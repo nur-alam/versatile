@@ -1,0 +1,25 @@
+{
+	"name": "tukitaki/tukitaki",
+	"description": "A WordPress plugin for lots of simple wordpress helper service",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"version": "1.0.0",
+	"autoload": {
+		"psr-4": {
+			"Tukitaki\\": "inc/"
+		},
+		"files": [
+			"./inc/TukitakiGlobals.php"
+		]
+	},
+	"authors": [
+		{
+			"name": "nurwp",
+			"email": "nur@wptriggermail.com"
+		}
+	],
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=7.4"
+	}
+}
