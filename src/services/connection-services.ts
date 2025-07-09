@@ -20,6 +20,20 @@ export const useGetPluginList = () => {
 	});
 };
 
+export const useGetDisablePluginList = () => {
+	return useQuery<TukitakiResponseType>({
+		queryKey: ['getDisablePluginList'],
+		queryFn: async (payload: AnyObject) => {
+			payload.action = 'tukitaki_get_disable_plugin_list';
+			const res = await fetchUtil(config.ajax_url, {
+				body: payload,
+			});
+			return res;
+		},
+		staleTime: 5000,
+	});
+};
+
 export const useDisablePlugin = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {

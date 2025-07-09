@@ -28,6 +28,7 @@ class DisablePluginInit {
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_tukitaki_plugin_list', array( $this, 'get_plugin_list' ) );
+		add_action( 'wp_ajax_tukitaki_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_tukitaki_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		// add_filter( 'option_active_plugins', array( $this, 'disable_plugins' ), 1 );
 		add_action( 'init', array( $this, 'tukitaki_create_mu_plugin' ) );
@@ -80,6 +81,17 @@ class DisablePluginInit {
 		update_option( 'tukitaki_disable_plugin_list', $params );
 
 		return $this->json_response( 'Disable plugin list saved', array(), 200 );
+	}
+
+	/**
+	 * Get_disable_plugin_list description
+	 *
+	 * @return  [type]  [return description]
+	 */
+	public function get_disable_plugin_list() {
+		// sleep( 1 );
+		$disable_plugin_list = get_option( 'tukitaki_disable_plugin_list' );
+		return $this->json_response( 'Disable plugin list saved', $disable_plugin_list, 200 );
 	}
 
 	/**
