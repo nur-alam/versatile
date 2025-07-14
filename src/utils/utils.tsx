@@ -1,5 +1,4 @@
 import config from "@/config";
-import { TriggerResponseType } from "./trigger-declaration";
 
 export function getSlugFromUrl(url: string = '', slug: string = 'page'): string {
 	if (url && slug) {
@@ -63,25 +62,6 @@ export const convertToFormData = (values: AnyObject) => {
 	}
 
 	return formData;
-};
-
-
-export const getProviderFullName = (provider: string): string => {
-	const providerMap: { [key: string]: string } = {
-		'ses': 'Amazon SES',
-		'smtp': 'SMTP',
-		'sendgrid': 'SendGrid',
-		'mailgun': 'Mailgun',
-		'postmark': 'Postmark',
-		'sparkpost': 'SparkPost',
-		'mailchimp': 'Mailchimp',
-		'sendinblue': 'Sendinblue',
-		'gmail': 'Gmail',
-		'outlook': 'Microsoft Outlook',
-		'yahoo': 'Yahoo Mail',
-	};
-
-	return providerMap[provider.toLowerCase()] || provider;
 };
 
 export const copyToClipboard = (text: string) => {

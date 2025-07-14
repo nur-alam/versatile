@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Tukitaki
- * Version: 1.0.1
+ * Version: 1.0.0
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://wptriggermail.com/
- * Description: Tukitaki allows you to disable any plugin selectively for your IP.
+ * Description: Tukitaki allows you to disable any plugin selectively by IP.
  * Author: nurwp
  * License: GPLv3 or later
  * Text Domain: tukitaki
@@ -61,9 +61,9 @@ if ( ! class_exists( 'Tukitaki' ) ) {
 
 			register_activation_hook( __FILE__, array( __CLASS__, 'register_activation' ) );
 			register_deactivation_hook( __FILE__, array( __CLASS__, 'register_deactivation' ) );
-			// new Init();
+			new Init();
 			// Initialize plugin.
-			add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
+			// add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		}
 
 		/**
@@ -120,7 +120,7 @@ if ( ! class_exists( 'Tukitaki' ) ) {
 		 * @return void
 		 */
 		public static function register_activation() {
-			update_option( 'tTukitaki_install_time', time() );
+			update_option( 'tukitaki_install_time', time() );
 
 			// Migrate DB.
 			Migration::migrate();

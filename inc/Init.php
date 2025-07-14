@@ -18,6 +18,7 @@ use Tukitaki\Admin\Init as AdminInit;
 use Tukitaki\Core\Enqueue;
 use Tukitaki\RestAPI\Routes;
 use Tukitaki\Services\DisablePlugin\DisablePluginInit;
+use Tukitaki\Services\MaintenanceMode\MaintenanceMode;
 
 /**
  * The Init class initializes plugin dependencies by creating instances
@@ -34,5 +35,6 @@ class Init {
 		new AdminInit();
 		new Routes();
 		new DisablePluginInit();
+		new MaintenanceMode();
 	}
 }

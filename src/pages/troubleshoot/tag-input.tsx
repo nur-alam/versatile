@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ipv4Regex } from '@/utils/schemaValidation';
+import { __ } from "@wordpress/i18n"
 
 type Props = {
 	tags: string[]
@@ -47,17 +48,27 @@ export default function TaggedInput({ tags, onChange }: Props) {
 
 	return (
 		<div>
-			<Input
-				type="text"
-				placeholder="Type a tag and press Enter or click outside..."
-				value={inputValue}
-				onChange={(e) => {
-					setInputValue(e.target.value)
-					if (inputError) setInputError(null)
-				}}
-				onKeyDown={handleKeyDown}
-				onBlur={handleBlur}
-			/>
+			<div className="relative">
+				<Input
+					type="text"
+					placeholder="Type a tag and press Enter or click outside..."
+					value={inputValue}
+					onChange={(e) => {
+						setInputValue(e.target.value)
+						if (inputError) setInputError(null)
+					}}
+					onKeyDown={handleKeyDown}
+					onBlur={handleBlur}
+				/>
+				<Button
+					type="button"
+					size="sm"
+					className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 h-5"
+					onClick={addTag}
+				>
+					{__('Add My IP', 'tukitaki')}
+				</Button>
+			</div>
 			{inputError && (
 				<p className="text-red-500 text-sm mt-1">{inputError}</p>
 			)}

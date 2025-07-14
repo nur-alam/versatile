@@ -1,112 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
-import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom';
-import MultipleSelector from './multi-selector';
-import TaggedInput from './tag-input';
-import { Form } from '@/components/ui/form';
+import React from 'react'
+import { __ } from '@wordpress/i18n'
+import { Link } from 'react-router-dom'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
-import { disablePluginFormSchema, DisablePluginFormValues, ipv4Regex } from '@/utils/schemaValidation'
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList } from '@/services/connection-services';
-
-const TukitakiDashboard = () => {
-	// const navigate = useNavigate();
-
-	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
-		resolver: zodResolver(disablePluginFormSchema),
-		defaultValues: {
-			chosenPlugins: [],
-			ipTags: [],
-		}
-	});
-
-	const disablePluginMutation = useDisablePlugin();
-
-	const onSubmit = async (values: DisablePluginFormValues) => {
-		console.log('Submitting', values);
-		await disablePluginMutation.mutateAsync({ ...values });
-	}
-
-	const { data: disablePluginData, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
-	const [loading, setLoading] = useState(true);
-
-	// useEffect(() => {
-	// 	if (disablePluginListLoading) {
-	// 		setLoading(true);
-	// 	} else {
-	// 		setLoading(false);
-	// 	}
-	// }, [disablePluginListLoading]);
-	const chosenPluginList = disablePluginData?.data['chosenPlugins'];
-	const chosenIpList = disablePluginData?.data['ipTags'];
-
-	useEffect(() => {
-		if (chosenPluginList || chosenIpList) {
-			// Set default values when data is loaded
-			control._reset({
-				chosenPlugins: chosenPluginList || [],
-				ipTags: chosenIpList || [],
-			});
-		}
-	}, [chosenPluginList, chosenIpList, control]);
-	// console.log('disablePluginList', disablePluginData?.data);
-	// console.log('chosenPluginList', chosenPluginList);
-	// console.log('chosenIpList', chosenIpList);
-
+const Dashboard = () => {
 	return (
-		<div className="p-4 space-y-6">
-			<h2 className='text-2xl'>{__('Tukitaki Dashboard', 'tukitaki')}</h2>
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<div className='min-h-[42px]'>
-					{
-						!disablePluginData ? 'Loading' : <Controller
-							name='chosenPlugins'
-							control={control}
-							render={({ field }) => (
-								<MultipleSelector
-									selectedPlugin={field.value}
-									onChange={field.onChange}
-								/>
-							)}
-						/>
-					}
-					{errors.chosenPlugins && (
-						<p className="text-red-500 text-sm mt-1">
-							{errors.chosenPlugins.message}
-						</p>
-					)}
-				</div>
-				<div className='min-h-[64px] mt-2'>
-					{
-						!disablePluginData ? 'Loading' :
-							<Controller
-								name='ipTags'
-								control={control}
-								render={({ field }) => (
-									<TaggedInput
-										tags={field.value}
-										onChange={field.onChange}
-									// onChange={(newTags: string[]) => {
-									// 	console.log('newTags', newTags);
-									// 	const validTags = newTags.filter(tag => ipv4Regex.test(tag));
-									// 	field.onChange(validTags);
-									// }}
-									/>
-								)}
-							/>
-					}
-					{errors.ipTags && (
-						<p className="text-red-500 text-sm mt-1">
-							{errors.ipTags[0]?.message}
-						</p>
-					)}
-				</div>
-				<Button type='submit' className='mt-2'>Submit</Button>
-			</form>
-		</div>
-	);
-};
+		<>
+			<div className='mt-10'>
+				<Card style={{ width: '300px' }}>
+					<Link to={'/troubleshoot'}>
+						<CardHeader>
+							<CardTitle className='text-2xl'>{__('Troubleshooting', 'tukitaki')}</CardTitle>
+						</CardHeader>
+						<CardContent>
+							{__('This plugin will perform a number of checks on your WordPress installation', 'tukitaki')}
+						</CardContent>
+					</Link>
+				</Card>
+				{/* <div>
+					<Link to={'/troubleshoot'}>
+						<h3>Troubleshoot</h3>
+						<p>This plugin will perform a number of checks on your WordPress installation to detect common configuration errors and known issues, and also allows plugins and themes to add their own checks.</p>
+					</Link>
+				</div> */}
+			</div>
+		</>
+	)
+}
 
-export default TukitakiDashboard
+export default Dashboard

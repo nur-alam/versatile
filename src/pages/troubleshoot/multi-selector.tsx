@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useGetPluginList } from "@/services/connection-services"
+import { useGetPluginList } from "@/services/tukitaki-services"
 
 type typePluginList = {
 	slug: string
@@ -88,7 +88,7 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 								{[...availablePlugins, ...chosenPlugins].map((plugin) => (
 									<CommandItem
 										key={plugin.slug}
-										value={plugin.slug}
+										value={plugin.label}
 										onSelect={() => handleSelect(plugin.slug)}
 									>
 										<Check

@@ -3,8 +3,8 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Header from '@/components/Header';
-import TukitakiDashboard from './pages/tukitaki';
+import Dashboard from './pages/tukitaki';
+import TroubleShoot from './pages/troubleshoot';
 
 const root = ReactDOM.createRoot(document.getElementById('tukitaki-root') as HTMLElement);
 
@@ -23,8 +23,8 @@ root.render(
 		<HashRouter>
 			{/* <Header /> */}
 			<Routes>
-				<Route path="/" element={<TukitakiDashboard />} />
-				<Route path="/dashboard" element={<TukitakiDashboard />} />
+				<Route path="/" element={<Dashboard />} />
+				<Route path="/troubleshoot" element={<TroubleShoot />} />
 				{/* <Route path="/email_logs" element={<EmailLogs />} />
 				<Route path="/settings" element={<Settings />} />
 				<Route path="/connections" element={<Connections />} />
