@@ -51,3 +51,21 @@ export const useDisablePlugin = () => {
 		},
 	});
 };
+
+export const useAddMyIp = () => {
+	return useMutation({
+		mutationFn: async (payload: AnyObject) => {
+			payload.action = 'tukitaki_add_my_ip';
+			const res = await fetchPostUtil(config.ajax_url, {
+				body: payload,
+			});
+			return res;
+		},
+		onSuccess: (response: TukitakiResponseType) => {
+			// toast.success(response.message ?? __('IP added successfully!', 'trigger'));
+		},
+		onError: (error: any) => {
+			toast.error(error.message ?? __('Failed to add IP', 'trigger'));
+		},
+	});
+}

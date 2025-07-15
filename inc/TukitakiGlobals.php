@@ -75,3 +75,47 @@ function tukitaki_verify_request( $check_auth = true ) {
 		'data'    => UtilityHelper::sanitize_array( $_REQUEST ),
 	);
 }
+
+/**
+ * Get client IP address
+ *
+ * @return string Client IP address.
+ */
+function tukitaki_get_client_ip() {
+	// Check for IP from various headers in order of preference
+	$ip_headers = array(
+		'HTTP_CF_CONNECTING_IP',     // Cloudflare
+		'HTTP_X_FORWARDED_FOR',      // Load balancer/proxy
+		'HTTP_X_FORWARDED',          // Proxy
+		'HTTP_X_CLUSTER_CLIENT_IP',  // Cluster
+		'HTTP_CLIENT_IP',            // Proxy
+		'HTTP_FORWARDED_FOR',        // Proxy
+		'HTTP_FORWARDED',            // Proxy
+		'REMOTE_ADDR',                // Standard
+	);
+
+	foreach ( $ip_headers as $header ) {
+		if ( ! empty( $_SERVER[ $header ] ) ) {
+			$ip = sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) );
+
+			// Handle comma-separated IPs (X-Forwarded-For can contain multiple IPs)
+			if ( strpos( $ip, ',' ) !== false ) {
+				$ip = trim( explode( ',', $ip )[0] );
+			}
+
+			// Validate IP address
+			if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+				return $ip;
+			}
+		}
+	}
+
+	$server_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+
+	if ( '::1' === $server_ip ) {
+		return '127.0.0.1';
+	}
+
+	// Fallback to REMOTE_ADDR even if it's private (for local development)
+	return $server_ip ?? '127.0.0.1';
+}

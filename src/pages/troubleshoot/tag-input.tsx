@@ -1,12 +1,14 @@
 "use client"
 
-import { useState, type KeyboardEvent, type FocusEvent } from "react"
+import { useState, type KeyboardEvent, type FocusEvent, ReactElement, ReactNode } from "react"
 import { X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ipv4Regex } from '@/utils/schemaValidation';
+import { ipv4Regex } from '@/utils/schemaValidation'
 import { __ } from "@wordpress/i18n"
+import { useAddMyIp } from "@/services/tukitaki-services"
+import toast from "react-hot-toast"
 
 type Props = {
 	tags: string[]
@@ -46,6 +48,23 @@ export default function TaggedInput({ tags, onChange }: Props) {
 		addTag()
 	}
 
+	const useAddMyIpMutation = useAddMyIp();
+
+	const addMyIp = async () => {
+		const { data,  } = await useAddMyIpMutation.mutateAsync({});
+		const ip = data?.ip;
+
+		if (tags.includes(ip)) {
+			toast.success(__('System Ip already added!', 'trigger'));
+			return;
+		}
+
+		if (!tags.includes(ip) && ip) {
+			onChange([...tags, ip])
+			toast.success(__('System Ip address added', 'trigger'));
+		}
+	}
+
 	return (
 		<div>
 			<div className="relative">
@@ -64,7 +83,7 @@ export default function TaggedInput({ tags, onChange }: Props) {
 					type="button"
 					size="sm"
 					className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 h-5"
-					onClick={addTag}
+					onClick={addMyIp}
 				>
 					{__('Add My IP', 'tukitaki')}
 				</Button>

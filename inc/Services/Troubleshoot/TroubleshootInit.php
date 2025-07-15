@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Tukitaki\Services\DisablePlugin;
+namespace Tukitaki\Services\Troubleshoot;
 
 use Tukitaki\Traits\JsonResponse;
 
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * DisablePlugin init
  */
-class DisablePluginInit {
+class TroubleshootInit {
 
 	use JsonResponse;
 
@@ -31,6 +31,7 @@ class DisablePluginInit {
 		add_action( 'wp_ajax_tukitaki_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_tukitaki_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		// add_action( 'init', array( $this, 'tukitaki_create_mu_plugin' ) );
+		add_action( 'wp_ajax_tukitaki_add_my_ip', array( $this, 'add_my_ip' ) );
 	}
 
 	/**
@@ -107,7 +108,24 @@ class DisablePluginInit {
 	}
 
 	/**
-	 * Tukitaki_create_mu_plugin description.
+	 * Add my ip function
+	 *
+	 * @return string id address.
+	 */
+	public function add_my_ip() {
+		try {
+			$ip_address = tukitaki_get_client_ip();
+			$data       = array(
+				'ip' => $ip_address,
+			);
+			return $this->json_response( 'System IP address added', $data, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while retrieving IP address', array(), 400 );
+		}
+	}
+
+	/**
+	 * Tukitaki create mu plugin description.
 	 *
 	 * @return void
 	 */
