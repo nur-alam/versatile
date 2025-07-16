@@ -47,7 +47,7 @@ const TroubleShoot = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Tukitaki Dashboard', 'tukitaki')}
+				{__('Disable Plugin by IP address', 'tukitaki')}
 			</h2>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className='min-h-[42px]'>
@@ -79,17 +79,6 @@ const TroubleShoot = () => {
 									<TaggedInput
 										tags={field.value}
 										onChange={field.onChange}
-										// actionBtn={<button>yo</button>}
-										// actionBtn={
-										// 	<Button
-										// 		type="button"
-										// 		size="sm"
-										// 		className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 h-5"
-										// 		onClick={addMyIp}
-										// 	>
-										// 		{__('Add My IP', 'tukitaki')}
-										// 	</Button>
-										// }
 									// onChange={(newTags: string[]) => {
 									// 	console.log('newTags', newTags);
 									// 	const validTags = newTags.filter(tag => ipv4Regex.test(tag));
@@ -105,7 +94,7 @@ const TroubleShoot = () => {
 						</p>
 					)}
 				</div>
-				<Button type='submit' className='mt-2'>Submit</Button>
+				<Button type='submit' className='mt-6'>{__('Submit', 'tukitaki')}</Button>
 			</form>
 		</div>
 	);

@@ -19,6 +19,7 @@ use Tukitaki\Core\Enqueue;
 use Tukitaki\RestAPI\Routes;
 use Tukitaki\Services\MaintenanceMode\MaintenanceMode;
 use Tukitaki\Services\Troubleshoot\TroubleshootInit;
+use Tukitaki\Services\Comingsoon\Comingsoon;
 
 /**
  * The Init class initializes plugin dependencies by creating instances
@@ -36,5 +37,6 @@ class Init {
 		new Routes();
 		new TroubleshootInit();
 		new MaintenanceMode();
+		new Comingsoon();
 	}
 }

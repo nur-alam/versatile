@@ -5,6 +5,8 @@ import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Dashboard from './pages/tukitaki';
 import TroubleShoot from './pages/troubleshoot';
+import Maintenance from './pages/maintenance';
+import Comingsoon from './pages/comingsoon';
 
 const root = ReactDOM.createRoot(document.getElementById('tukitaki-root') as HTMLElement);
 
@@ -25,11 +27,8 @@ root.render(
 			<Routes>
 				<Route path="/" element={<Dashboard />} />
 				<Route path="/troubleshoot" element={<TroubleShoot />} />
-				{/* <Route path="/email_logs" element={<EmailLogs />} />
-				<Route path="/settings" element={<Settings />} />
-				<Route path="/connections" element={<Connections />} />
-				<Route path="/general" element={<GeneralSettings />} />
-				<Route path="/add-connection" element={<AddConnection />} /> */}
+				<Route path="/maintenance" element={<Maintenance />} />
+				<Route path="/comingsoon" element={<Comingsoon />} />
 			</Routes>
 
 			<Toaster

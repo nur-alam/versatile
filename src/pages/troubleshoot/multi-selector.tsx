@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useGetPluginList } from "@/services/tukitaki-services"
+import { __ } from "@wordpress/i18n"
 
 type typePluginList = {
 	slug: string
@@ -60,7 +61,7 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 							{chosenPlugins.map((item) => (
 								<Badge key={item.slug} variant="default" className="mr-1 mb-1">
 									{item.label}
-									<button
+									{/* <button
 										className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
 										onClick={(e) => {
 											e.preventDefault()
@@ -68,12 +69,24 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 											handleRemove(item.slug)
 										}}
 									>
-										<X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-									</button>
+										<X className="h-3 w-3 text-white/50 hover:text-white/100" />
+									</button> */}
+									<Button
+										variant="ghost"
+										size="sm"
+										className="h-4 w-4 p-0 ml-1"
+										onClick={(e) => {
+											e.preventDefault()
+											e.stopPropagation()
+											handleRemove(item.slug)
+										}}
+									>
+										<X className="h-3 w-3" />
+									</Button>
 								</Badge>
 							))}
 							{chosenPlugins.length === 0 && (
-								<span className="text-muted-foreground">Select frameworks you like...</span>
+								<span className="text-muted-foreground">{__('Select plugins you like...', 'tukitaki')}</span>
 							)}
 						</div>
 						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
@@ -81,9 +94,9 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 				</PopoverTrigger>
 				<PopoverContent className="w-full p-0" align="start">
 					<Command>
-						<CommandInput placeholder="Search frameworks..." />
+						<CommandInput placeholder="Search plugin..." />
 						<CommandList>
-							<CommandEmpty>No framework found.</CommandEmpty>
+							<CommandEmpty>No plugin found.</CommandEmpty>
 							<CommandGroup>
 								{[...availablePlugins, ...chosenPlugins].map((plugin) => (
 									<CommandItem

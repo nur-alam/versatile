@@ -6,11 +6,31 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const Dashboard = () => {
 	return (
 		<>
-			<div className='mt-10'>
+			<div className='mt-10 flex flex-wrap gap-2'>
 				<Card style={{ width: '300px' }}>
 					<Link to={'/troubleshoot'}>
 						<CardHeader>
 							<CardTitle className='text-2xl'>{__('Troubleshooting', 'tukitaki')}</CardTitle>
+						</CardHeader>
+						<CardContent>
+							{__('This plugin will perform a number of checks on your WordPress installation', 'tukitaki')}
+						</CardContent>
+					</Link>
+				</Card>
+				<Card style={{ width: '300px' }}>
+					<Link to={'/maintenance'}>
+						<CardHeader>
+							<CardTitle className='text-2xl'>{__('Maintenance Mood', 'tukitaki')}</CardTitle>
+						</CardHeader>
+						<CardContent>
+							{__('This plugin will perform a number of checks on your WordPress installation', 'tukitaki')}
+						</CardContent>
+					</Link>
+				</Card>
+				<Card style={{ width: '300px' }}>
+					<Link to={'/comingsoon'}>
+						<CardHeader>
+							<CardTitle className='text-2xl'>{__('Coming Soon', 'tukitaki')}</CardTitle>
 						</CardHeader>
 						<CardContent>
 							{__('This plugin will perform a number of checks on your WordPress installation', 'tukitaki')}

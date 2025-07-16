@@ -290,26 +290,4 @@ class ValidationHelper {
 		$user = get_user_by( 'id', $user_id );
 		return $user ? true : false;
 	}
-
-	/**
-	 * Check a table has record.
-	 *
-	 * @since 2.7.0
-	 *
-	 * @param string $table table name with prefix or without.
-	 * @param string $column table column name.
-	 * @param mixed  $value table column value.
-	 *
-	 * @return boolean
-	 */
-	// public static function has_record( $table, $column, $value ) {
-	// global $wpdb;
-	// $table_prefix = $wpdb->prefix;
-	// if ( strpos( $table, $table_prefix ) !== 0 ) {
-	// $table = $table_prefix . $table;
-	// }
-
-	// $record = QueryHelper::get_row( $table, array( $column => $value ), $column );
-	// return $record ? true : false;
-	// }
 }
