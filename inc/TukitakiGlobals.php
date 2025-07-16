@@ -67,6 +67,9 @@ function tukitaki_verify_request( $check_auth = true ) {
 		);
 	}
 
+	// Remove keys that should not be saved
+	unset( $_REQUEST['action'], $_REQUEST['tukitaki_nonce'] );
+
 	// Return success with sanitized POST data
 	return array(
 		'success' => true,

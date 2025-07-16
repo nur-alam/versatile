@@ -44,10 +44,10 @@ export const useDisablePlugin = () => {
 			return res;
 		},
 		onSuccess: (response: TukitakiResponseType) => {
-			toast.success(response.message ?? __('Plugin disabled successfully!', 'trigger'));
+			toast.success(response.message ?? __('Plugin disabled successfully!', 'tukitaki'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to disable plugin', 'trigger'));
+			toast.error(error.message ?? __('Failed to disable plugin', 'tukitaki'));
 		},
 	});
 };
@@ -62,10 +62,10 @@ export const useAddMyIp = () => {
 			return res;
 		},
 		onSuccess: (response: TukitakiResponseType) => {
-			// toast.success(response.message ?? __('IP added successfully!', 'trigger'));
+			// toast.success(response.message ?? __('IP added successfully!', 'tukitaki'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to add IP', 'trigger'));
+			toast.error(error.message ?? __('Failed to add IP', 'tukitaki'));
 		},
 	});
 }

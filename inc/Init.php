@@ -37,6 +37,6 @@ class Init {
 		new Routes();
 		new TroubleshootInit();
 		new MaintenanceMode();
-		new Comingsoon();
+		// new Comingsoon();
 	}
 }
