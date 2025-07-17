@@ -26,7 +26,7 @@ class ComingsoonMood {
 	 * Comingsoon constructor.
 	 */
 	public function __construct() {
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 		if ( $tukitaki_mood_info['enable_comingsoon'] && ! $tukitaki_mood_info['enable_maintenance'] ) {
 			if ( ! is_admin() ) {
 				add_action( 'wp', array( $this, 'custom_comingsoon_mode' ) );
@@ -45,7 +45,7 @@ class ComingsoonMood {
 			$request_verify                         = tukitaki_verify_request();
 			$params                                 = $request_verify['data'];
 			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
-			$current_mood_info                      = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+			$current_mood_info                      = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_comingsoon'] = $params['enable_comingsoon'] ?? false;
 			if ( $current_mood_info['enable_comingsoon'] ) {
 				$current_mood_info['enable_maintenance'] = false;
@@ -55,12 +55,12 @@ class ComingsoonMood {
 				$current_mood_info['comingsoon'],
 				$params
 			);
-			$is_mood_info_updated            = update_option( TUKITAKI_MOOD_KEY, $current_mood_info );
-			if ( $is_mood_info_updated ) {
-				$tukitaki_addon_info                         = get_option( TUKITAKI_ADDON_INFO );
-				$tukitaki_addon_info['comingsoon']['enable'] = true;
-				update_option( TUKITAKI_ADDON_INFO, $tukitaki_addon_info );
-			}
+			$is_mood_info_updated            = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
+			// $tukitaki_addon_list                         = get_option( TUKITAKI_ADDON_LIST );
+			// $tukitaki_addon_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
+			// update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
+			// if ( $current_mood_info['enable_comingsoon'] ) {
+			// }
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );

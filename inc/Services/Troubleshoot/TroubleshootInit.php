@@ -58,13 +58,13 @@ class TroubleshootInit {
 			}
 
 			// Save to options table
-			$is_updated = update_option( TUKITAKI_DISABLE_PLUGIN_LIST_KEY, $params );
+			$is_updated = update_option( TUKITAKI_DISABLE_PLUGIN_LIST, $params );
 
 			// update tukitaki addon info
 			if ( $is_updated ) {
-				$tukitaki_addon_info                           = get_option( TUKITAKI_ADDON_INFO );
-				$tukitaki_addon_info['troubleshoot']['enable'] = true;
-				update_option( TUKITAKI_ADDON_INFO, $tukitaki_addon_info );
+				$tukitaki_addon_list                           = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_LIST );
+				$tukitaki_addon_list['troubleshoot']['enable'] = true;
+				update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
 			}
 
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );
@@ -80,7 +80,7 @@ class TroubleshootInit {
 	 */
 	public function get_disable_plugin_list() {
 		sleep( 1 );
-		$disable_plugin_list = get_option( TUKITAKI_DISABLE_PLUGIN_LIST_KEY );
+		$disable_plugin_list = get_option( TUKITAKI_DISABLE_PLUGIN_LIST );
 		return $this->json_response( 'Disable plugin list saved', $disable_plugin_list, 200 );
 	}
 

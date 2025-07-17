@@ -19,6 +19,8 @@ const Dashboard = () => {
 	const { data: addonListResponse, isLoading } = useGetAddonList();
 	const addonList = addonListResponse?.data as AddonListType;
 
+	console.log('addonList', addonList);
+
 	return (
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>

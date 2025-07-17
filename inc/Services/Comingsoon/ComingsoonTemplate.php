@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$tukitaki_mood_info = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 
 if ( ! empty( $tukitaki_mood_info ) ) {
 	$tukitaki_comingsoon_mood_info = $tukitaki_mood_info['comingsoon'];

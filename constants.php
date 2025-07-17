@@ -19,13 +19,13 @@ define( 'TUKITAKI_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 define( 'TUKITAKI_REDIRECT_URI', admin_url( 'admin.php?page=tukitaki' ) );
 
-define( 'TUKITAKI_DISABLE_PLUGIN_LIST_KEY', 'tukitaki_disable_plugin_list' );
+define( 'TUKITAKI_DISABLE_PLUGIN_LIST', 'tukitaki_disable_plugin_list' );
 
-define( 'TUKITAKI_MOOD_KEY', 'tukitaki_mood_info' );
-// $_tukitaki_mood_info = array();
+define( 'TUKITAKI_MOOD_LIST', 'tukitaki_mood_list' );
+
 // Define default mood info structure
 define(
-	'TUKITAKI_DEFAULT_MOOD_INFO',
+	'TUKITAKI_DEFAULT_MOOD_LIST',
 	array(
 		'enable_troubleshoot' => false,
 		'enable_maintenance'  => false,
@@ -53,9 +53,9 @@ define(
 	)
 );
 
-define( 'TUKITAKI_ADDON_INFO', 'tukitaki_addon_info' );
+define( 'TUKITAKI_ADDON_LIST', 'tukitaki_addon_list' );
 define(
-	'TUKITAKI_DEFAULT_ADDON_INFO',
+	'TUKITAKI_DEFAULT_ADDON_LIST',
 	array(
 		'troubleshoot' => array(
 			'label'       => 'Troubleshoot',
@@ -71,7 +71,7 @@ define(
 		),
 		'comingsoon'   => array(
 			'label'       => 'Comingsoon Mood',
-			'enable'      => false,
+			'enable'      => true,
 			'path'        => 'comingsoon',
 			'description' => 'lorem:1',
 		),

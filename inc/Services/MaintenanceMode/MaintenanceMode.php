@@ -28,7 +28,7 @@ class MaintenanceMode {
 	 * MaintenanceMode constructor.
 	 */
 	public function __construct() {
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 		if ( $tukitaki_mood_info['enable_maintenance'] && ! $tukitaki_mood_info['enable_comingsoon'] ) {
 			if ( ! is_admin() ) {
 				add_action( 'wp', array( $this, 'custom_maintenance_mode' ) );
@@ -47,7 +47,7 @@ class MaintenanceMode {
 		try {
 			$request_verify    = tukitaki_verify_request();
 			$params            = $request_verify['data'];
-			$current_mood_info = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+			$current_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
@@ -65,7 +65,7 @@ class MaintenanceMode {
 			$request_verify                          = tukitaki_verify_request();
 			$params                                  = $request_verify['data'];
 			$params['enable_maintenance']            = filter_var( $params['enable_maintenance'], FILTER_VALIDATE_BOOLEAN );
-			$current_mood_info                       = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+			$current_mood_info                       = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_maintenance'] = $params['enable_maintenance'] ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
 				$current_mood_info['enable_comingsoon'] = false;
@@ -75,14 +75,14 @@ class MaintenanceMode {
 				$current_mood_info['maintenance'],
 				$params
 			);
-			$is_mood_info_updated             = update_option( TUKITAKI_MOOD_KEY, $current_mood_info );
+			$is_mood_info_updated             = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
 
-			// update tukitaki addon info
-			if ( $is_mood_info_updated ) {
-				$tukitaki_addon_info                          = get_option( TUKITAKI_ADDON_INFO );
-				$tukitaki_addon_info['maintenance']['enable'] = true;
-				update_option( TUKITAKI_ADDON_INFO, $tukitaki_addon_info );
-			}
+			// update tukitaki addon info // implement later
+			// $tukitaki_addon_list                          = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_INFO );
+			// $tukitaki_addon_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
+			// update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
+			// if ( $current_mood_info['enable_maintenance'] ) {
+			// }
 
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {

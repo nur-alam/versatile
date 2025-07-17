@@ -34,20 +34,20 @@ class ServiceInit {
 	 */
 	public function __construct() {
 
-		$tukitaki_addon_info = get_option( TUKITAKI_ADDON_INFO, TUKITAKI_DEFAULT_ADDON_INFO );
+		$tukitaki_addon_list = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_LIST );
 
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_KEY, TUKITAKI_DEFAULT_MOOD_INFO );
+		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
 
 		// Troubleshoot enable_troubleshoot
-		if ( $tukitaki_addon_info['troubleshoot']['enable'] ) {
+		if ( $tukitaki_addon_list['troubleshoot']['enable'] ) {
 			new TroubleshootInit();
 		}
 
 		// Mood services
-		if ( $tukitaki_addon_info['maintenance']['enable'] ) {
+		if ( $tukitaki_addon_list['maintenance']['enable'] ) {
 			new MaintenanceMode();
 		}
-		if ( $tukitaki_addon_info['comingsoon']['enable'] ) {
+		if ( $tukitaki_addon_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
 		}
 
@@ -63,7 +63,7 @@ class ServiceInit {
 		try {
 			$request_verify = tukitaki_verify_request();
 			$params         = $request_verify['data'];
-			$addon_list     = get_option( TUKITAKI_ADDON_INFO, TUKITAKI_DEFAULT_ADDON_INFO );
+			$addon_list     = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_LIST );
 			return $this->json_response( 'Maintenance Mood info updated!', $addon_list, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );

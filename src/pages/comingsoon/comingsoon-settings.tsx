@@ -34,7 +34,6 @@ const ComingsoonMode = () => {
 	const comingsoonMoodInfo: ComingsoonMoodFormValues = moodInfo?.data['comingsoon'];
 
 	useEffect(() => {
-		console.log('comingsoonMoodInfo', comingsoonMoodInfo);
 		if (comingsoonMoodInfo) {
 			comingsoonMoodFrom.reset({
 				enable_comingsoon: moodInfo?.data['enable_comingsoon'],
