@@ -17,9 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Tukitaki\Admin\Init as AdminInit;
 use Tukitaki\Core\Enqueue;
 use Tukitaki\RestAPI\Routes;
-use Tukitaki\Services\MaintenanceMode\MaintenanceMode;
-use Tukitaki\Services\Troubleshoot\TroubleshootInit;
-use Tukitaki\Services\Comingsoon\Comingsoon;
+use Tukitaki\Services\ServiceInit;
 
 /**
  * The Init class initializes plugin dependencies by creating instances
@@ -35,8 +33,6 @@ class Init {
 		new Enqueue();
 		new AdminInit();
 		new Routes();
-		new TroubleshootInit();
-		new MaintenanceMode();
-		// new Comingsoon();
+		new ServiceInit();
 	}
 }

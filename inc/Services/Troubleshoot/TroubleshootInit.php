@@ -30,7 +30,6 @@ class TroubleshootInit {
 		add_action( 'wp_ajax_tukitaki_plugin_list', array( $this, 'get_plugin_list' ) );
 		add_action( 'wp_ajax_tukitaki_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_tukitaki_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
-		// add_action( 'init', array( $this, 'tukitaki_create_mu_plugin' ) );
 		add_action( 'wp_ajax_tukitaki_add_my_ip', array( $this, 'add_my_ip' ) );
 	}
 
@@ -59,7 +58,14 @@ class TroubleshootInit {
 			}
 
 			// Save to options table
-			update_option( 'tukitaki_disable_plugin_list', $params );
+			$is_updated = update_option( TUKITAKI_DISABLE_PLUGIN_LIST_KEY, $params );
+
+			// update tukitaki addon info
+			if ( $is_updated ) {
+				$tukitaki_addon_info                           = get_option( TUKITAKI_ADDON_INFO );
+				$tukitaki_addon_info['troubleshoot']['enable'] = true;
+				update_option( TUKITAKI_ADDON_INFO, $tukitaki_addon_info );
+			}
 
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );
 		} catch ( \Throwable $th ) {
@@ -74,7 +80,7 @@ class TroubleshootInit {
 	 */
 	public function get_disable_plugin_list() {
 		sleep( 1 );
-		$disable_plugin_list = get_option( 'tukitaki_disable_plugin_list' );
+		$disable_plugin_list = get_option( TUKITAKI_DISABLE_PLUGIN_LIST_KEY );
 		return $this->json_response( 'Disable plugin list saved', $disable_plugin_list, 200 );
 	}
 
@@ -131,10 +137,10 @@ class TroubleshootInit {
 	 */
 	public function tukitaki_create_mu_plugin() {
 		try {
-			// if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/mu-tukitaki.php' ) ) {
-			// return;
-			// }
-			$template_file  = TUKITAKI_PLUGIN_DIR . 'inc/Services/DisablePlugin/mu-template.php';
+			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/mu-tukitaki.php' ) ) {
+				return;
+			}
+			$template_file  = TUKITAKI_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuTemplate.php';
 			$mu_plugin_dir  = WP_CONTENT_DIR . '/mu-plugins';
 			$mu_plugin_file = $mu_plugin_dir . '/mu-tukitaki.php';
 

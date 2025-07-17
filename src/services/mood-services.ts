@@ -6,66 +6,62 @@ import toast from 'react-hot-toast';
 import { __ } from '@wordpress/i18n';
 import { AnyObject } from '@/utils/utils';
 
-export const useGetPluginList = () => {
+export const useGetMoodInfo = () => {
 	return useQuery<TukitakiResponseType>({
-		queryKey: ['getPluginList'],
+		queryKey: ['getMoodInfo'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_plugin_list';
-			const res = await fetchUtil(config.ajax_url, {
-				body: payload,
-			});
+			payload.action = 'tukitaki_get_mood_info';
+			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
 		staleTime: 5000,
 	});
 };
 
-export const useGetDisablePluginList = () => {
+export const useGetAddonList = () => {
 	return useQuery<TukitakiResponseType>({
-		queryKey: ['getDisablePluginList'],
+		queryKey: ['getAddonList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_get_disable_plugin_list';
-			const res = await fetchUtil(config.ajax_url, {
-				body: payload,
-			});
+			payload.action = 'tukitaki_get_addon_list';
+			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
 		staleTime: 5000,
 	});
 };
 
-export const useDisablePlugin = () => {
+export const useUpdateMaintenanceMood = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_save_disable_plugin_list';
+			payload.action = 'tukitaki_update_maintenance_mood';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
 			return res;
 		},
 		onSuccess: (response: TukitakiResponseType) => {
-			toast.success(response.message ?? __('Plugin disabled successfully!', 'tukitaki'));
+			toast.success(response.message ?? __('Maintenance Mood info updated!', 'tukitaki'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to disable plugin', 'tukitaki'));
+			toast.error(error.message ?? __('Failed while updating maintenance mood', 'tukitaki'));
 		},
 	});
 };
 
-export const useAddMyIp = () => {
+export const useUpdateComingsoonMood = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_add_my_ip';
-			const res = await fetchPostUtil(config.ajax_url, {
+			payload.action = 'tukitaki_update_comingsoon_mood';
+			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
 			return res;
 		},
 		onSuccess: (response: TukitakiResponseType) => {
-			// toast.success(response.message ?? __('IP added successfully!', 'tukitaki'));
+			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'tukitaki'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to add IP', 'tukitaki'));
+			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'tukitaki'));
 		},
 	});
-}
+};

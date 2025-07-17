@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import { ArrowLeft } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import MaintenanceSettings from './MaintenanceSettings'
+import MaintenanceSettings from './maintenance-settings'
 
 const Maintenance = () => {
 	return (

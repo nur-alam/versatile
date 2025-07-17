@@ -14,11 +14,22 @@ export const disablePluginFormSchema = z.object({
 
 export type DisablePluginFormValues = z.infer<typeof disablePluginFormSchema>;
 
-export const maintenanceMoodFromSchema = z.object({
+// Maintenance Mood
+export const maintenanceMoodFormSchema = z.object({
 	enable_maintenance: z.boolean(),
 	title: z.string().min(2, 'Title must be more than 2 characters'),
 	description: z.string().min(2, 'Description must be more than 2 characters'),
 	subtitle: z.string().min(2, 'Subtitle must be more than 2 characters'),
 });
 
-export type MaintenanceMoodFormValues = z.infer<typeof maintenanceMoodFromSchema>;
+export type MaintenanceMoodFormValues = z.infer<typeof maintenanceMoodFormSchema>;
+
+// Comingsoon Mood
+export const comingsoonMoodFormSchema = z.object({
+	enable_comingsoon: z.boolean(),
+	title: z.string().min(2, 'Title must be more than 2 characters'),
+	description: z.string().min(2, 'Description must be more than 2 characters'),
+	subtitle: z.string().min(2, 'Subtitle must be more than 2 characters'),
+});
+
+export type ComingsoonMoodFormValues = z.infer<typeof comingsoonMoodFormSchema>;

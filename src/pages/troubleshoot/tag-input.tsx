@@ -5,7 +5,7 @@ import { X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ipv4Regex } from '@/utils/schemaValidation'
+import { ipv4Regex } from '@/utils/schema-validation'
 import { __ } from "@wordpress/i18n"
 import { useAddMyIp } from "@/services/tukitaki-services"
 import toast from "react-hot-toast"

@@ -19,13 +19,18 @@ define( 'TUKITAKI_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 define( 'TUKITAKI_REDIRECT_URI', admin_url( 'admin.php?page=tukitaki' ) );
 
+define( 'TUKITAKI_DISABLE_PLUGIN_LIST_KEY', 'tukitaki_disable_plugin_list' );
+
+define( 'TUKITAKI_MOOD_KEY', 'tukitaki_mood_info' );
+// $_tukitaki_mood_info = array();
 // Define default mood info structure
 define(
 	'TUKITAKI_DEFAULT_MOOD_INFO',
 	array(
-		'enable_maintenance' => false,
-		'enable_coming_soon' => false,
-		'maintenance'        => array(
+		'enable_troubleshoot' => false,
+		'enable_maintenance'  => false,
+		'enable_comingsoon'   => false,
+		'maintenance'         => array(
 			'title'       => '',
 			'subtitle'    => '',
 			'description' => '',
@@ -35,7 +40,7 @@ define(
 				'opacity'  => 1,
 			),
 		),
-		'coming_soon'        => array(
+		'comingsoon'          => array(
 			'title'       => '',
 			'subtitle'    => '',
 			'description' => '',
@@ -44,6 +49,31 @@ define(
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
 			),
+		),
+	)
+);
+
+define( 'TUKITAKI_ADDON_INFO', 'tukitaki_addon_info' );
+define(
+	'TUKITAKI_DEFAULT_ADDON_INFO',
+	array(
+		'troubleshoot' => array(
+			'label'       => 'Troubleshoot',
+			'enable'      => true,
+			'path'        => 'troubleshoot',
+			'description' => 'lorem ipsum',
+		),
+		'maintenance'  => array(
+			'label'       => 'Maintenance Mood',
+			'enable'      => true,
+			'path'        => 'maintenance',
+			'description' => 'lorem:1',
+		),
+		'comingsoon'   => array(
+			'label'       => 'Comingsoon Mood',
+			'enable'      => false,
+			'path'        => 'comingsoon',
+			'description' => 'lorem:1',
 		),
 	)
 );

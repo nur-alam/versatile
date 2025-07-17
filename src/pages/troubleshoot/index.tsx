@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import MultipleSelector from './multi-selector';
 import TaggedInput from './tag-input';
 
-import { disablePluginFormSchema, DisablePluginFormValues, ipv4Regex } from '@/utils/schemaValidation'
+import { disablePluginFormSchema, DisablePluginFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useDisablePlugin, useGetDisablePluginList } from '@/services/tukitaki-services';
