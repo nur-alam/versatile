@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@/components/ui/button'
-import MultipleSelector from './multi-selector';
-import TaggedInput from './tag-input';
+import MultipleSelector from '@pages/troubleshoot/multi-selector';
+import TaggedInput from '@pages/troubleshoot/tag-input';
 
 import { disablePluginFormSchema, DisablePluginFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';

@@ -3,11 +3,12 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Dashboard from './pages/tukitaki';
-import TroubleShoot from './pages/troubleshoot';
-import Maintenance from './pages/maintenance';
-import Comingsoon from './pages/comingsoon';
-import Header from './pages/Header';
+import Dashboard from '@/pages/tukitaki';
+import TroubleShoot from '@/pages/troubleshoot';
+import Maintenance from '@pages/maintenance';
+import Comingsoon from '@/pages/comingsoon';
+import Header from '@/pages/Header';
+import { RouteGuard } from '@/components/RouteGuard';
 
 const root = ReactDOM.createRoot(document.getElementById('tukitaki-root') as HTMLElement);
 
@@ -27,9 +28,21 @@ root.render(
 			<Header />
 			<Routes>
 				<Route path="/" element={<Dashboard />} />
-				<Route path="/troubleshoot" element={<TroubleShoot />} />
-				<Route path="/maintenance" element={<Maintenance />} />
-				<Route path="/comingsoon" element={<Comingsoon />} />
+				<Route path="/troubleshoot" element={
+					<RouteGuard>
+						<TroubleShoot />
+					</RouteGuard>
+				} />
+				<Route path="/maintenance" element={
+					<RouteGuard>
+						<Maintenance />
+					</RouteGuard>
+				} />
+				<Route path="/comingsoon" element={
+					<RouteGuard>
+						<Comingsoon />
+					</RouteGuard>
+				} />
 			</Routes>
 
 			<Toaster

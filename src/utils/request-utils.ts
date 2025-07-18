@@ -1,6 +1,6 @@
 import config from '@/config';
-import { TukitakiResponseType } from './tukitaki-declaration';
-import { AnyObject, convertToFormData } from './utils';
+import { TukitakiResponseType } from '@utils/tukitaki-declaration';
+import { AnyObject, convertToFormData } from '@utils/utils';
 
 type FetchUtilOptions = {
 	body?: AnyObject;

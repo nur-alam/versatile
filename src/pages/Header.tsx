@@ -9,7 +9,7 @@ const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const queryClient = useQueryClient();
 
-    const { data: serviceListResponse, isLoading } = useGetServiceList();
+    const { data: serviceListResponse } = useGetServiceList();
     const services = serviceListResponse?.data as ServiceListType;
 
     const updateServiceMutation = useUpdateServiceStatus();
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
                     // Invalidate and refetch both service lists
                     queryClient.invalidateQueries({ queryKey: ['getServiceList'] });
                     queryClient.invalidateQueries({ queryKey: ['getEnableServiceList'] });
-                },
+                }
             }
         );
     };

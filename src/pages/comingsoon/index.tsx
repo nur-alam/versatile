@@ -2,7 +2,7 @@ import React from 'react'
 import { __ } from '@wordpress/i18n'
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import ComingsoonMode from './comingsoon-settings'
+import ComingsoonMode from '@pages/comingsoon/comingsoon-settings'
 
 const Comingsoon = () => {
 	return (

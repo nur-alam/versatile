@@ -21,6 +21,7 @@
             "@utils/*": ["./src/utils/*"],
             "@hooks": ["./src/hooks"],
             "@pages/*": ["./src/pages/*"],
+            "@services/*": ["./src/services/*"],
         }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
