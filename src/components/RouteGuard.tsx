@@ -1,6 +1,7 @@
-import { useGetEnableServiceList } from '@services/mood-services';
+import { useGetEnableServiceList } from '@/services/mood-services';
 import { ServiceListType } from '@utils/tukitaki-declaration';
 import { Navigate, useLocation } from 'react-router-dom';
+import { __ } from '@wordpress/i18n';
 
 interface RouteGuardProps {
     children: React.ReactNode;
@@ -18,15 +19,21 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
         return <div className='text-xl'>{__('Loading...', 'tukitaki')}</div>;
     }
 
+    // If no service list data, allow access (fallback)
+    if (!serviceList) {
+        return <>{children}</>;
+    }
+
     // Check if current service is enabled
-    const currentService = Object.values(serviceList || {}).find(
+    const currentService = Object.values(serviceList).find(
         service => service.path === currentPath
     );
 
-    console.log('Found service:', currentService);
+    if (!currentService) {
+        return <Navigate to="/" replace />;
+    }
 
-    if (!currentService || !currentService.enable) {
-        console.log('Service not found or disabled, redirecting...');
+    if (!currentService.enable) {
         return <Navigate to="/" replace />;
     }
 
