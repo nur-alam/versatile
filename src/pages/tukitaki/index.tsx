@@ -18,9 +18,9 @@ const Dashboard = () => {
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
-					isLoading ? <span className='text-2xl'>Loading</span> :
+					isLoading ? <span className='text-xl'>{__('Loading', 'tukitaki')}</span> :
 						Object.entries(serviceList).map(([key, addon]) => (
-							<Card key={key} className='w-[300px]'>
+							<Card key={key} className='w-[300px] hover:bg-gray-100'>
 								<Link to={`/${addon.path}`} className='block p-3'>
 									<CardHeader className='p-0'>
 										<CardTitle className='text-xl'>{addon.label}</CardTitle>
