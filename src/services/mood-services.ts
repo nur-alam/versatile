@@ -18,11 +18,23 @@ export const useGetMoodInfo = () => {
 	});
 };
 
-export const useGetAddonList = () => {
+export const useGetServiceList = () => {
 	return useQuery<TukitakiResponseType>({
-		queryKey: ['getAddonList'],
+		queryKey: ['getServiceList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_get_addon_list';
+			payload.action = 'tukitaki_get_service_list';
+			const res = await fetchUtil(config.ajax_url, { body: payload });
+			return res;
+		},
+		staleTime: 5000,
+	});
+};
+
+export const useGetEnableServiceList = () => {
+	return useQuery<TukitakiResponseType>({
+		queryKey: ['getEnableServiceList'],
+		queryFn: async (payload: AnyObject) => {
+			payload.action = 'tukitaki_get_enable_service_list';
 			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
@@ -62,6 +74,24 @@ export const useUpdateComingsoonMood = () => {
 		},
 		onError: (error: any) => {
 			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'tukitaki'));
+		},
+	});
+};
+
+export const useUpdateServiceStatus = () => {
+	return useMutation({
+		mutationFn: async (payload: AnyObject) => {
+			payload.action = 'tukitaki_update_service_status';
+			const res = await fetchUtil(config.ajax_url, {
+				body: payload,
+			});
+			return res;
+		},
+		onSuccess: (response: TukitakiResponseType) => {
+			toast.success(response.message ?? __('Service status updated!', 'tukitaki'));
+		},
+		onError: (error: any) => {
+			toast.error(error.message ?? __('Failed to update service status', 'tukitaki'));
 		},
 	});
 };

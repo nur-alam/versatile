@@ -9,3 +9,14 @@ export type TukitakiResponseType<T = any> = {
 	data: T;
 	errors?: Record<string, string[]>;
 };
+
+export type ServiceItem = {
+	label: string;
+	enable: boolean;
+	path: string;
+	description: string;
+};
+
+export type ServiceListType = {
+	[key: string]: ServiceItem;
+};

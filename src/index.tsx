@@ -7,6 +7,7 @@ import Dashboard from './pages/tukitaki';
 import TroubleShoot from './pages/troubleshoot';
 import Maintenance from './pages/maintenance';
 import Comingsoon from './pages/comingsoon';
+import Header from './pages/Header';
 
 const root = ReactDOM.createRoot(document.getElementById('tukitaki-root') as HTMLElement);
 
@@ -23,7 +24,7 @@ const queryClient = new QueryClient({
 root.render(
 	<QueryClientProvider client={queryClient}>
 		<HashRouter>
-			{/* <Header /> */}
+			<Header />
 			<Routes>
 				<Route path="/" element={<Dashboard />} />
 				<Route path="/troubleshoot" element={<TroubleShoot />} />

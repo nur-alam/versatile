@@ -52,7 +52,7 @@ const TroubleShoot = () => {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className='min-h-[42px]'>
 					{
-						isFetching ? 'Loading' : <Controller
+						isFetching ? <span className='text-xl'>{__('Loading...', 'tukitaki')}</span> : <Controller
 							name='chosenPlugins'
 							control={control}
 							render={({ field }) => (
@@ -71,7 +71,7 @@ const TroubleShoot = () => {
 				</div>
 				<div className='min-h-[64px] mt-2'>
 					{
-						isFetching ? 'Loading' :
+						isFetching ? <span className='text-xl'>{__('Loading...', 'tukitaki')}</span> :
 							<Controller
 								name='ipTags'
 								control={control}

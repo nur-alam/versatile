@@ -53,27 +53,28 @@ define(
 	)
 );
 
-define( 'TUKITAKI_ADDON_LIST', 'tukitaki_addon_list' );
+define( 'TUKITAKI_SERVICE_LIST', 'tukitaki_service_list' );
 define(
-	'TUKITAKI_DEFAULT_ADDON_LIST',
+	'TUKITAKI_DEFAULT_SERVICE_LIST',
 	array(
 		'troubleshoot' => array(
 			'label'       => 'Troubleshoot',
 			'enable'      => true,
 			'path'        => 'troubleshoot',
-			'description' => 'lorem ipsum',
+			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
+			// 'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 		),
 		'maintenance'  => array(
-			'label'       => 'Maintenance Mood',
+			'label'       => 'Maintenance Mode',
 			'enable'      => true,
 			'path'        => 'maintenance',
-			'description' => 'lorem:1',
+			'description' => 'Display a custom maintenance page to visitors while you update your site.',
 		),
 		'comingsoon'   => array(
-			'label'       => 'Comingsoon Mood',
+			'label'       => 'Coming Soon',
 			'enable'      => true,
 			'path'        => 'comingsoon',
-			'description' => 'lorem:1',
+			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
 		),
 	)
 );

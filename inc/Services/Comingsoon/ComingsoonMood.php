@@ -56,9 +56,9 @@ class ComingsoonMood {
 				$params
 			);
 			$is_mood_info_updated            = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
-			// $tukitaki_addon_list                         = get_option( TUKITAKI_ADDON_LIST );
-			// $tukitaki_addon_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
-			// update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
+			// $tukitaki_service_list                         = get_option( TUKITAKI_SERVICE_LIST );
+			// $tukitaki_service_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
+			// update_option( TUKITAKI_SERVICE_LIST, $tukitaki_service_list );
 			// if ( $current_mood_info['enable_comingsoon'] ) {
 			// }
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );

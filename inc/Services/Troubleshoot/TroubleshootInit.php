@@ -62,9 +62,9 @@ class TroubleshootInit {
 
 			// update tukitaki addon info
 			if ( $is_updated ) {
-				$tukitaki_addon_list                           = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_LIST );
-				$tukitaki_addon_list['troubleshoot']['enable'] = true;
-				update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
+				$tukitaki_service_list                           = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_SERVICE_LIST );
+				$tukitaki_service_list['troubleshoot']['enable'] = true;
+				update_option( TUKITAKI_SERVICE_LIST, $tukitaki_service_list );
 			}
 
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );

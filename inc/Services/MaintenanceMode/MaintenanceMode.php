@@ -78,9 +78,9 @@ class MaintenanceMode {
 			$is_mood_info_updated             = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
 
 			// update tukitaki addon info // implement later
-			// $tukitaki_addon_list                          = get_option( TUKITAKI_ADDON_LIST, TUKITAKI_DEFAULT_ADDON_INFO );
-			// $tukitaki_addon_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
-			// update_option( TUKITAKI_ADDON_LIST, $tukitaki_addon_list );
+			// $tukitaki_service_list                          = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_ADDON_INFO );
+			// $tukitaki_service_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
+			// update_option( TUKITAKI_SERVICE_LIST, $tukitaki_service_list );
 			// if ( $current_mood_info['enable_maintenance'] ) {
 			// }
 

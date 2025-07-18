@@ -2,31 +2,24 @@ import React, { useEffect } from 'react'
 import { __ } from '@wordpress/i18n'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useGetAddonList } from '@/services/mood-services'
+import { useGetEnableServiceList } from '@/services/mood-services'
+import { ServiceListType } from '@/utils/tukitaki-declaration'
 
-export type AddonItem = {
-	label: string;
-	enable: boolean;
-	path: string;
-	description: string;
-};
-
-export type AddonListType = {
-	[key: string]: AddonItem;
-};
 
 const Dashboard = () => {
-	const { data: addonListResponse, isLoading } = useGetAddonList();
-	const addonList = addonListResponse?.data as AddonListType;
 
-	console.log('addonList', addonList);
+	// const { data: serviceListResponse, isLoading } = useGetServiceList();
+	// const serviceList = serviceListResponse?.data as ServiceListType;
+
+	const { data: serviceListResponse, isLoading } = useGetEnableServiceList();
+	const serviceList = serviceListResponse?.data as ServiceListType;
 
 	return (
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
 					isLoading ? <span className='text-2xl'>Loading</span> :
-						Object.entries(addonList).map(([key, addon]) => (
+						Object.entries(serviceList).map(([key, addon]) => (
 							<Card key={key} className='w-[300px]'>
 								<Link to={`/${addon.path}`} className='block p-3'>
 									<CardHeader className='p-0'>
