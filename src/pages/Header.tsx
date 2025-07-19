@@ -67,16 +67,38 @@ const Header: React.FC = () => {
             {/* Overlay */}
             {isMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                    className="fixed z-[99999] inset-0 bg-black bg-opacity-50 z-40"
                     onClick={toggleMenu}
                 />
             )}
 
             {/* Services Menu Popup */}
             {isMenuOpen && (
-                <div className="fixed top-16 right-6 bg-white rounded-lg shadow-lg border border-gray-200 z-50 w-80">
+                <div className="fixed w-[500px] top-0 z-[99999] rounded-none right-0 h-screen bg-white shadow-lg border border-gray-200">
                     <div className="p-4">
-                        <h3 className="text-lg font-medium text-gray-800 mb-4">{__('Services', 'versatile')}</h3>
+                        {/* Header with title and close button */}
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-medium text-gray-800">{__('Services', 'versatile')}</h3>
+                            <button
+                                onClick={toggleMenu}
+                                className="p-1 rounded-md hover:bg-gray-100 transition-colors duration-200"
+                                aria-label="Close menu"
+                            >
+                                <svg
+                                    className="w-5 h-5 text-gray-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
                         <div className="space-y-3">
                             {Object.entries(services || {}).map(([key, service]) => (
                                 <div
