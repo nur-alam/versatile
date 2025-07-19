@@ -49,11 +49,11 @@ class UtilityHelper {
 	 * Sanitize get value through callable function
 	 *
 	 * @param string   $key required $_GET key.
-	 * @param callable $callback callable WP sanitize/esc func.
+	 * @param callable|null $callback callable WP sanitize/esc func.
 	 *
 	 * @return string
 	 */
-	public static function sanitize_get_field( string $key, callable $callback = null ) {
+	public static function sanitize_get_field( string $key, ?callable $callback = null ) {
 		$data = $_GET; //phpcs:ignore
 		if ( is_null( $callback ) ) {
 			$callback = 'sanitize_text_field';
@@ -66,14 +66,14 @@ class UtilityHelper {
 	}
 
 	/**
-	 * Sanitize get value through callable function
+	 * Sanitize post value through callable function
 	 *
-	 * @param string   $key required $_GET key.
-	 * @param callable $callback callable WP sanitize/esc func.
+	 * @param string   $key required $_POST key.
+	 * @param callable|null $callback callable WP sanitize/esc func.
 	 *
 	 * @return string
 	 */
-	public static function sanitize_post_field( string $key, callable $callback = null ) {
+	public static function sanitize_post_field( string $key, ?callable $callback = null ) {
 		if ( is_null( $callback ) ) {
 			$callback = 'sanitize_text_field';
 		}
