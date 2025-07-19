@@ -1,9 +1,9 @@
 <?php
 /**
- * Email Log Model
+ * Demo Model
  *
  * @package Versatile\Models
- * @subpackage Versatile\Models\EmailLogModel
+ * @subpackage Versatile\Models\DemoModel
  * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Words database operation management
+ * Demo database model
  */
-class EmailLogModel {
+class DemoModel {
 
 	/**
 	 * Table name
@@ -34,6 +34,6 @@ class EmailLogModel {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		// $this->table_name = ( new EmailLogTable() )->get_table_name();
+		// $this->table_name = ( new DemoModelTable() )->get_table_name();
 	}
 }

@@ -39,7 +39,7 @@ const Header: React.FC = () => {
             <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
                 <div className="flex items-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3.67188 16.373L7.44737 12.5388" stroke="#6374BB" stroke-width="1.5" />
                         <path d="M16.5191 3.93774L12.4375 7.46106" stroke="#6374BB" stroke-width="1.5" />
                         <path d="M16.5191 16.373L12.4375 12.5388" stroke="#6374BB" stroke-width="1.5" />
@@ -50,8 +50,8 @@ const Header: React.FC = () => {
                         <path d="M17.5 20C18.8808 20 20.0001 18.8807 20.0001 17.5C20.0001 16.1193 18.8808 15 17.5 15C16.1193 15 15 16.1193 15 17.5C15 18.8807 16.1193 20 17.5 20Z" fill="#9CA3AF" />
                         <path d="M9.75004 13.5C11.8211 13.5 13.5001 11.8211 13.5001 9.75C13.5001 7.67893 11.8211 6 9.75004 6C7.67895 6 6 7.67893 6 9.75C6 11.8211 7.67895 13.5 9.75004 13.5Z" fill="#374151" />
                         <path d="M11.222 8.27273L10.2135 11H9.78738L8.77885 8.27273H9.2334L9.98624 10.446H10.0146L10.7675 8.27273H11.222Z" fill="white" />
-                    </svg>
-                    <h2 className="text-xl font-semibold text-gray-800 ml-2">{__('Versatile', 'versatile')}</h2>
+                    </svg> */}
+                    <h2 className="text-xl font-semibold text-gray-800">{__('Versatile', 'versatile')}</h2>
                 </div>
 
                 {/* Right side - Toggle Menu Button */}

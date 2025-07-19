@@ -11,8 +11,7 @@
 namespace Versatile\Admin\Menu;
 
 use Versatile;
-use Versatile\Admin\Menu\SubMenu\Settings;
-use Versatile\Admin\Menu\SubMenu\EmailLogs;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -134,54 +133,6 @@ class MainMenu {
 			$this->position()
 		);
 
-		// Register main menu.
-		// add_submenu_page(
-		// $this->slug(),
-		// 'Dashboard',
-		// 'Dashboard',
-		// $this->capability(),
-		// $this->slug(),
-		// array( $this, 'view' )
-		// );
-
-		// $submenus = $this->submenu_factory();
-
-		// $email_logs_submenu = new EmailLogs();
-		// add_submenu_page(
-		// $this->slug(),
-		// $email_logs_submenu->page_title(),
-		// $email_logs_submenu->menu_title(),
-		// $email_logs_submenu->capability(),
-		// $email_logs_submenu->slug(),
-		// array( $this, 'view' )
-		// );
-
-		// // Register sub-menus.
-		// $settings_submenu = new Settings();
-		// add_submenu_page(
-		// $this->slug(),
-		// $settings_submenu->page_title(),
-		// $settings_submenu->menu_title(),
-		// $settings_submenu->capability(),
-		// $settings_submenu->slug(),
-		// array( $this, 'view' )
-		// );
-	}
-
-	/**
-	 * The function creates an array of submenu objects for a menu.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return The function `submenu_factory()` is returning an array of objects that represent sub-menus.
-	 * The sub-menus are instances of the `Packages`, `Products`, and `Orders` classes.
-	 */
-	private function submenu_factory() {
-		$submenus = array(
-			new Settings(),
-		);
-
-		return $submenus;
 	}
 
 	/**

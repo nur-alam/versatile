@@ -10,8 +10,6 @@
 
 namespace Versatile\RestAPI;
 
-use Versatile\Controllers\Provider\aws\AwsSesController;
-use Versatile\Controllers\SmtpConfig;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,31 +68,7 @@ class Routes {
 	 */
 	public static function endpoints() {
 
-		// $smtp_controller = new SmtpConfig();
-		// $aws_controller  = new AwsSesController();
-
 		return array(
-			// array(
-			// 'endpoint'            => '/connections',
-			// 'url_params'          => '',
-			// 'method'              => WP_REST_Server::READABLE,
-			// 'callback'            => array( $smtp_controller, 'get_email_connections' ),
-			// 'permission_callback' => '',
-			// ),
-			// array(
-			// 'endpoint'            => '/get-default-connections',
-			// 'url_params'          => '',
-			// 'method'              => WP_REST_Server::READABLE,
-			// 'callback'            => array( $smtp_controller, 'get_default_email_connection' ),
-			// 'permission_callback' => '',
-			// ),
-			// array(
-			// 'endpoint'            => '/get-verified-ses-emails',
-			// 'url_params'          => '',
-			// 'method'              => WP_REST_Server::READABLE,
-			// 'callback'            => array( $aws_controller, 'get_verified_ses_emails' ),
-			// 'permission_callback' => '',
-			// ),
 		);
 	}
 }

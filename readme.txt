@@ -29,7 +29,6 @@ Versatile makes it easy to control active plugins by IP address or user. Debug p
 
 * Site reset & clean-up utilities
 * One-click full site backup & restore
-* SMTP configuration & email logging
 * AI-powered title, excerpt, and image generation
 * One dashboard for all WordPress micro-tools
 

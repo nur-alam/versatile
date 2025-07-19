@@ -10,7 +10,7 @@ export const pageUrls = {
 };
 
 export const router = {
-	[pageUrls.TRIGGER]: { pageTitle: 'Trigger', pageContent: <Trigger /> },
+	[pageUrls.TRIGGER]: { pageTitle: 'Versatile', pageContent: <Trigger /> },
 	// [pageUrls.EMAIL_LOGS]: { pageTitle: 'Email Logs', pageContent: <EmailLogs /> },
 	// [pageUrls.SETTINGS]: { pageTitle: 'Settings', pageContent: <Settings /> },
 };
