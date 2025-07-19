@@ -58,7 +58,7 @@ const MaintenanceSettings = () => {
 								<FormItem>
 									<div className='flex items-center gap-2'>
 										<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
-											{__('Enable Maintenance Mood', 'tukitaki')}
+											{__('Enable Maintenance Mood', 'versatile')}
 										</FormLabel>
 										<FormControl>
 											<Switch id='enable_maintenance'
@@ -69,7 +69,7 @@ const MaintenanceSettings = () => {
 									</div>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('This will be displayed as the main heading.', 'tukitaki')}
+											{__('This will be displayed as the main heading.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -82,14 +82,14 @@ const MaintenanceSettings = () => {
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
 									<FormLabel className="text-foreground">
-										{__('Title', 'tukitaki')}
+										{__('Title', 'versatile')}
 									</FormLabel>
 									<FormControl>
-										<Input placeholder={__('Enter maintenance title', 'tukitaki')} {...field} />
+										<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('This will be displayed as the main heading.', 'tukitaki')}
+											{__('This will be displayed as the main heading.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -101,13 +101,13 @@ const MaintenanceSettings = () => {
 							name="subtitle"
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Subtitle', 'tukitaki')}</FormLabel>
+									<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
 									<FormControl>
-										<Input placeholder={__('Enter subtitle', 'tukitaki')} {...field} />
+										<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('Optional subtitle under the title.', 'tukitaki')}
+											{__('Optional subtitle under the title.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -119,13 +119,13 @@ const MaintenanceSettings = () => {
 							name="description"
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Description', 'tukitaki')}</FormLabel>
+									<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
 									<FormControl>
-										<Textarea placeholder={__('Describe what is happening...', 'tukitaki')} {...field} />
+										<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('Provide more details about the maintenance.', 'tukitaki')}
+											{__('Provide more details about the maintenance.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -133,7 +133,7 @@ const MaintenanceSettings = () => {
 							)}
 						/>
 						<Button type="submit" className='mt-6'>
-							{__('Save Settings', 'tukitaki')}
+							{__('Save Settings', 'versatile')}
 						</Button>
 					</form>
 				</Form>

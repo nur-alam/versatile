@@ -2,7 +2,7 @@
 /**
  * Maintenance Mode Template
  *
- * @package Tukitaki
+ * @package Versatile
  * @since 1.0.0
  */
 
@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$tukitaki_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 
-if ( ! empty( $tukitaki_mood_info ) ) {
-	$tukitaki_comingsoon_mood_info = $tukitaki_mood_info['comingsoon'];
+if ( ! empty( $versatile_mood_info ) ) {
+	$versatile_comingsoon_mood_info = $versatile_mood_info['comingsoon'];
 }
 
 ?>
@@ -33,15 +33,15 @@ if ( ! empty( $tukitaki_mood_info ) ) {
 </head>
 <body>
 	<h2>🚧
-		<?php echo esc_html( $tukitaki_comingsoon_mood_info['title'] ?? 'Juicy' ); ?>
+		<?php echo esc_html( $versatile_comingsoon_mood_info['title'] ?? 'Juicy' ); ?>
 	</h2>
 	<p>
 		<!-- We're performing scheduled comingsoon. Please check back later. -->
-		<?php echo esc_html( $tukitaki_comingsoon_mood_info['title'] ?? '' ); ?>
+		<?php echo esc_html( $versatile_comingsoon_mood_info['title'] ?? '' ); ?>
 	</p>
 	<p><small>
 		<!-- Expected completion: July 10, 2025, 12:00 PM UTC -->
-		<?php echo esc_html( $tukitaki_comingsoon_mood_info['description'] ?? '' ); ?>
+		<?php echo esc_html( $versatile_comingsoon_mood_info['description'] ?? '' ); ?>
 	</small></p>
 </body>
 </html>

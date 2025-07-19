@@ -56,7 +56,7 @@ const ComingsoonMode = () => {
 								<FormItem>
 									<div className='flex items-center gap-2'>
 										<FormLabel className="text-foreground" htmlFor='enable_comingsoon'>
-											{__('Enable Comingsoon Mood', 'tukitaki')}
+											{__('Enable Comingsoon Mood', 'versatile')}
 										</FormLabel>
 										<FormControl>
 											<Switch id='enable_comingsoon'
@@ -67,7 +67,7 @@ const ComingsoonMode = () => {
 									</div>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('This will be displayed as the main heading.', 'tukitaki')}
+											{__('This will be displayed as the main heading.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -80,14 +80,14 @@ const ComingsoonMode = () => {
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
 									<FormLabel className="text-foreground">
-										{__('Title', 'tukitaki')}
+										{__('Title', 'versatile')}
 									</FormLabel>
 									<FormControl>
-										<Input placeholder={__('Enter comingsoon title', 'tukitaki')} {...field} />
+										<Input placeholder={__('Enter comingsoon title', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('This will be displayed as the main heading.', 'tukitaki')}
+											{__('This will be displayed as the main heading.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -99,13 +99,13 @@ const ComingsoonMode = () => {
 							name="subtitle"
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Subtitle', 'tukitaki')}</FormLabel>
+									<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
 									<FormControl>
-										<Input placeholder={__('Enter subtitle', 'tukitaki')} {...field} />
+										<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('Optional subtitle under the title.', 'tukitaki')}
+											{__('Optional subtitle under the title.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -117,13 +117,13 @@ const ComingsoonMode = () => {
 							name="description"
 							render={({ field, fieldState }) => (
 								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Description', 'tukitaki')}</FormLabel>
+									<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
 									<FormControl>
-										<Textarea placeholder={__('Describe what is happening...', 'tukitaki')} {...field} />
+										<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
 									</FormControl>
 									{!fieldState.error &&
 										<FormDescription>
-											{__('Provide more details about the comingsoon.', 'tukitaki')}
+											{__('Provide more details about the comingsoon.', 'versatile')}
 										</FormDescription>
 									}
 									<FormMessage />
@@ -131,7 +131,7 @@ const ComingsoonMode = () => {
 							)}
 						/>
 						<Button type="submit" className='mt-6'>
-							{__('Save Settings', 'tukitaki')}
+							{__('Save Settings', 'versatile')}
 						</Button>
 					</form>
 				</Form>

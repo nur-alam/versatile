@@ -77,18 +77,18 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_front_end_scripts(): void {
-		// $plugin_data             = Tukitaki::plugin_data();
-		// $Tukitaki_frontend_bundle = Tukitaki::plugin_data()['plugin_url'] . 'assets/dist/js/Tukitaki-frontend.min.js';
+		// $plugin_data             = Versatile::plugin_data();
+		// $Versatile_frontend_bundle = Versatile::plugin_data()['plugin_url'] . 'assets/dist/js/Versatile-frontend.min.js';
 		// wp_enqueue_script(
-		// 'Tukitaki-frontend',
-		// $Tukitaki_frontend_bundle,
+		// 'Versatile-frontend',
+		// $Versatile_frontend_bundle,
 		// array(),
-		// TUKITAKI_VERSION,
+		// VERSATILE_VERSION,
 		// true
 		// );
 		// wp_add_inline_script(
-		// 'Tukitaki-frontend',
-		// 'const _tukitakiObject = ' . wp_json_encode( self::scripts_data() ) . ';window._tukitakiObject=_tukitakiObject',
+		// 'Versatile-frontend',
+		// 'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
 		// 'before'
 		// );
 	}

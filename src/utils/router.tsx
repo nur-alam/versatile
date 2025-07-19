@@ -1,4 +1,4 @@
-import Trigger from '@/pages/tukitaki';
+import Trigger from '@/pages/versatile';
 // import Settings from '@pages/settings';
 // import EmailLogs from '@pages/email-logs';
 const SLUG = 'trigger';

@@ -1,9 +1,9 @@
 <?php
 /**
- * Tukitaki backend app container
+ * Versatile backend app container
  *
- * @package Tukitaki
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 

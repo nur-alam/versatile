@@ -1,5 +1,5 @@
 import config from '@/config';
-import { VersatileResponseType } from '@utils/tukitaki-declaration';
+import { VersatileResponseType } from '@utils/versatile-declaration';
 import { AnyObject, convertToFormData } from '@utils/utils';
 
 type FetchUtilOptions = {

@@ -11,7 +11,7 @@ const Comingsoon = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Comingsoon Mood', 'tukitaki')}
+				{__('Comingsoon Mood', 'versatile')}
 			</h2>
 			<ComingsoonMode />
 		</div>
