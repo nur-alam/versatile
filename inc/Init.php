@@ -34,5 +34,21 @@ class Init {
 		new AdminInit();
 		new Routes();
 		new ServiceInit();
+		add_action('admin_head', array( $this, 'custom_admin_css') );
 	}
+
+	/**
+	 * Add custom CSS for admin menu icon
+	 * 
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function custom_admin_css() {
+		echo '<style>
+			.toplevel_page_versatile a div {
+				background-size: 14px auto !important;
+			}
+		</style>';
+	}
+
 }

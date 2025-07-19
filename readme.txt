@@ -1,4 +1,4 @@
-=== Versatile - Smart Plugin Disabler (IP Based) ===
+=== Versatile - TroubleShoot (IP Based), Maintenance, Comingsoon ===
 Contributors: nurwp
 Tags: plugin management, disable plugin, IP based control, debug tools, WordPress admin
 Requires at least: 5.3
