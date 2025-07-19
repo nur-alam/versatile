@@ -2,13 +2,13 @@
 /**
  * Interface contains  method that derived class must need to implement
  *
- * @package Tukitaki\Admin\Menu\SubMenu;
- * @subpackage Tukitaki\Admin\Menu\SubMenu\SubMenuInterface;
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Admin\Menu\SubMenu;
+ * @subpackage Versatile\Admin\Menu\SubMenu\SubMenuInterface;
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Admin\Menu\SubMenu;
+namespace Versatile\Admin\Menu\SubMenu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

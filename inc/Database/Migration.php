@@ -2,13 +2,13 @@
 /**
  * The Migration class creates and drops tables of products
  *
- * @package Tukitaki\Core
- * @subpackage Tukitaki\Core\Migration
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Database
+ * @subpackage Versatile\Database\Migration
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Database;
+namespace Versatile\Database;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -63,7 +63,7 @@ class Migration {
 	 * @return void
 	 */
 	public static function drop_tables() {
-		// Command: Tukitaki\Database\Migration::drop_tables();
+		// Command: Versatile\Database\Migration::drop_tables();
 		global $wpdb;
 
 		$wpdb->query( 'SET foreign_key_checks = 0' );

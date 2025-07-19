@@ -4,13 +4,13 @@
  *
  * Wrapper class of rest_ensure_response
  *
- * @package Tukitaki\Traits
- * @subpackage Tukitaki\Traits\RestResponse
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Traits
+ * @subpackage Versatile\Traits\RestResponse
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Traits;
+namespace Versatile\Traits;
 
 use WP_REST_Response;
 

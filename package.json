@@ -1,15 +1,15 @@
 {
-	"name": "tukitaki",
+	"name": "versatile",
 	"version": "1.0.0",
-	"description": "tukitaki service app",
+	"description": "versatile service app",
 	"main": "index.js",
 	"scripts": {
 		"dev": "webpack --mode development --watch",
 		"mix": "npx mix watch",
 		"watch": "concurrently \"npm run dev\" \"npm run mix\"",
 		"prod": "webpack --mode production",
-		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/tukitaki.pot",
-		"bundle": "wp dist-archive . ../tukitaki.zip",
+		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile.pot",
+		"bundle": "wp dist-archive . ../versatile.zip",
 		"build": "composer i --no-dev && npm run prod && npm run make-pot && npm run bundle"
 	},
 	"author": "nurwp",

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useGetPluginList } from "@/services/tukitaki-services"
+import { useGetPluginList } from "@/services/versatile-services"
 import { __ } from "@wordpress/i18n"
 
 type typePluginList = {
@@ -86,7 +86,7 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 								</Badge>
 							))}
 							{chosenPlugins.length === 0 && (
-								<span className="text-muted-foreground">{__('Select plugins you like...', 'tukitaki')}</span>
+								<span className="text-muted-foreground">{__('Select plugins you like...', 'versatile')}</span>
 							)}
 						</div>
 						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />

@@ -1,15 +1,15 @@
 {
-	"name": "tukitaki/tukitaki",
+	"name": "versatile/versatile",
 	"description": "A WordPress plugin for lots of simple wordpress helper service",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"version": "1.0.0",
 	"autoload": {
 		"psr-4": {
-			"Tukitaki\\": "inc/"
+			"Versatile\\": "inc/"
 		},
 		"files": [
-			"./inc/TukitakiGlobals.php"
+			"./inc/VersatileGlobals.php"
 		]
 	},
 	"authors": [

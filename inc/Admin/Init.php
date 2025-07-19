@@ -2,15 +2,15 @@
 /**
  * Admin module loader
  *
- * @package Tukitaki\Admin
- * @subpackage Tukitaki\Admin\Init
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Admin
+ * @subpackage Versatile\Admin\Init
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Admin;
+namespace Versatile\Admin;
 
-use Tukitaki\Admin\Menu\MainMenu;
+use Versatile\Admin\Menu\MainMenu;
 
 /**
  * Admin Package loader

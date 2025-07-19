@@ -1,16 +1,16 @@
 <?php
 /**
- * Enqueue Assets, styles & scripts
+ * Comingsoon Service
  *
- * @package Tukitaki\Core
- * @subpackage Tukitaki\Core\Enqueue
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Services\Comingsoon
+ * @subpackage Versatile\Services\Comingsoon\ComingsoonMood
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Services\Comingsoon;
+namespace Versatile\Services\Comingsoon;
 
-use Tukitaki\Traits\JsonResponse;
+use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,13 +26,13 @@ class ComingsoonMood {
 	 * Comingsoon constructor.
 	 */
 	public function __construct() {
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
-		if ( $tukitaki_mood_info['enable_comingsoon'] && ! $tukitaki_mood_info['enable_maintenance'] ) {
+		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		if ( $versatile_mood_info['enable_comingsoon'] && ! $versatile_mood_info['enable_maintenance'] ) {
 			if ( ! is_admin() ) {
 				add_action( 'wp', array( $this, 'custom_comingsoon_mode' ) );
 			}
 		}
-		add_action( 'wp_ajax_tukitaki_update_comingsoon_mood', array( $this, 'tukitaki_update_comingsoon_mood' ) );
+		add_action( 'wp_ajax_versatile_update_comingsoon_mood', array( $this, 'versatile_update_comingsoon_mood' ) );
 	}
 
 	/**
@@ -40,12 +40,12 @@ class ComingsoonMood {
 	 *
 	 * @return array description
 	 */
-	public function tukitaki_update_comingsoon_mood() {
+	public function versatile_update_comingsoon_mood() {
 		try {
-			$request_verify                         = tukitaki_verify_request();
+			$request_verify                         = versatile_verify_request();
 			$params                                 = $request_verify['data'];
 			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
-			$current_mood_info                      = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
+			$current_mood_info                      = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_comingsoon'] = $params['enable_comingsoon'] ?? false;
 			if ( $current_mood_info['enable_comingsoon'] ) {
 				$current_mood_info['enable_maintenance'] = false;
@@ -55,10 +55,10 @@ class ComingsoonMood {
 				$current_mood_info['comingsoon'],
 				$params
 			);
-			$is_mood_info_updated            = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
-			// $tukitaki_service_list                         = get_option( TUKITAKI_SERVICE_LIST );
-			// $tukitaki_service_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
-			// update_option( TUKITAKI_SERVICE_LIST, $tukitaki_service_list );
+			$is_mood_info_updated            = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
+			// $versatile_service_list                         = get_option( VERSATILE_SERVICE_LIST );
+			// $versatile_service_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
+			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
 			// if ( $current_mood_info['enable_comingsoon'] ) {
 			// }
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
@@ -78,7 +78,7 @@ class ComingsoonMood {
 		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
 		// Load your custom comingsoon HTML
 		// }
-		include_once TUKITAKI_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
 		die();
 	}
 }

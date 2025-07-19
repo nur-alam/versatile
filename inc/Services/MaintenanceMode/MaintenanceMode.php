@@ -1,16 +1,16 @@
 <?php
 /**
- * Enqueue Assets, styles & scripts
+ * MaintenanceMode Service
  *
- * @package Tukitaki\Core
- * @subpackage Tukitaki\Core\Enqueue
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Services\MaintenanceMode
+ * @subpackage Versatile\Services\MaintenanceMode\MaintenanceMode
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Services\MaintenanceMode;
+namespace Versatile\Services\MaintenanceMode;
 
-use Tukitaki\Traits\JsonResponse;
+use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,14 +28,14 @@ class MaintenanceMode {
 	 * MaintenanceMode constructor.
 	 */
 	public function __construct() {
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
-		if ( $tukitaki_mood_info['enable_maintenance'] && ! $tukitaki_mood_info['enable_comingsoon'] ) {
+		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		if ( $versatile_mood_info['enable_maintenance'] && ! $versatile_mood_info['enable_comingsoon'] ) {
 			if ( ! is_admin() ) {
 				add_action( 'wp', array( $this, 'custom_maintenance_mode' ) );
 			}
 		}
-		add_action( 'wp_ajax_tukitaki_update_maintenance_mood', array( $this, 'tukitaki_update_maintenance_mood' ) );
-		add_action( 'wp_ajax_tukitaki_get_mood_info', array( $this, 'get_mood_info' ) );
+		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
+		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
 	}
 
 	/**
@@ -45,9 +45,9 @@ class MaintenanceMode {
 	 */
 	public function get_mood_info() {
 		try {
-			$request_verify    = tukitaki_verify_request();
+			$request_verify    = versatile_verify_request();
 			$params            = $request_verify['data'];
-			$current_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
+			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
@@ -60,12 +60,12 @@ class MaintenanceMode {
 	 *
 	 * @return array description
 	 */
-	public function tukitaki_update_maintenance_mood() {
+	public function versatile_update_maintenance_mood() {
 		try {
-			$request_verify                          = tukitaki_verify_request();
+			$request_verify                          = versatile_verify_request();
 			$params                                  = $request_verify['data'];
 			$params['enable_maintenance']            = filter_var( $params['enable_maintenance'], FILTER_VALIDATE_BOOLEAN );
-			$current_mood_info                       = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
+			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_maintenance'] = $params['enable_maintenance'] ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
 				$current_mood_info['enable_comingsoon'] = false;
@@ -75,12 +75,12 @@ class MaintenanceMode {
 				$current_mood_info['maintenance'],
 				$params
 			);
-			$is_mood_info_updated             = update_option( TUKITAKI_MOOD_LIST, $current_mood_info );
+			$is_mood_info_updated             = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
-			// update tukitaki addon info // implement later
-			// $tukitaki_service_list                          = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_ADDON_INFO );
-			// $tukitaki_service_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
-			// update_option( TUKITAKI_SERVICE_LIST, $tukitaki_service_list );
+			// update versatile addon info // implement later
+			// $versatile_service_list                          = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_ADDON_INFO );
+			// $versatile_service_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
+			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
 			// if ( $current_mood_info['enable_maintenance'] ) {
 			// }
 
@@ -101,7 +101,7 @@ class MaintenanceMode {
 		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
 		// Load your custom maintenance HTML
 		// }
-		include_once TUKITAKI_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
+		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
 		die();
 	}
 }

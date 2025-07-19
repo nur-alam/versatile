@@ -3,15 +3,15 @@
  * Contains Plugin's utilities functions
  * Initialize the plugin
  *
- * @package Tukitaki\Helpers
- * @subpackage Tukitaki\Helpers\UtilityHelper
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Helpers
+ * @subpackage Versatile\Helpers\UtilityHelper
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Helpers;
+namespace Versatile\Helpers;
 
-use Tukitaki;
+use Versatile;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -32,7 +32,7 @@ class UtilityHelper {
 	 * @return void
 	 */
 	public static function load_template( string $template, $data = array(), $once = false ) {
-		$plugin_data   = Tukitaki::plugin_data();
+		$plugin_data   = Versatile::plugin_data();
 		$template_path = $plugin_data['templates'] . $template;
 		if ( file_exists( $template_path ) ) {
 			if ( $once ) {
@@ -92,7 +92,7 @@ class UtilityHelper {
 	 * @return bool if die false otherwise it will die
 	 */
 	public static function verify_nonce() {
-		$plugin_data = Tukitaki::plugin_data();
+		$plugin_data = Versatile::plugin_data();
 		return isset( $_POST[ $plugin_data['nonce_key'] ] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ $plugin_data['nonce_key'] ] ) ), $plugin_data['nonce_action'] ); //phpcs:ignore
 	}
 

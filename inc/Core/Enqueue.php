@@ -2,18 +2,18 @@
 /**
  * Enqueue Assets, styles & scripts
  *
- * @package Tukitaki\Core
- * @subpackage Tukitaki\Core\Enqueue
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Core
+ * @subpackage Versatile\Core\Enqueue
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Core;
+namespace Versatile\Core;
 
-use Tukitaki;
-use Tukitaki\Frontend\CustomTemplate;
-use Tukitaki\Helpers\UtilityHelper;
-use Tukitaki\RestAPI\Routes;
+use Versatile;
+use Versatile\Frontend\CustomTemplate;
+use Versatile\Helpers\UtilityHelper;
+use Versatile\RestAPI\Routes;
 
 /**
  * Enqueue styles & scripts
@@ -42,28 +42,28 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_admin_scripts( $page ): void {
-		$plugin_data           = Tukitaki::plugin_data();
-		$tukitaki_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
-		$tukitaki_admin_bundle = $plugin_data['plugin_url'] . 'assets/dist/js/backend-bundle.min.js';
+		$plugin_data             = Versatile::plugin_data();
+		$versatile_style_bundle  = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
+		$versatile_admin_bundle  = $plugin_data['plugin_url'] . 'assets/dist/js/backend-bundle.min.js';
 
-		if ( 'toplevel_page_tukitaki' === $page ) {
+		if ( 'toplevel_page_versatile' === $page ) {
 			wp_enqueue_style(
-				'tukitaki-style',
-				$tukitaki_style_bundle,
+				'versatile-style',
+				$versatile_style_bundle,
 				array(),
-				TUKITAKI_VERSION,
+				VERSATILE_VERSION,
 				'all'
 			);
 			wp_enqueue_script(
-				'tukitaki-admin',
-				$tukitaki_admin_bundle,
+				'versatile-admin',
+				$versatile_admin_bundle,
 				array( 'wp-element', 'wp-i18n' ),
-				TUKITAKI_VERSION,
+				VERSATILE_VERSION,
 				true
 			);
 			wp_add_inline_script(
-				'tukitaki-admin',
-				'const _tukitakiObject = ' . wp_json_encode( self::scripts_data() ) . ';window._tukitakiObject=_tukitakiObject',
+				'versatile-admin',
+				'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
 				'before'
 			);
 		}
@@ -101,7 +101,7 @@ class Enqueue {
 	 * @return array
 	 */
 	public static function scripts_data() {
-		$plugin_data = Tukitaki::plugin_data();
+		$plugin_data = Versatile::plugin_data();
 		$user_id     = get_current_user_id();
 		$data        = array(
 			'user_id'       => $user_id,
@@ -125,7 +125,7 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function script_text_domain() {
-		$plugin_data = Tukitaki::plugin_data();
-		wp_set_script_translations( 'Tukitaki-backend', $plugin_data['plugin_url'] . 'assets/languages/' );
+		$plugin_data = Versatile::plugin_data();
+		wp_set_script_translations( 'Versatile-backend', $plugin_data['plugin_url'] . 'assets/languages/' );
 	}
 }

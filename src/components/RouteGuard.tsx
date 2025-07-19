@@ -1,5 +1,5 @@
 import { useGetEnableServiceList } from '@/services/mood-services';
-import { ServiceListType } from '@utils/tukitaki-declaration';
+import { ServiceListType } from '@utils/versatile-declaration';
 import { Navigate, useLocation } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
 
@@ -16,7 +16,7 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
     const currentPath = location.pathname.replace('/', ''); // Remove leading slash
 
     if (isLoading) {
-        return <div className='text-xl'>{__('Loading...', 'tukitaki')}</div>;
+        return <div className='text-xl'>{__('Loading...', 'versatile')}</div>;
     }
 
     // If no service list data, allow access (fallback)

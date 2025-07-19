@@ -1,8 +1,8 @@
-## Tukitaki
+## Versatile
 
 ## Description
 
-Tukitaki
+Versatile
 
 ## System Requirements
 
@@ -10,7 +10,7 @@ Tukitaki
 -   Tested up to: 6.8
 -   Requires PHP: 7.4
 ## Source Code link
-Source code link : https://github.com/nur-alam/tukitaki
+Source code link : https://github.com/nur-alam/versatile
 
 ## Installation
 

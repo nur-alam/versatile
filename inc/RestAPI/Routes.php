@@ -2,16 +2,16 @@
 /**
  * Register Routes
  *
- * @package Tukitaki\RestAPI
- * @subpackage Tukitaki\RestAPI\Routes
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\RestAPI
+ * @subpackage Versatile\RestAPI\Routes
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\RestAPI;
+namespace Versatile\RestAPI;
 
-use Tukitaki\Controllers\Provider\aws\AwsSesController;
-use Tukitaki\Controllers\SmtpConfig;
+use Versatile\Controllers\Provider\aws\AwsSesController;
+use Versatile\Controllers\SmtpConfig;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class Routes {
 	 *
 	 * @var string
 	 */
-	public static $route_namespace = 'tukitaki/v1';
+	public static $route_namespace = 'versatile/v1';
 	/**
 	 * Register hooks
 	 *

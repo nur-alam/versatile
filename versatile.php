@@ -1,28 +1,28 @@
 <?php
 /**
- * Plugin Name: Tukitaki
+ * Plugin Name: Versatile
  * Version: 1.0.0
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://wptriggermail.com/
- * Description: Tukitaki allows you to disable any plugin selectively by IP.
+ * Description: Versatile allows you to disable any plugin selectively by IP.
  * Author: nurwp
  * License: GPLv3 or later
- * Text Domain: tukitaki
+ * Text Domain: versatile
  * Domain Path: /languages
  *
- * @package tukitaki
+ * @package versatile
  */
 
-use Tukitaki\Init;
-use Tukitaki\Database\Migration;
+use Versatile\Init;
+use Versatile\Database\Migration;
 
-if ( ! class_exists( 'Tukitaki' ) ) {
+if ( ! class_exists( 'Versatile' ) ) {
 
 	/**
-	 * Tukitaki main class that tukitaki the plugin
+	 * Versatile main class that
 	 */
-	final class Tukitaki {
+	final class Versatile {
 
 		/**
 		 * Plugin meta data
@@ -96,8 +96,8 @@ if ( ! class_exists( 'Tukitaki' ) ) {
 				self::$plugin_data['views']        = trailingslashit( plugin_dir_path( __FILE__ ) . 'views' );
 				self::$plugin_data['assets']       = trailingslashit( plugin_dir_url( __FILE__ ) . 'assets' );
 				self::$plugin_data['env']          = 'DEV';
-				self::$plugin_data['nonce_key']    = 'tukitaki_nonce';
-				self::$plugin_data['nonce_action'] = 'tukitaki';
+				self::$plugin_data['nonce_key']    = 'versatile_nonce';
+				self::$plugin_data['nonce_action'] = 'versatile';
 			}
 			return self::$plugin_data;
 		}
@@ -120,7 +120,7 @@ if ( ! class_exists( 'Tukitaki' ) ) {
 		 * @return void
 		 */
 		public static function register_activation() {
-			update_option( 'tukitaki_install_time', time() );
+			update_option( 'versatile_install_time', time() );
 
 			// Migrate DB.
 			Migration::migrate();
@@ -141,6 +141,6 @@ if ( ! class_exists( 'Tukitaki' ) ) {
 		}
 	}
 
-	// tukitaki.
-	Tukitaki::instance();
+	// start versatile
+	Versatile::instance();
 }

@@ -1,16 +1,16 @@
 import config from '@/config';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { TukitakiResponseType } from '@/utils/tukitaki-declaration';
-import { fetchPostUtil, fetchUtil } from '@/utils/request-utils';
+import { VersatileResponseType } from '@/utils/versatile-declaration';
+import { fetchUtil } from '@/utils/request-utils';
 import toast from 'react-hot-toast';
 import { __ } from '@wordpress/i18n';
 import { AnyObject } from '@/utils/utils';
 
 export const useGetMoodInfo = () => {
-	return useQuery<TukitakiResponseType>({
+	return useQuery<VersatileResponseType>({
 		queryKey: ['getMoodInfo'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_get_mood_info';
+			payload.action = 'versatile_get_mood_info';
 			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
@@ -19,10 +19,10 @@ export const useGetMoodInfo = () => {
 };
 
 export const useGetServiceList = () => {
-	return useQuery<TukitakiResponseType>({
+	return useQuery<VersatileResponseType>({
 		queryKey: ['getServiceList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_get_service_list';
+			payload.action = 'versatile_get_service_list';
 			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
@@ -31,10 +31,10 @@ export const useGetServiceList = () => {
 };
 
 export const useGetEnableServiceList = () => {
-	return useQuery<TukitakiResponseType>({
+	return useQuery<VersatileResponseType>({
 		queryKey: ['getEnableServiceList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_get_enable_service_list';
+			payload.action = 'versatile_get_enable_service_list';
 			const res = await fetchUtil(config.ajax_url, { body: payload });
 			return res;
 		},
@@ -45,17 +45,17 @@ export const useGetEnableServiceList = () => {
 export const useUpdateMaintenanceMood = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_update_maintenance_mood';
+			payload.action = 'versatile_update_maintenance_mood';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
 			return res;
 		},
-		onSuccess: (response: TukitakiResponseType) => {
-			toast.success(response.message ?? __('Maintenance Mood info updated!', 'tukitaki'));
+		onSuccess: (response: VersatileResponseType) => {
+			toast.success(response.message ?? __('Maintenance Mood info updated!', 'versatile'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed while updating maintenance mood', 'tukitaki'));
+			toast.error(error.message ?? __('Failed while updating maintenance mood', 'versatile'));
 		},
 	});
 };
@@ -63,17 +63,17 @@ export const useUpdateMaintenanceMood = () => {
 export const useUpdateComingsoonMood = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_update_comingsoon_mood';
+			payload.action = 'versatile_update_comingsoon_mood';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
 			return res;
 		},
-		onSuccess: (response: TukitakiResponseType) => {
-			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'tukitaki'));
+		onSuccess: (response: VersatileResponseType) => {
+			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'versatile'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'tukitaki'));
+			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'versatile'));
 		},
 	});
 };
@@ -81,17 +81,17 @@ export const useUpdateComingsoonMood = () => {
 export const useUpdateServiceStatus = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			payload.action = 'tukitaki_update_service_status';
+			payload.action = 'versatile_update_service_status';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
 			return res;
 		},
-		onSuccess: (response: TukitakiResponseType) => {
-			toast.success(response.message ?? __('Service status updated!', 'tukitaki'));
+		onSuccess: (response: VersatileResponseType) => {
+			toast.success(response.message ?? __('Service status updated!', 'versatile'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to update service status', 'tukitaki'));
+			toast.error(error.message ?? __('Failed to update service status', 'versatile'));
 		},
 	});
 };

@@ -1,4 +1,4 @@
-=== Tukitaki - Smart Plugin Disabler (IP Based) ===
+=== Versatile - Smart Plugin Disabler (IP Based) ===
 Contributors: nurwp
 Tags: plugin management, disable plugin, IP based control, debug tools, WordPress admin
 Requires at least: 5.3
@@ -8,11 +8,11 @@ Stable tag: 1.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Tukitaki allows you to disable any plugin selectively for your IP or specific users. Safely debug and test on your live site without affecting your real visitors.
+Versatile allows you to disable any plugin selectively for your IP or specific users. Safely debug and test on your live site without affecting your real visitors.
 
 == Description ==
 
-Tukitaki makes it easy to control active plugins by IP address or user. Debug plugin conflicts and experiment live, without disturbing your users' experience. Future updates will bring even more small but powerful WordPress tools into one plugin — such as site reset, backups, SMTP setup, AI integration for content generation, and more.
+Versatile makes it easy to control active plugins by IP address or user. Debug plugin conflicts and experiment live, without disturbing your users' experience. Future updates will bring even more small but powerful WordPress tools into one plugin — such as site reset, backups, SMTP setup, AI integration for content generation, and more.
 
 **Key Features:**
 
@@ -33,13 +33,13 @@ Tukitaki makes it easy to control active plugins by IP address or user. Debug pl
 * AI-powered title, excerpt, and image generation
 * One dashboard for all WordPress micro-tools
 
-Source code link: https://github.com/nur-alam/tukitaki
+Source code link: https://github.com/nur-alam/versatile
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/tukitaki` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/versatile` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to Settings > Tukitaki to configure.
+3. Go to Settings > Versatile to configure.
 
 == Frequently Asked Questions ==
 
@@ -50,7 +50,7 @@ No. Only the IP addresses or users you specify will see plugins disabled.
 Yes! Use the "Test this plugin now" button to simulate how plugins would appear for your IP.
 
 = Can I extend it with my own tools? =
-Yes, Tukitaki is built with modular architecture and can be extended easily.
+Yes, Versatile is built with modular architecture and can be extended easily.
 
 == Screenshots ==
 

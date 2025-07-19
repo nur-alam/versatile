@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
+$tukitaki_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 
 if ( ! empty( $tukitaki_mood_info ) ) {
 	$tukitaki_maintenance_mood_info = $tukitaki_mood_info['maintenance'];

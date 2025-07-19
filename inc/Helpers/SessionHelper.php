@@ -3,13 +3,13 @@
  * Session Management Helper Class.
  * Initialize the plugin
  *
- * @package Tukitaki\Helpers
- * @subpackage Tukitaki\Helpers\SessionHelper
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Helpers
+ * @subpackage Versatile\Helpers\SessionHelper
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Helpers;
+namespace Versatile\Helpers;
 
 /**
  * SessionHelper class

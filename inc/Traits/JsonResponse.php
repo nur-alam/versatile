@@ -2,16 +2,16 @@
 /**
  * Manage json response
  *
- * @package Tukitaki\Traits
- * @subpackage Tukitaki\Traits\JsonResponse
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Traits
+ * @subpackage Versatile\Traits\JsonResponse
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Traits;
+namespace Versatile\Traits;
 
-use Tukitaki;
-use Tukitaki\Helpers\UtilityHelper;
+use Versatile;
+use Versatile\Helpers\UtilityHelper;
 
 /**
  * JsonResponse trait

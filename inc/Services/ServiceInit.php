@@ -2,22 +2,22 @@
 /**
  * Initialize the plugin
  *
- * @package Tukitaki\Core
- * @subpackage Tukitaki\Init
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Core
+ * @subpackage Versatile\Init
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Services;
+namespace Versatile\Services;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Tukitaki\Services\MaintenanceMode\MaintenanceMode;
-use Tukitaki\Services\Troubleshoot\TroubleshootInit;
-use Tukitaki\Services\Comingsoon\ComingsoonMood;
-use Tukitaki\Traits\JsonResponse;
+use Versatile\Services\MaintenanceMode\MaintenanceMode;
+use Versatile\Services\Troubleshoot\TroubleshootInit;
+use Versatile\Services\Comingsoon\ComingsoonMood;
+use Versatile\Traits\JsonResponse;
 
 /**
  * The Init class initializes plugin dependencies by creating instances
@@ -34,38 +34,38 @@ class ServiceInit {
 	 */
 	public function __construct() {
 
-		$tukitaki_service_list = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_SERVICE_LIST );
+		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
-		$tukitaki_mood_info = get_option( TUKITAKI_MOOD_LIST, TUKITAKI_DEFAULT_MOOD_LIST );
+		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 
 		// Troubleshoot enable_troubleshoot
-		if ( $tukitaki_service_list['troubleshoot']['enable'] ) {
+		if ( $versatile_service_list['troubleshoot']['enable'] ) {
 			new TroubleshootInit();
 		}
 
 		// Mood services
-		if ( $tukitaki_service_list['maintenance']['enable'] ) {
+		if ( $versatile_service_list['maintenance']['enable'] ) {
 			new MaintenanceMode();
 		}
-		if ( $tukitaki_service_list['comingsoon']['enable'] ) {
+		if ( $versatile_service_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
 		}
 
-		add_action( 'wp_ajax_tukitaki_get_service_list', array( $this, 'tukitaki_get_service_list' ) );
-		add_action( 'wp_ajax_tukitaki_get_enable_service_list', array( $this, 'tukitaki_get_enable_service_list' ) );
-		add_action( 'wp_ajax_tukitaki_update_service_status', array( $this, 'tukitaki_update_service_status' ) );
+		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
+		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
+		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
 	}
 
 	/**
-	 * Tukitaki_get_service_list description
+	 * Versatile_get_service_list description
 	 *
 	 * @return array description
 	 */
-	public function tukitaki_get_service_list() {
+	public function versatile_get_service_list() {
 		try {
-			$request_verify = tukitaki_verify_request();
+			$request_verify = versatile_verify_request();
 			$params         = $request_verify['data'];
-			$addon_list     = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_SERVICE_LIST );
+			$addon_list     = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 			return $this->json_response( 'Service list retrieved successfully!', $addon_list, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while retrieving service list', array(), 400 );
@@ -77,11 +77,11 @@ class ServiceInit {
 	 *
 	 * @return array JSON response with enabled services only
 	 */
-	public function tukitaki_get_enable_service_list() {
+	public function versatile_get_enable_service_list() {
 		try {
-			$request_verify = tukitaki_verify_request();
+			$request_verify = versatile_verify_request();
 			$params         = $request_verify['data'];
-			$addon_list     = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_SERVICE_LIST );
+			$addon_list     = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 			
 			// Filter only enabled services
 			$enabled_services = array_filter( $addon_list, function( $service ) {
@@ -101,9 +101,9 @@ class ServiceInit {
 	 *
 	 * @return array JSON response
 	 */
-	public function tukitaki_update_service_status() {
+	public function versatile_update_service_status() {
 		try {
-			$request_verify = tukitaki_verify_request();
+			$request_verify = versatile_verify_request();
 			$params         = $request_verify['data'];
 
 			// Validate required parameters
@@ -115,7 +115,7 @@ class ServiceInit {
 			$enable      = filter_var( $params['enable'], FILTER_VALIDATE_BOOLEAN );
 
 			// Get current service list
-			$service_list = get_option( TUKITAKI_SERVICE_LIST, TUKITAKI_DEFAULT_SERVICE_LIST );
+			$service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
 			// Check if service exists
 			if ( ! isset( $service_list[ $service_key ] ) ) {
@@ -126,7 +126,7 @@ class ServiceInit {
 			$service_list[ $service_key ]['enable'] = $enable;
 
 			// Save updated service list
-			$updated = update_option( TUKITAKI_SERVICE_LIST, $service_list );
+			$updated = update_option( VERSATILE_SERVICE_LIST, $service_list );
 
 			if ( $updated ) {
 				$status_text = $enable ? 'enabled' : 'disabled';

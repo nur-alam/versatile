@@ -1,14 +1,14 @@
 <?php
 /**
- * Enqueue Assets, styles & scripts
+ * Email Log Model
  *
- * @package Tukitaki\Models
- * @subpackage Tukitaki\Models\EmailLogModel
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Models
+ * @subpackage Versatile\Models\EmailLogModel
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Models;
+namespace Versatile\Models;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

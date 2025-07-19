@@ -1,5 +1,5 @@
 import config from '@/config';
-import { TukitakiResponseType } from '@utils/tukitaki-declaration';
+import { VersatileResponseType } from '@utils/tukitaki-declaration';
 import { AnyObject, convertToFormData } from '@utils/utils';
 
 type FetchUtilOptions = {
@@ -10,7 +10,7 @@ type FetchUtilOptions = {
 
 type optionsType = Omit<RequestInit, 'body'> & { body?: AnyObject };
 
-export async function fetchUtil(endpoint: string, options: optionsType): Promise<TukitakiResponseType> {
+export async function fetchUtil(endpoint: string, options: optionsType): Promise<VersatileResponseType> {
 	const { wp_rest_nonce, nonce_key, nonce_value } = config;
 	let url = `${endpoint}`;
 
@@ -38,7 +38,7 @@ export async function fetchUtil(endpoint: string, options: optionsType): Promise
 
 	try {
 		const apiResponse = await fetch(url, fetchOptions);
-		const response = (await apiResponse.json()) as TukitakiResponseType;
+		const response = (await apiResponse.json()) as VersatileResponseType;
 
 		if (response.status_code === 200) {
 			return response;
@@ -50,7 +50,7 @@ export async function fetchUtil(endpoint: string, options: optionsType): Promise
 	}
 }
 
-export async function fetchPostUtil(endpoint: string, options: optionsType): Promise<TukitakiResponseType> {
+export async function fetchPostUtil(endpoint: string, options: optionsType): Promise<VersatileResponseType> {
 	const { wp_rest_nonce, nonce_key, nonce_value } = config;
 	const url = `${endpoint}`;
 
@@ -73,7 +73,7 @@ export async function fetchPostUtil(endpoint: string, options: optionsType): Pro
 	try {
 		const apiResponse = await fetch(url, fetchOptions as RequestInit);
 
-		const response = (await apiResponse.json()) as TukitakiResponseType;
+		const response = (await apiResponse.json()) as VersatileResponseType;
 
 		if (response.status_code === 200) {
 			return response;

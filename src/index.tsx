@@ -3,14 +3,14 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Dashboard from '@/pages/tukitaki';
+import Dashboard from '@/pages/versatile';
 import TroubleShoot from '@/pages/troubleshoot';
 import Maintenance from '@pages/maintenance';
 import Comingsoon from '@/pages/comingsoon';
 import Header from '@/pages/Header';
 import { RouteGuard } from '@/components/RouteGuard';
 
-const root = ReactDOM.createRoot(document.getElementById('tukitaki-root') as HTMLElement);
+const root = ReactDOM.createRoot(document.getElementById('versatile-root') as HTMLElement);
 
 // QueryClient instance
 const queryClient = new QueryClient({

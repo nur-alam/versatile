@@ -2,13 +2,13 @@
 /**
  * EmailLogs sub menu
  *
- * @package Tukitaki\Admin\Menu\SubMenu
- * @subpackage Tukitaki\Admin\Menu\SubMenu\EmailLogs
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Admin\Menu\SubMenu
+ * @subpackage Versatile\Admin\Menu\SubMenu\EmailLogs
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Admin\Menu\SubMenu;
+namespace Versatile\Admin\Menu\SubMenu;
 
 /**
  * EmailLogs sub menu
@@ -23,7 +23,7 @@ class EmailLogs implements SubMenuInterface {
 	 * @return string  page title
 	 */
 	public function page_title(): string {
-		return __( 'Email Logs', 'tukitaki' );
+		return __( 'Email Logs', 'versatile' );
 	}
 
 	/**
@@ -34,7 +34,7 @@ class EmailLogs implements SubMenuInterface {
 	 * @return string  menu title
 	 */
 	public function menu_title(): string {
-		return __( 'Email Logs', 'tukitaki' );
+		return __( 'Email Logs', 'versatile' );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class EmailLogs implements SubMenuInterface {
 	 * @return string
 	 */
 	public function page_view(): string {
-		return __( 'email-logs-view', 'tukitaki' );
+		return __( 'email-logs-view', 'versatile' );
 	}
 
 	/**
@@ -67,7 +67,7 @@ class EmailLogs implements SubMenuInterface {
 	 * @return string  slug
 	 */
 	public function slug(): string {
-		return 'tukitaki-email-logs';
+		return 'versatile-email-logs';
 	}
 
 	/**

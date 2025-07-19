@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: TukitakiMu
+ * Plugin Name: VersatileMu
  * Description: Conditionally disabled themes or plugins on your site for a given session, used to rule out conflicts during troubleshooting.
  * Version: 1.0.0
  *
- * @package TukitakiMu
+ * @package VersatileMu
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * TukitakiMu description
+ * VersatileMu description
  */
-class TukitakiMu {
+class VersatileMu {
 	/**
-	 * TukitakiMu constructor.
+	 * VersatileMu constructor.
 	 */
 	public function __construct() {
 		add_filter( 'option_active_plugins', array( $this, 'disable_plugins' ) );
@@ -32,9 +32,9 @@ class TukitakiMu {
 	public function disable_plugins( $plugins ) {
 		$current_ip = $this->get_client_ip();
 
-		$ip_plugin_list   = get_option( 'tukitaki_disable_plugin_list' );
-		$disabled_plugins = $ip_plugin_list['chosenPlugins'];
-		$target_ips       = $ip_plugin_list['ipTags'];
+		$ip_plugin_list   = get_option( 'versatile_disable_plugin_list' );
+		$disabled_plugins = $ip_plugin_list['chosenPlugins'] ?? [];
+		$target_ips       = $ip_plugin_list['ipTags'] ?? [];
 
 		if ( empty( $disabled_plugins ) || ! $disabled_plugins || empty( $target_ips ) || ! $target_ips ) {
 			return $plugins;
@@ -94,4 +94,4 @@ class TukitakiMu {
 	}
 }
 
-new TukitakiMu();
+new VersatileMu();

@@ -4,13 +4,13 @@
  *
  * Perform table create & drop execution
  *
- * @package Tukitaki\Database
- * @subpackage Tukitaki\Database\DatabaseAbstract
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Database
+ * @subpackage Versatile\Database\DatabaseAbstract
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Database;
+namespace Versatile\Database;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,11 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class DatabaseAbstract {
 
 	/**
-	 * Prefix for the tukitaki tables
+	 * Prefix for the versatile tables
 	 *
 	 * @var string
 	 */
-	const PREFIX = 'tukitaki_';
+	const PREFIX = 'versatile_';
 
 	/**
 	 * Abstract function to get table name

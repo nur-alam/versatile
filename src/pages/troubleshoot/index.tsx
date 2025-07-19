@@ -7,7 +7,7 @@ import TaggedInput from '@pages/troubleshoot/tag-input';
 import { disablePluginFormSchema, DisablePluginFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList } from '@/services/tukitaki-services';
+import { useDisablePlugin, useGetDisablePluginList } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -29,6 +29,8 @@ const TroubleShoot = () => {
 	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
 
 	const chosenPluginList = disablePluginData?.data['chosenPlugins'];
+	console.log('chosenPluginList', chosenPluginList);
+
 	const chosenIpList = disablePluginData?.data['ipTags'];
 
 	useEffect(() => {
@@ -47,12 +49,12 @@ const TroubleShoot = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Disable Plugin by IP address', 'tukitaki')}
+				{__('Disable Plugin by IP address', 'versatile')}
 			</h2>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className='min-h-[42px]'>
 					{
-						isFetching ? <span className='text-xl'>{__('Loading...', 'tukitaki')}</span> : <Controller
+						isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> : <Controller
 							name='chosenPlugins'
 							control={control}
 							render={({ field }) => (
@@ -71,7 +73,7 @@ const TroubleShoot = () => {
 				</div>
 				<div className='min-h-[64px] mt-2'>
 					{
-						isFetching ? <span className='text-xl'>{__('Loading...', 'tukitaki')}</span> :
+						isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> :
 							<Controller
 								name='ipTags'
 								control={control}
@@ -94,7 +96,7 @@ const TroubleShoot = () => {
 						</p>
 					)}
 				</div>
-				<Button type='submit' className='mt-6'>{__('Submit', 'tukitaki')}</Button>
+				<Button type='submit' className='mt-6'>{__('Submit', 'versatile')}</Button>
 			</form>
 		</div>
 	);

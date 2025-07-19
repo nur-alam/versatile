@@ -11,7 +11,7 @@ declare global {
 	interface Window {
 		wp: any;
 		ajaxurl: string;
-		_tukitakiObject: {
+		_versatileObject: {
 			user_id: Int;
 			site_url: string;
 			admin_url: string;

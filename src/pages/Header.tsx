@@ -1,5 +1,5 @@
 import { useGetServiceList, useUpdateServiceStatus } from '@/services/mood-services';
-import { ServiceItem, ServiceListType } from '@/utils/tukitaki-declaration';
+import { ServiceItem, ServiceListType } from '@/utils/versatile-declaration';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
@@ -39,7 +39,7 @@ const Header: React.FC = () => {
             <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
                 <div className="flex items-center">
-                    <h1 className="text-xl font-semibold text-gray-800">{__('Tukitaki', 'tukitaki')}</h1>
+                    <h1 className="text-xl font-semibold text-gray-800">{__('Versatile', 'versatile')}</h1>
                 </div>
 
                 {/* Right side - Toggle Menu Button */}
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
             {isMenuOpen && (
                 <div className="fixed top-16 right-6 bg-white rounded-lg shadow-lg border border-gray-200 z-50 w-80">
                     <div className="p-4">
-                        <h3 className="text-lg font-medium text-gray-800 mb-4">{__('Services', 'tukitaki')}</h3>
+                        <h3 className="text-lg font-medium text-gray-800 mb-4">{__('Services', 'versatile')}</h3>
                         <div className="space-y-3">
                             {Object.entries(services || {}).map(([key, service]) => (
                                 <div

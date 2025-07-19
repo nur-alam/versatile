@@ -2,13 +2,13 @@
 /**
  * Helper class for handling cookies.
  *
- * @package Tukitaki\Helpers
- * @subpackage Tukitaki\Helpers\CookieHelper
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Helpers
+ * @subpackage Versatile\Helpers\CookieHelper
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Helpers;
+namespace Versatile\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

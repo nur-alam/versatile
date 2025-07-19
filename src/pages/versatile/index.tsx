@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGetEnableServiceList } from '@/services/mood-services'
-import { ServiceListType } from '@/utils/tukitaki-declaration'
+import { ServiceListType } from '@/utils/versatile-declaration'
 
 
 const Dashboard = () => {
@@ -17,7 +17,7 @@ const Dashboard = () => {
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
-					isLoading ? <span className='text-xl'>{__('Loading', 'tukitaki')}</span> :
+					isLoading ? <span className='text-xl'>{__('Loading', 'versatile')}</span> :
 						Object.entries(serviceList)
 							.filter(([key, addon]) => addon.enable) // Only show enabled services
 							.map(([key, addon]) => (

@@ -2,13 +2,13 @@
 /**
  * Settings sub menu
  *
- * @package Tukitaki\Admin\Menu\SubMenu
- * @subpackage Tukitaki\Admin\Menu\SubMenu\Settings
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Admin\Menu\SubMenu
+ * @subpackage Versatile\Admin\Menu\SubMenu\Settings
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Admin\Menu\SubMenu;
+namespace Versatile\Admin\Menu\SubMenu;
 
 /**
  * EvaluationReport sub menu
@@ -23,7 +23,7 @@ class Settings implements SubMenuInterface {
 	 * @return string  page title
 	 */
 	public function page_title(): string {
-		return __( 'Settings', 'tukitaki' );
+		return __( 'Settings', 'versatile' );
 	}
 
 	/**
@@ -34,7 +34,7 @@ class Settings implements SubMenuInterface {
 	 * @return string  menu title
 	 */
 	public function menu_title(): string {
-		return __( 'Settings', 'tukitaki' );
+		return __( 'Settings', 'versatile' );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class Settings implements SubMenuInterface {
 	 * @return string
 	 */
 	public function page_view(): string {
-		return __( 'settings-view', 'tukitaki' );
+		return __( 'settings-view', 'versatile' );
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Settings implements SubMenuInterface {
 	 * @return string  slug
 	 */
 	public function slug(): string {
-		return 'tukitaki-settings';
+		return 'versatile-settings';
 	}
 
 	/**

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ipv4Regex } from '@/utils/schema-validation'
 import { __ } from "@wordpress/i18n"
-import { useAddMyIp } from "@/services/tukitaki-services"
+import { useAddMyIp } from "@/services/versatile-services"
 import toast from "react-hot-toast"
 
 type Props = {
@@ -85,7 +85,7 @@ export default function TaggedInput({ tags, onChange }: Props) {
 					className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 h-5"
 					onClick={addMyIp}
 				>
-					{__('Add My IP', 'tukitaki')}
+					{__('Add My IP', 'versatile')}
 				</Button>
 			</div>
 			{inputError && (

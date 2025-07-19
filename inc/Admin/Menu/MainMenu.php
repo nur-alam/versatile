@@ -2,17 +2,17 @@
 /**
  * Register admin main menu & sub-menu
  *
- * @package Tukitaki\Admin\Menu
- * @subpackage Tukitaki\Admin\Menu\MainMenu
- * @author  Tukitaki<Tukitaki@gmail.com>
+ * @package Versatile\Admin\Menu
+ * @subpackage Versatile\Admin\Menu\MainMenu
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Admin\Menu;
+namespace Versatile\Admin\Menu;
 
-use Tukitaki;
-use Tukitaki\Admin\Menu\SubMenu\Settings;
-use Tukitaki\Admin\Menu\SubMenu\EmailLogs;
+use Versatile;
+use Versatile\Admin\Menu\SubMenu\Settings;
+use Versatile\Admin\Menu\SubMenu\EmailLogs;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -34,7 +34,7 @@ class MainMenu {
 	 *
 	 * @var string $slug
 	 */
-	private $slug = 'tukitaki';
+	private $slug = 'versatile';
 
 	/**
 	 * Hold plugin meta data
@@ -54,7 +54,7 @@ class MainMenu {
 		if ( $run ) {
 			add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		}
-		$this->plugin_data = Tukitaki::plugin_data();
+		$this->plugin_data = Versatile::plugin_data();
 	}
 
 	/**
@@ -63,7 +63,7 @@ class MainMenu {
 	 * @return string
 	 */
 	public function page_title(): string {
-		return __( 'Tukitaki', 'tukitaki' );
+		return __( 'Versatile', 'versatile' );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class MainMenu {
 	 * @return string
 	 */
 	public function menu_title(): string {
-		return __( 'Tukitaki', 'tukitaki' );
+		return __( 'Versatile', 'versatile' );
 	}
 
 	/**
@@ -189,6 +189,6 @@ class MainMenu {
 	 * @return void
 	 */
 	public function view() {
-		include trailingslashit( $this->plugin_data['views'] . 'pages' ) . 'tukitaki-view.php';
+		include trailingslashit( $this->plugin_data['views'] . 'pages' ) . 'versatile-view.php';
 	}
 }

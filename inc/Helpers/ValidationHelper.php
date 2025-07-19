@@ -4,13 +4,13 @@
  *
  * Provides static helper methods for form validation.
  *
- * @package Tukitaki\Helper
- * @author  Tukitaki<support@tukitaki.com>
- * @link    https://tukitaki.com
+ * @package Versatile\Helpers
+ * @author  Versatile<support@versatile.com>
+ * @link    https://versatile.com
  * @since   2.6.0
  */
 
-namespace Tukitaki\Helpers;
+namespace Versatile\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -65,14 +65,14 @@ class ValidationHelper {
 						case 'required':
 							if ( ! self::has_key( $key, $data ) || self::is_empty( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is required', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' is required', 'versatile' );
 								$required_rule_failed        = true;
 							}
 							break;
 						case 'numeric':
 							if ( ! self::is_numeric( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'versatile' );
 							}
 							break;
 						/* Greater than (gt) */
@@ -80,7 +80,7 @@ class ValidationHelper {
 							if ( $data[ $key ] < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'tukitaki' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'versatile' ), $key, $nested_rules[1] );
 							}
 							break;
 						/* Less than (lt) */
@@ -88,61 +88,61 @@ class ValidationHelper {
 							if ( $data[ $key ] > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'tukitaki' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'versatile' ), $key, $nested_rules[1] );
 							}
 							break;
 						case 'email':
 							if ( ! is_email( $data[ $key ] ) ) {
 								$validation_pass = false;
 								/* translators: %s: field name */
-								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'tukitaki' ), $key );
+								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'versatile' ), $key );
 							}
 							break;
 						case 'min_length':
 							if ( strlen( $data[ $key ] ) < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'tukitaki' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'versatile' ), $key, $nested_rule[1] );
 							}
 							break;
 						case 'max_length':
 							if ( strlen( $data[ $key ] ) > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'tukitaki' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'versatile' ), $key, $nested_rule[1] );
 							}
 							break;
 						case 'mimes':
 							$extensions = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $extensions ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' extension is not valid', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' extension is not valid', 'versatile' );
 							}
 							break;
 						case 'match_string':
 							$strings = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $strings ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' string is not valid', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' string is not valid', 'versatile' );
 							}
 							break;
 						case 'boolean':
 							if ( ! self::is_boolean( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not boolean', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' is not boolean', 'versatile' );
 							}
 							break;
 						case 'is_array':
 							if ( ! self::is_array( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not an array', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' is not an array', 'versatile' );
 							}
 							break;
 						case 'date_format':
 							$format = explode( ':', $rule, 2 )[1];
 							if ( ! self::is_valid_date( $data[ $key ], $format ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' invalid date format', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' invalid date format', 'versatile' );
 							}
 							break;
 
@@ -151,7 +151,7 @@ class ValidationHelper {
 							$is_exists = self::is_user_exists( $user_id );
 							if ( ! $is_exists ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' user does not exist', 'tukitaki' );
+								$validation_errors[ $key ][] = $key . __( ' user does not exist', 'versatile' );
 							}
 							break;
 						default:

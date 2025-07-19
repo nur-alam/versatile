@@ -4,13 +4,13 @@
  * operations
  * Initialize the plugin
  *
- * @package Tukitaki\Helpers
- * @subpackage Tukitaki\Helpers\QueryHelper
- * @author  Tukitaki<tukitaki@gmail.com>
+ * @package Versatile\Helpers
+ * @subpackage Versatile\Helpers\QueryHelper
+ * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Tukitaki\Helpers;
+namespace Versatile\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

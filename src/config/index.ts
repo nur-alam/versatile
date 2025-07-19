@@ -1,5 +1,5 @@
 const config = {
-	...window._tukitakiObject,
+	...window._versatileObject,
 };
 
 export default config;
