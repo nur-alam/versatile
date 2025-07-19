@@ -56,11 +56,7 @@ class ComingsoonMood {
 				$params
 			);
 			$is_mood_info_updated            = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
-			// $versatile_service_list                         = get_option( VERSATILE_SERVICE_LIST );
-			// $versatile_service_list['comingsoon']['enable'] = $current_mood_info['enable_comingsoon'];
-			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
-			// if ( $current_mood_info['enable_comingsoon'] ) {
-			// }
+
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );

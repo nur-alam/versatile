@@ -1,5 +1,5 @@
 import config from '@/config';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { VersatileResponseType } from '@/utils/versatile-declaration';
 import { fetchUtil } from '@/utils/request-utils';
 import toast from 'react-hot-toast';
@@ -43,6 +43,8 @@ export const useGetEnableServiceList = () => {
 };
 
 export const useUpdateMaintenanceMood = () => {
+	const queryClient = useQueryClient();
+	
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
 			payload.action = 'versatile_update_maintenance_mood';
@@ -53,6 +55,8 @@ export const useUpdateMaintenanceMood = () => {
 		},
 		onSuccess: (response: VersatileResponseType) => {
 			toast.success(response.message ?? __('Maintenance Mood info updated!', 'versatile'));
+			// Invalidate and refetch mood info
+			queryClient.invalidateQueries({ queryKey: ['getMoodInfo'] });
 		},
 		onError: (error: any) => {
 			toast.error(error.message ?? __('Failed while updating maintenance mood', 'versatile'));
@@ -61,6 +65,8 @@ export const useUpdateMaintenanceMood = () => {
 };
 
 export const useUpdateComingsoonMood = () => {
+	const queryClient = useQueryClient();
+	
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
 			payload.action = 'versatile_update_comingsoon_mood';
@@ -71,6 +77,8 @@ export const useUpdateComingsoonMood = () => {
 		},
 		onSuccess: (response: VersatileResponseType) => {
 			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'versatile'));
+			// Invalidate and refetch mood info
+			queryClient.invalidateQueries({ queryKey: ['getMoodInfo'] });
 		},
 		onError: (error: any) => {
 			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'versatile'));

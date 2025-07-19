@@ -17,9 +17,13 @@ export type DisablePluginFormValues = z.infer<typeof disablePluginFormSchema>;
 // Maintenance Mood
 export const maintenanceMoodFormSchema = z.object({
 	enable_maintenance: z.boolean(),
-	title: z.string().min(2, 'Title must be more than 2 characters'),
-	description: z.string().min(2, 'Description must be more than 2 characters'),
-	subtitle: z.string().min(2, 'Subtitle must be more than 2 characters'),
+	title: z.string(),
+	description: z.string(),
+	subtitle: z.string(),
+	background_image: z.string().optional(),
+	background_image_id: z.coerce.number().optional(),
+	logo: z.string().optional(),
+	logo_id: z.coerce.number().optional(),
 });
 
 export type MaintenanceMoodFormValues = z.infer<typeof maintenanceMoodFormSchema>;
@@ -27,9 +31,13 @@ export type MaintenanceMoodFormValues = z.infer<typeof maintenanceMoodFormSchema
 // Comingsoon Mood
 export const comingsoonMoodFormSchema = z.object({
 	enable_comingsoon: z.boolean(),
-	title: z.string().min(2, 'Title must be more than 2 characters'),
-	description: z.string().min(2, 'Description must be more than 2 characters'),
-	subtitle: z.string().min(2, 'Subtitle must be more than 2 characters'),
+	title: z.string(),
+	description: z.string(),
+	subtitle: z.string(),
+	background_image: z.string().optional(),
+	background_image_id: z.coerce.number().optional(),
+	logo: z.string().optional(),
+	logo_id: z.coerce.number().optional(),
 });
 
 export type ComingsoonMoodFormValues = z.infer<typeof comingsoonMoodFormSchema>;

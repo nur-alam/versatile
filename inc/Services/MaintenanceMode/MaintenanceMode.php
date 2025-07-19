@@ -77,13 +77,6 @@ class MaintenanceMode {
 			);
 			$is_mood_info_updated             = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
-			// update versatile addon info // implement later
-			// $versatile_service_list                          = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_ADDON_INFO );
-			// $versatile_service_list['maintenance']['enable'] = $current_mood_info['enable_maintenance'];
-			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
-			// if ( $current_mood_info['enable_maintenance'] ) {
-			// }
-
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );

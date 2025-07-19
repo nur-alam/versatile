@@ -47,6 +47,9 @@ class Enqueue {
 		$versatile_admin_bundle  = $plugin_data['plugin_url'] . 'assets/dist/js/backend-bundle.min.js';
 
 		if ( 'toplevel_page_versatile' === $page ) {
+			// Enqueue WordPress media library
+			wp_enqueue_media();
+			
 			wp_enqueue_style(
 				'versatile-style',
 				$versatile_style_bundle,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { comingsoonMoodFormSchema, ComingsoonMoodFormValues } from '@/utils/schema-validation';
 import { useForm } from 'react-hook-form';
@@ -9,15 +9,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useGetMoodInfo, useUpdateComingsoonMood } from '@/services/mood-services';
 import { Switch } from '@/components/ui/switch';
+import MediaUploader from '@/components/MediaUploader';
 
 const ComingsoonMode = () => {
+	const [isFormInitialized, setIsFormInitialized] = useState(false);
 	const comingsoonMoodFrom = useForm<ComingsoonMoodFormValues>({
 		resolver: zodResolver(comingsoonMoodFormSchema),
 		defaultValues: {
 			enable_comingsoon: true,
 			title: '',
 			description: '',
-			subtitle: ''
+			subtitle: '',
+			background_image: '',
+			background_image_id: 0,
+			logo: '',
+			logo_id: 0
 		}
 	});
 
@@ -26,7 +32,11 @@ const ComingsoonMode = () => {
 	const updateComingsoonMoodMutation = useUpdateComingsoonMood();
 
 	const onSubmit = async (values: ComingsoonMoodFormValues) => {
-		await updateComingsoonMoodMutation.mutateAsync(values);
+		try {
+			await updateComingsoonMoodMutation.mutateAsync(values);
+		} catch (error) {
+			console.error('Error submitting maintenance mood form:', error);
+		}
 	}
 
 	// Fetching saved form data
@@ -39,14 +49,19 @@ const ComingsoonMode = () => {
 				enable_comingsoon: moodInfo?.data['enable_comingsoon'],
 				title: comingsoonMoodInfo.title,
 				description: comingsoonMoodInfo.description,
-				subtitle: comingsoonMoodInfo.subtitle
+				subtitle: comingsoonMoodInfo.subtitle,
+				background_image: comingsoonMoodInfo.background_image || '',
+				background_image_id: comingsoonMoodInfo.background_image_id || 0,
+				logo: comingsoonMoodInfo.logo || '',
+				logo_id: comingsoonMoodInfo.logo_id || 0
 			});
+			setIsFormInitialized(true);
 		}
 	}, [comingsoonMoodInfo]);
 
 	return (
 		<div className="p-4 space-y-6">
-			{isLoading ? <span className="text-2xl">Loading...</span> :
+			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
 				<Form {...comingsoonMoodFrom}>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<FormField
@@ -130,6 +145,61 @@ const ComingsoonMode = () => {
 								</FormItem>
 							)}
 						/>
+
+						<FormField
+							control={comingsoonMoodFrom.control}
+							name="background_image"
+							render={({ field, fieldState }) => (
+								<FormItem className='mt-6'>
+									<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+									<FormControl>
+										<MediaUploader
+											value={field.value || ''}
+											onChange={(url, id) => {
+												field.onChange(url);
+												comingsoonMoodFrom.setValue('background_image_id', id);
+											}}
+											buttonText={__('Upload Background Image', 'versatile')}
+											allowedTypes={['image']}
+										/>
+									</FormControl>
+									{!fieldState.error &&
+										<FormDescription>
+											{__('Upload a background image for the coming soon page.', 'versatile')}
+										</FormDescription>
+									}
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={comingsoonMoodFrom.control}
+							name="logo"
+							render={({ field, fieldState }) => (
+								<FormItem className='mt-6'>
+									<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+									<FormControl>
+										<MediaUploader
+											value={field.value || ''}
+											onChange={(url, id) => {
+												field.onChange(url);
+												comingsoonMoodFrom.setValue('logo_id', id);
+											}}
+											buttonText={__('Upload Logo', 'versatile')}
+											allowedTypes={['image']}
+										/>
+									</FormControl>
+									{!fieldState.error &&
+										<FormDescription>
+											{__('Upload a logo to display on the coming soon page.', 'versatile')}
+										</FormDescription>
+									}
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<Button type="submit" className='mt-6'>
 							{__('Save Settings', 'versatile')}
 						</Button>

@@ -31,20 +31,28 @@ define(
 		'enable_maintenance'  => false,
 		'enable_comingsoon'   => false,
 		'maintenance'         => array(
-			'title'       => '',
-			'subtitle'    => '',
-			'description' => '',
-			'style'       => array(
+			'title'               => '',
+			'subtitle'            => '',
+			'description'         => '',
+			'background_image'    => '',
+			'background_image_id' => 0,
+			'logo'                => '',
+			'logo_id'             => 0,
+			'style'               => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
 			),
 		),
 		'comingsoon'          => array(
-			'title'       => '',
-			'subtitle'    => '',
-			'description' => '',
-			'style'       => array(
+			'title'               => '',
+			'subtitle'            => '',
+			'description'         => '',
+			'background_image'    => '',
+			'background_image_id' => 0,
+			'logo'                => '',
+			'logo_id'             => 0,
+			'style'               => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
