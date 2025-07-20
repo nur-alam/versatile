@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useGetMoodInfo, useUpdateComingsoonMood } from '@/services/mood-services';
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
-import PreviewButton from '@/components/PreviewButton';
+import PreviewModal from '@/components/PreviewModal';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -216,7 +216,7 @@ const ComingsoonMode = () => {
 								}
 							</Button>
 							
-							<PreviewButton 
+							<PreviewModal 
 								type="comingsoon"
 								disabled={updateComingsoonMoodMutation.isPending}
 							/>

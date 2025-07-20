@@ -7,7 +7,7 @@ interface RouteGuardProps {
     children: React.ReactNode;
 }
 
-export const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
+export const RouteGuard = ({ children }: RouteGuardProps) => {
     const { data: serviceListResponse, isLoading } = useGetEnableServiceList();
     const serviceList = serviceListResponse?.data as ServiceListType;
     const location = useLocation();

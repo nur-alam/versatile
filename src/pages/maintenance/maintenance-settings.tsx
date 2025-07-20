@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useUpdateMaintenanceMood, useGetMoodInfo } from '@/services/mood-services';
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
-import PreviewButton from '@/components/PreviewButton';
+import PreviewModal from '@/components/PreviewModal';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -220,7 +220,7 @@ const MaintenanceSettings = () => {
 								}
 							</Button>
 							
-							<PreviewButton 
+							<PreviewModal 
 								type="maintenance"
 								disabled={updateMaintenanceMoodMutation.isPending}
 							/>

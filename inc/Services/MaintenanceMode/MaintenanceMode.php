@@ -32,15 +32,12 @@ class MaintenanceMode {
 		if ( $versatile_mood_info['enable_maintenance'] && ! $versatile_mood_info['enable_comingsoon'] ) {
 			if ( ! is_admin() ) {
 				add_action( 'wp', array( $this, 'custom_maintenance_mode' ) );
-				// add_action( 'wp', array( $this, 'handle_preview_mode' ) );
 			}
 		}
 
-		// Handle preview mode
-		add_action( 'wp', array( $this, 'handle_preview_mode' ) );
-
 		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
 		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
+		add_action( 'wp_ajax_versatile_preview_maintenance', array( $this, 'preview_maintenance_mode' ) );
 	}
 
 	/**
@@ -89,26 +86,28 @@ class MaintenanceMode {
 	}
 
 	/**
-	 * Handle preview mode for maintenance page
+	 * Preview maintenance mode via AJAX
 	 *
 	 * @return void
 	 */
-	public function handle_preview_mode() {
-		// Check if preview parameter is set and user has permission
-		if ( isset( $_GET['versatile_preview'] ) && 'maintenance' === $_GET['versatile_preview'] ) {
+	public function preview_maintenance_mode() {
+		try {
 			// Verify nonce for security
-			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'versatile' ) ) {
-				wp_die( 'Security check failed' );
-			}
+			$request_verify = versatile_verify_request();
 
 			// Check if user has permission to preview
 			if ( ! current_user_can( 'manage_options' ) ) {
 				wp_die( 'You do not have permission to preview this page' );
 			}
 
+			// Set headers for HTML response
+			header( 'Content-Type: text/html; charset=utf-8' );
+
 			// Load maintenance template for preview
 			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
 			die();
+		} catch ( \Throwable $th ) {
+			wp_die( 'Error loading preview' );
 		}
 	}
 

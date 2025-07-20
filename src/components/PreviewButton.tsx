@@ -8,19 +8,19 @@ interface PreviewButtonProps {
   disabled?: boolean;
 }
 
-const PreviewButton: React.FC<PreviewButtonProps> = ({ type, disabled = false }) => {
+const PreviewButton = ({ type, disabled = false }: PreviewButtonProps) => {
   const handlePreview = () => {
     // Get the site URL and create preview URL with nonce
     const siteUrl = window._versatileObject?.site_url || window.location.origin;
     const nonce = window._versatileObject?.nonce_value;
-    
+
     if (!nonce) {
       alert(__('Security nonce not found. Please refresh the page and try again.', 'versatile'));
       return;
     }
-    
+
     const previewUrl = `${siteUrl}?versatile_preview=${type}&nonce=${nonce}`;
-    
+
     // Open preview in new tab
     window.open(previewUrl, '_blank', 'noopener,noreferrer');
   };
@@ -34,7 +34,7 @@ const PreviewButton: React.FC<PreviewButtonProps> = ({ type, disabled = false })
       className="flex items-center gap-2"
     >
       <ExternalLink size={16} />
-      {type === 'maintenance' 
+      {type === 'maintenance'
         ? __('Preview Maintenance Page', 'versatile')
         : __('Preview Coming Soon Page', 'versatile')
       }
