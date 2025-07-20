@@ -100,7 +100,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
           htmlOverlay.style.display = 'none';
         }
       });
-    }, 100); // 1000ms second timeout
+    }, 3000); // 1000ms second timeout
 
     return () => clearTimeout(timer);
   }, [formDataString]);
