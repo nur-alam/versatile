@@ -32,6 +32,10 @@ class ComingsoonMood {
 				add_action( 'wp', array( $this, 'custom_comingsoon_mode' ) );
 			}
 		}
+
+		// Handle preview mode
+		add_action( 'wp', array( $this, 'handle_preview_mode' ) );
+
 		add_action( 'wp_ajax_versatile_update_comingsoon_mood', array( $this, 'versatile_update_comingsoon_mood' ) );
 	}
 
@@ -60,6 +64,30 @@ class ComingsoonMood {
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
+		}
+	}
+
+	/**
+	 * Handle preview mode for coming soon page
+	 *
+	 * @return void
+	 */
+	public function handle_preview_mode() {
+		// Check if preview parameter is set and user has permission
+		if ( isset( $_GET['versatile_preview'] ) && 'comingsoon' === $_GET['versatile_preview'] ) {
+			// Verify nonce for security
+			if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'versatile' ) ) {
+				wp_die( 'Security check failed' );
+			}
+
+			// Check if user has permission to preview
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( 'You do not have permission to preview this page' );
+			}
+
+			// Load coming soon template for preview
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+			die();
 		}
 	}
 

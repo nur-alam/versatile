@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useUpdateMaintenanceMood, useGetMoodInfo } from '@/services/mood-services';
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
+import PreviewButton from '@/components/PreviewButton';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -68,152 +69,162 @@ const MaintenanceSettings = () => {
 					<form onSubmit={handleSubmit(onSubmit, (errors) => {
 						console.error('Form validation errors:', errors);
 					})}>
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="enable_maintenance"
-							render={({ field, fieldState }) => (
-								<FormItem>
-									<div className='flex items-center gap-2'>
-										<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
-											{__('Enable Maintenance Mood', 'versatile')}
-										</FormLabel>
-										<FormControl>
-											<Switch id='enable_maintenance'
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</div>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('This will be displayed as the main heading.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="title"
-							render={({ field, fieldState }) => (
-								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">
-										{__('Title', 'versatile')}
-									</FormLabel>
-									<FormControl>
-										<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
-									</FormControl>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('This will be displayed as the main heading.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="subtitle"
-							render={({ field, fieldState }) => (
-								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
-									<FormControl>
-										<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
-									</FormControl>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('Optional subtitle under the title.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="description"
-							render={({ field, fieldState }) => (
-								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
-									<FormControl>
-										<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
-									</FormControl>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('Provide more details about the maintenance.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="background_image"
-							render={({ field, fieldState }) => (
-								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
-									<FormControl>
-										<MediaUploader
-											value={field.value || ''}
-											onChange={(url, id) => {
-												field.onChange(url);
-												maintenanceMoodForm.setValue('background_image_id', id);
-											}}
-											buttonText={__('Upload Background Image', 'versatile')}
-											allowedTypes={['image']}
-										/>
-									</FormControl>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('Upload a background image for the maintenance page.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={maintenanceMoodForm.control}
-							name="logo"
-							render={({ field, fieldState }) => (
-								<FormItem className='mt-6'>
-									<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
-									<FormControl>
-										<MediaUploader
-											value={field.value || ''}
-											onChange={(url, id) => {
-												field.onChange(url);
-												maintenanceMoodForm.setValue('logo_id', id);
-											}}
-											buttonText={__('Upload Logo', 'versatile')}
-											allowedTypes={['image']}
-										/>
-									</FormControl>
-									{!fieldState.error &&
-										<FormDescription>
-											{__('Upload a logo to display on the maintenance page.', 'versatile')}
-										</FormDescription>
-									}
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<Button 
-							type="submit" 
-							className='mt-6'
-							disabled={updateMaintenanceMoodMutation.isPending}
-						>
-							{updateMaintenanceMoodMutation.isPending 
-								? __('Saving...', 'versatile') 
-								: __('Save Settings', 'versatile')
-							}
-						</Button>
+						<div className='flex gap-10'>
+							<div className='w-1/2'>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="enable_maintenance"
+									render={({ field, fieldState }) => (
+										<FormItem>
+											<div className='flex items-center gap-2'>
+												<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
+													{__('Enable Maintenance Mood', 'versatile')}
+												</FormLabel>
+												<FormControl>
+													<Switch id='enable_maintenance'
+														checked={field.value}
+														onCheckedChange={field.onChange}
+													/>
+												</FormControl>
+											</div>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('This will be displayed as the main heading.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="title"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">
+												{__('Title', 'versatile')}
+											</FormLabel>
+											<FormControl>
+												<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('This will be displayed as the main heading.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="subtitle"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
+											<FormControl>
+												<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Optional subtitle under the title.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="description"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
+											<FormControl>
+												<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Provide more details about the maintenance.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+							<div className='w-1/2'>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="background_image"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+											<FormControl>
+												<MediaUploader
+													value={field.value || ''}
+													onChange={(url, id) => {
+														field.onChange(url);
+														maintenanceMoodForm.setValue('background_image_id', id);
+													}}
+													buttonText={__('Upload Background Image', 'versatile')}
+													allowedTypes={['image']}
+												/>
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Upload a background image for the maintenance page.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="logo"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+											<FormControl>
+												<MediaUploader
+													value={field.value || ''}
+													onChange={(url, id) => {
+														field.onChange(url);
+														maintenanceMoodForm.setValue('logo_id', id);
+													}}
+													buttonText={__('Upload Logo', 'versatile')}
+													allowedTypes={['image']}
+												/>
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Upload a logo to display on the maintenance page.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+						
+						<div className="flex gap-4 mt-6">
+							<Button 
+								type="submit" 
+								disabled={updateMaintenanceMoodMutation.isPending}
+							>
+								{updateMaintenanceMoodMutation.isPending 
+									? __('Saving...', 'versatile') 
+									: __('Save Settings', 'versatile')
+								}
+							</Button>
+							
+							<PreviewButton 
+								type="maintenance"
+								disabled={updateMaintenanceMoodMutation.isPending}
+							/>
+						</div>
 					</form>
 				</Form>
 			}
