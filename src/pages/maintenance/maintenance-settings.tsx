@@ -11,10 +11,14 @@ import { useUpdateMaintenanceMood, useGetMoodInfo } from '@/services/mood-servic
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
 import PreviewModal from '@/components/PreviewModal';
+import TemplateSelector from '@/components/TemplateSelector';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
-	
+	const [formValues, setFormValues] = useState<MaintenanceMoodFormValues | null>(null);
+
 	const maintenanceMoodForm = useForm<MaintenanceMoodFormValues>({
 		resolver: zodResolver(maintenanceMoodFormSchema),
 		defaultValues: {
@@ -22,6 +26,7 @@ const MaintenanceSettings = () => {
 			title: '',
 			description: '',
 			subtitle: '',
+			template: 'classic',
 			background_image: '',
 			background_image_id: 0,
 			logo: '',
@@ -29,7 +34,21 @@ const MaintenanceSettings = () => {
 		}
 	});
 
-	const { handleSubmit } = maintenanceMoodForm;
+	const { handleSubmit, watch } = maintenanceMoodForm;
+
+	// Watch form values for live preview updates
+	const watchedValues = watch();
+
+	useEffect(() => {
+		if (isFormInitialized) {
+			// Use a timeout to debounce the updates and prevent infinite loops
+			const timeoutId = setTimeout(() => {
+				setFormValues(watchedValues);
+			}, 100);
+			
+			return () => clearTimeout(timeoutId);
+		}
+	}, [JSON.stringify(watchedValues), isFormInitialized]);
 
 	const updateMaintenanceMoodMutation = useUpdateMaintenanceMood();
 
@@ -52,6 +71,7 @@ const MaintenanceSettings = () => {
 				title: maintenanceMoodInfo.title || '',
 				description: maintenanceMoodInfo.description || '',
 				subtitle: maintenanceMoodInfo.subtitle || '',
+				template: maintenanceMoodInfo.template || 'classic',
 				background_image: maintenanceMoodInfo.background_image || '',
 				background_image_id: maintenanceMoodInfo.background_image_id || 0,
 				logo: maintenanceMoodInfo.logo || '',
@@ -62,14 +82,40 @@ const MaintenanceSettings = () => {
 	}, [maintenanceMoodInfo]);
 
 
+
+
 	return (
-		<div className="p-4 space-y-6">
+		<div className="">
 			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
 				<Form {...maintenanceMoodForm}>
 					<form onSubmit={handleSubmit(onSubmit, (errors) => {
 						console.error('Form validation errors:', errors);
 					})}>
-						<div className='flex gap-10'>
+						<div className='flex justify-between pb-5'>
+							<h2 className='flex items-center gap-2 text-2xl'>
+								<Link to={'/'}>
+									<ArrowLeft />
+								</Link>
+								{__('Maintenance Mood', 'versatile')}
+							</h2>
+							<div className='flex gap-5'>
+								<Button
+									type="submit"
+									disabled={updateMaintenanceMoodMutation.isPending}
+								>
+									{updateMaintenanceMoodMutation.isPending
+										? __('Saving...', 'versatile')
+										: __('Save Settings', 'versatile')
+									}
+								</Button>
+
+								<PreviewModal
+									type="maintenance"
+									disabled={updateMaintenanceMoodMutation.isPending}
+								/>
+							</div>
+						</div>
+						<div className='flex gap-10 mt-5'>
 							<div className='w-1/2'>
 								<FormField
 									control={maintenanceMoodForm.control}
@@ -96,6 +142,33 @@ const MaintenanceSettings = () => {
 										</FormItem>
 									)}
 								/>
+
+								<FormField
+									control={maintenanceMoodForm.control}
+									name="template"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">
+												{__('Choose Template', 'versatile')}
+											</FormLabel>
+											<FormControl>
+												<TemplateSelector
+													selectedTemplate={field.value || 'classic'}
+													onTemplateSelect={field.onChange}
+													type="maintenance"
+													formData={formValues}
+												/>
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Select a design template for your maintenance page.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
 								<FormField
 									control={maintenanceMoodForm.control}
 									name="title"
@@ -158,7 +231,7 @@ const MaintenanceSettings = () => {
 									control={maintenanceMoodForm.control}
 									name="background_image"
 									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
+										<FormItem className=''>
 											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
 											<FormControl>
 												<MediaUploader
@@ -207,23 +280,6 @@ const MaintenanceSettings = () => {
 									)}
 								/>
 							</div>
-						</div>
-						
-						<div className="flex gap-4 mt-6">
-							<Button 
-								type="submit" 
-								disabled={updateMaintenanceMoodMutation.isPending}
-							>
-								{updateMaintenanceMoodMutation.isPending 
-									? __('Saving...', 'versatile') 
-									: __('Save Settings', 'versatile')
-								}
-							</Button>
-							
-							<PreviewModal 
-								type="maintenance"
-								disabled={updateMaintenanceMoodMutation.isPending}
-							/>
 						</div>
 					</form>
 				</Form>

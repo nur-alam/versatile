@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
-import { ExternalLink, X } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
 
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
@@ -9,6 +9,7 @@ interface PreviewModalProps {
 }
 
 const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
+
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,12 +45,12 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
         variant="outline"
         onClick={handlePreview}
         disabled={disabled}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 border-gray-400"
       >
-        <ExternalLink size={16} />
+        <Eye size={16} />
         {type === 'maintenance'
-          ? __('Preview Maintenance Page', 'versatile')
-          : __('Preview Coming Soon Page', 'versatile')
+          ? __('Preview', 'versatile')
+          : __('Preview', 'versatile')
         }
       </Button>
 

@@ -7,12 +7,6 @@ import MaintenanceSettings from './maintenance-settings'
 const Maintenance = () => {
 	return (
 		<div className="p-4 space-y-6">
-			<h2 className='flex items-center gap-2 text-2xl'>
-				<Link to={'/'}>
-					<ArrowLeft />
-				</Link>
-				{__('Maintenance Mood', 'versatile')}
-			</h2>
 			<MaintenanceSettings />
 		</div>
 	)

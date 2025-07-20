@@ -1,0 +1,304 @@
+import { useState, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Check } from 'lucide-react';
+import config from '@/config';
+
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  preview: string;
+  thumbnail: string;
+}
+
+interface TemplateSelectorProps {
+  selectedTemplate: string;
+  onTemplateSelect: (templateId: string) => void;
+  type: 'maintenance' | 'comingsoon';
+  formData?: any; // Current form data for live preview
+}
+
+const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }: TemplateSelectorProps) => {
+  const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
+  // Define available templates
+  const templates: Template[] = [
+    {
+      id: 'classic',
+      name: __('Classic', 'versatile'),
+      description: __('Clean and professional design with centered content', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/classic-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/classic-thumb.png'
+    },
+    {
+      id: 'modern',
+      name: __('Modern', 'versatile'),
+      description: __('Sleek design with gradient backgrounds and modern typography', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/modern-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/modern-thumb.png'
+    },
+    {
+      id: 'minimal',
+      name: __('Minimal', 'versatile'),
+      description: __('Simple and elegant with focus on content', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/minimal-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/minimal-thumb.png'
+    },
+    {
+      id: 'creative',
+      name: __('Creative', 'versatile'),
+      description: __('Bold design with creative layouts and animations', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/creative-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/creative-thumb.png'
+    },
+    {
+      id: 'corporate',
+      name: __('Corporate', 'versatile'),
+      description: __('Professional business design with elegant typography', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/corporate-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/corporate-thumb.png'
+    },
+    {
+      id: 'neon',
+      name: __('Neon', 'versatile'),
+      description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile'),
+      preview: '/wp-content/plugins/versatile/assets/images/templates/neon-preview.png',
+      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/neon-thumb.png'
+    }
+  ];
+
+  const handleTemplateSelect = (templateId: string) => {
+    onTemplateSelect(templateId);
+  };
+
+  const handlePreview = (templateId: string) => {
+    setPreviewTemplate(templateId);
+    setIsPreviewLoading(true);
+  };
+
+  const closePreview = () => {
+    setPreviewTemplate(null);
+    setIsPreviewLoading(false);
+  };
+
+  // Memoize the form data string to prevent unnecessary re-renders
+  const formDataString = useMemo(() => {
+    return formData ? JSON.stringify(formData) : '';
+  }, [formData]);
+
+  // Add timeout for loading overlays
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const loadingOverlays = document.querySelectorAll('.iframe-loading');
+      loadingOverlays.forEach(overlay => {
+        const htmlOverlay = overlay as HTMLElement;
+        if (htmlOverlay.style.display !== 'none') {
+          console.warn('Template preview timed out, hiding loading overlay');
+          htmlOverlay.style.display = 'none';
+        }
+      });
+    }, 100); // 1000ms second timeout
+
+    return () => clearTimeout(timer);
+  }, [formDataString]);
+
+
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-4 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        {templates.map((template) => (
+          <Card
+            key={template.id}
+            className={`cursor-pointer transition-all duration-200 hover:shadow-lg flex-shrink-0 w-64 ${selectedTemplate === template.id
+              ? 'ring-2 ring-blue-500 shadow-lg'
+              : 'hover:ring-1 hover:ring-gray-300'
+              }`}
+            onClick={() => handleTemplateSelect(template.id)}
+          >
+            <CardContent className="p-4">
+              {/* Template Live Preview */}
+              <div className="relative mb-3">
+                <div className="w-full h-32 rounded-md bg-gray-100 overflow-hidden border relative">
+                  {/* Temporary fallback to static preview while debugging iframe issues */}
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="text-center p-4">
+                      <div className="text-2xl mb-2">
+                        {template.id === 'classic' && '📄'}
+                        {template.id === 'modern' && '🎨'}
+                        {template.id === 'minimal' && '✨'}
+                        {template.id === 'creative' && '🎭'}
+                        {template.id === 'corporate' && '🏢'}
+                        {template.id === 'neon' && '⚡'}
+                      </div>
+                      <p className="text-xs font-medium text-gray-700">{template.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formData?.title || 'Preview'}
+                      </p>
+                      {formData?.background_image && (
+                        <div className="absolute inset-0 opacity-20">
+                          <img 
+                            src={formData.background_image} 
+                            alt="" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Hidden iframe for future use when backend is fixed */}
+                  <iframe
+                    key={`${template.id}-${formDataString}`}
+                    src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
+                    className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
+                    title={`${template.name} Preview`}
+                    style={{ 
+                      transform: 'scale(0.25)', 
+                      transformOrigin: 'top left',
+                      width: '400%',
+                      height: '400%'
+                    }}
+                    onLoad={(e) => {
+                      console.log(`Template ${template.id} loaded successfully - switching to iframe`);
+                      const iframe = e.currentTarget;
+                      const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
+                      if (staticPreview && iframe) {
+                        staticPreview.style.display = 'none';
+                        iframe.classList.remove('hidden');
+                      }
+                      const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
+                    onError={(e) => {
+                      console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
+                      const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Selected Indicator */}
+                {selectedTemplate === template.id && (
+                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1 z-10">
+                    <Check size={16} />
+                  </div>
+                )}
+
+                {/* Loading Overlay */}
+                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-md iframe-loading">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-1"></div>
+                    <p className="text-xs text-gray-500">{__('Loading...', 'versatile')}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Template Info */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-sm">{template.name}</h4>
+                <p className="text-xs text-gray-600 line-clamp-2">{template.description}</p>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={selectedTemplate === template.id ? "default" : "outline"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTemplateSelect(template.id);
+                    }}
+                    className="flex-1 text-xs"
+                  >
+                    {selectedTemplate === template.id ? __('Selected', 'versatile') : __('Select', 'versatile')}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePreview(template.id);
+                    }}
+                    className="text-xs"
+                  >
+                    {__('Preview', 'versatile')}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Template Preview Modal */}
+      {previewTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold">
+                {__('Template Preview', 'versatile')} - {templates.find(t => t.id === previewTemplate)?.name}
+              </h3>
+              <Button type="button" variant="ghost" size="sm" onClick={closePreview}>
+                ×
+              </Button>
+            </div>
+
+            <div className="flex-1 p-4">
+              <div className="w-full h-full border rounded-lg overflow-hidden bg-gray-50 relative">
+                {isPreviewLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                      <p className="text-gray-600">{__('Loading template preview...', 'versatile')}</p>
+                    </div>
+                  </div>
+                )}
+                <iframe
+                  src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${previewTemplate}&type=${type}`}
+                  className="w-full h-full border-0"
+                  title={__('Template Preview', 'versatile')}
+                  onLoad={() => setIsPreviewLoading(false)}
+                  style={{ display: isPreviewLoading ? 'none' : 'block' }}
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t bg-gray-50 flex justify-between items-center">
+              <p className="text-sm text-gray-600">
+                {templates.find(t => t.id === previewTemplate)?.description}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (previewTemplate) {
+                      handleTemplateSelect(previewTemplate);
+                      closePreview();
+                    }
+                  }}
+                >
+                  {__('Use This Template', 'versatile')}
+                </Button>
+                <Button type="button" variant="outline" onClick={closePreview}>
+                  {__('Close', 'versatile')}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TemplateSelector;
