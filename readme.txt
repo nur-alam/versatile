@@ -1,6 +1,6 @@
-=== Versatile - TroubleShoot (IP Based), Maintenance, Comingsoon ===
+=== Versatile - Complete WordPress Toolkit ===
 Contributors: nurwp
-Tags: plugin management, disable plugin, IP based control, debug tools, WordPress admin
+Tags: maintenance mode, coming soon, troubleshoot, plugin management, IP control, WordPress toolkit
 Requires at least: 5.3
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -8,70 +8,112 @@ Stable tag: 1.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Versatile allows you to disable any plugin selectively for your IP or specific users. Safely debug and test on your live site without affecting your real visitors.
+A comprehensive WordPress toolkit featuring maintenance mode, coming soon pages, and advanced troubleshooting tools with IP-based plugin control.
 
 == Description ==
 
-Versatile makes it easy to control active plugins by IP address or user. Debug plugin conflicts and experiment live, without disturbing your users' experience. Future updates will bring even more small but powerful WordPress tools into one plugin — such as site reset, backups, SMTP setup, AI integration for content generation, and more.
+**Versatile** is your all-in-one WordPress toolkit that combines essential website management features into a single, powerful plugin. Whether you need to put your site in maintenance mode, create stunning coming soon pages, or troubleshoot plugin conflicts safely, Versatile has you covered.
 
-**Key Features:**
+**🔧 Key Features:**
 
+**Advanced Troubleshooting**
+* IP-based plugin control for safe debugging
 * Disable specific plugins only for your IP address
-* Choose to disable plugins for specific admin users
-* Live simulation feature: test which plugins would be disabled for your IP
-* Full logging system with rotation and manual clearing
-* Export/import plugin settings as JSON
+* Test plugin conflicts on live sites without affecting visitors
+* Selective plugin management for specific users
+* Live simulation to preview changes before applying
+
+**Maintenance Mode**
+* Professional maintenance pagess
+* Upload custom background images and logos
+* Responsive design that works on all devices
+* Easy toggle to enable/disable maintenance mode
+* Customizable title, subtitle, and description
+
+**Coming Soon Pages**
+* Beautiful coming soon pages to build anticipation
+* Custom background images and logo support
+* Fully customizable content and styling
+* Perfect for pre-launch websites
+* Mobile-responsive design
+
+**Modern Interface**
+* Clean, intuitive React-based admin interface
+* WordPress media library integration
+* Real-time preview of uploaded images
+* Seamless user experience with loading states
+* Form validation and error handling
+
+**Developer Friendly**
+* Built with modern technologies (React, TypeScript)
+* Modular architecture for easy extension
+* Clean, well-documented code
+* Hook-based system for customization
 * REST API support for external integrations
-* Clean, modern, and modular code architecture
-* Ready for future add-ons: reset site, backups, SMTP, AI content tools, etc.
-
-**Future features preview:**
-
-* Site reset & clean-up utilities
-* One-click full site backup & restore
-* AI-powered title, excerpt, and image generation
-* One dashboard for all WordPress micro-tools
-
-Source code link: https://github.com/nur-alam/versatile
 
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/versatile` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to Settings > Versatile to configure.
+3. Navigate to **Versatile** in your WordPress admin menu to configure the plugin.
+4. Choose from Troubleshoot, Maintenance Mode, or Coming Soon features.
 
 == Frequently Asked Questions ==
 
-= Will this affect visitors on my live site? =
-No. Only the IP addresses or users you specify will see plugins disabled.
+= Will maintenance mode affect my admin access? =
+No, administrators can still access the WordPress admin area while maintenance mode is active for visitors.
 
-= Can I test before applying changes? =
-Yes! Use the "Test this plugin now" button to simulate how plugins would appear for your IP.
+= Can I customize the appearance of maintenance and coming soon pages? =
+Yes! You can upload custom background images, logos, and customize all text content including titles, subtitles, and descriptions.
 
-= Can I extend it with my own tools? =
-Yes, Versatile is built with modular architecture and can be extended easily.
+= How does IP-based troubleshooting work? =
+The troubleshooting feature allows you to disable specific plugins only for your IP address, so you can safely test and debug on live sites without affecting your visitors.
+
+= Can I preview changes before applying them? =
+Yes, the plugin includes simulation features that let you preview how changes will look before making them live.
+
+= Is the plugin mobile-friendly? =
+Absolutely! All maintenance and coming soon pages are fully responsive and work perfectly on mobile devices.
+
+= Can I use my own images? =
+Yes, the plugin integrates with WordPress media library, allowing you to upload and use your own background images and logos.
 
 == Screenshots ==
 
-1. Settings page with plugin IP controls
-2. Simulation result panel
-3. Log viewer
+1. Main dashboard with service overview
+2. Maintenance mode settings with image upload
+3. Coming soon page configuration
+4. Troubleshooting tools with IP-based controls
+5. Live maintenance page preview
+6. Coming soon page with custom branding
 
 == Changelog ==
 
-= 1.0.0 - July 5, 2025 =
-
+= 1.0.0 =
 * Initial release
-* Disable plugins selectively by IP
-* Per-user override support
-* Log system and simulation mode
-* Export/import settings
+* IP-based troubleshooting and plugin management
+* Maintenance Mode with custom backgrounds and logos
+* Coming Soon pages with full customization
+* WordPress media library integration
+* React-based modern admin interface
+* Mobile-responsive templates
 * REST API support
 
 == Upgrade Notice ==
 
 = 1.0.0 =
-First stable release — safe to use on production sites for IP-based plugin disabling.
+First stable release of Versatile - your complete WordPress toolkit for maintenance, coming soon pages, and troubleshooting.
+
+== Technical Requirements ==
+
+* WordPress 5.3 or higher
+* PHP 7.4 or higher
+* Modern browser with JavaScript enabled
+* WordPress media library access for image uploads
+
+== Support ==
+
+For support, feature requests, or bug reports, please visit our support forum or contact us through the plugin's official channels.
 
 == License ==
 

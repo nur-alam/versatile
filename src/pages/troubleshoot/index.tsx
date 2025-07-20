@@ -44,7 +44,7 @@ const TroubleShoot = () => {
 	}, [chosenPluginList, chosenIpList, control]);
 
 	return (
-		<div className="p-4 space-y-6">
+		<div className="p-4 space-y-6 max-w-[800px]">
 			<h2 className='flex items-center gap-2 text-2xl'>
 				<Link to={'/'}>
 					<ArrowLeft />
