@@ -20,55 +20,55 @@ interface TemplateSelectorProps {
   formData?: any; // Current form data for live preview
 }
 
+// Define available templates
+const templates: Template[] = [
+  {
+    id: 'classic',
+    name: __('Classic', 'versatile'),
+    description: __('Clean and professional design with centered content', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/classic-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/classic-thumb.png'
+  },
+  {
+    id: 'modern',
+    name: __('Modern', 'versatile'),
+    description: __('Sleek design with gradient backgrounds and modern typography', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/modern-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/modern-thumb.png'
+  },
+  {
+    id: 'minimal',
+    name: __('Minimal', 'versatile'),
+    description: __('Simple and elegant with focus on content', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/minimal-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/minimal-thumb.png'
+  },
+  {
+    id: 'creative',
+    name: __('Creative', 'versatile'),
+    description: __('Bold design with creative layouts and animations', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/creative-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/creative-thumb.png'
+  },
+  {
+    id: 'corporate',
+    name: __('Corporate', 'versatile'),
+    description: __('Professional business design with elegant typography', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/corporate-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/corporate-thumb.png'
+  },
+  {
+    id: 'neon',
+    name: __('Neon', 'versatile'),
+    description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile'),
+    preview: '/wp-content/plugins/versatile/assets/images/templates/neon-preview.png',
+    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/neon-thumb.png'
+  }
+];
+
 const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }: TemplateSelectorProps) => {
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-
-  // Define available templates
-  const templates: Template[] = [
-    {
-      id: 'classic',
-      name: __('Classic', 'versatile'),
-      description: __('Clean and professional design with centered content', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/classic-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/classic-thumb.png'
-    },
-    {
-      id: 'modern',
-      name: __('Modern', 'versatile'),
-      description: __('Sleek design with gradient backgrounds and modern typography', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/modern-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/modern-thumb.png'
-    },
-    {
-      id: 'minimal',
-      name: __('Minimal', 'versatile'),
-      description: __('Simple and elegant with focus on content', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/minimal-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/minimal-thumb.png'
-    },
-    {
-      id: 'creative',
-      name: __('Creative', 'versatile'),
-      description: __('Bold design with creative layouts and animations', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/creative-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/creative-thumb.png'
-    },
-    {
-      id: 'corporate',
-      name: __('Corporate', 'versatile'),
-      description: __('Professional business design with elegant typography', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/corporate-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/corporate-thumb.png'
-    },
-    {
-      id: 'neon',
-      name: __('Neon', 'versatile'),
-      description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile'),
-      preview: '/wp-content/plugins/versatile/assets/images/templates/neon-preview.png',
-      thumbnail: '/wp-content/plugins/versatile/assets/images/templates/neon-thumb.png'
-    }
-  ];
 
   const handleTemplateSelect = (templateId: string) => {
     onTemplateSelect(templateId);
@@ -105,8 +105,6 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
     return () => clearTimeout(timer);
   }, [formDataString]);
 
-
-
   return (
     <div className="space-y-4">
       <div className="flex gap-4 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -140,48 +138,49 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
                       </p>
                       {formData?.background_image && (
                         <div className="absolute inset-0 opacity-20">
-                          <img 
-                            src={formData.background_image} 
-                            alt="" 
+                          <img
+                            src={formData.background_image}
+                            alt=""
                             className="w-full h-full object-cover"
                           />
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Hidden iframe for future use when backend is fixed */}
                   <iframe
                     key={`${template.id}-${formDataString}`}
-                    src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
-                    className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
-                    title={`${template.name} Preview`}
-                    style={{ 
-                      transform: 'scale(0.25)', 
-                      transformOrigin: 'top left',
-                      width: '400%',
-                      height: '400%'
-                    }}
-                    onLoad={(e) => {
-                      console.log(`Template ${template.id} loaded successfully - switching to iframe`);
-                      const iframe = e.currentTarget;
-                      const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
-                      if (staticPreview && iframe) {
-                        staticPreview.style.display = 'none';
-                        iframe.classList.remove('hidden');
-                      }
-                      const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
-                      if (loadingOverlay) {
-                        loadingOverlay.style.display = 'none';
-                      }
-                    }}
-                    onError={(e) => {
-                      console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
-                      const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
-                      if (loadingOverlay) {
-                        loadingOverlay.style.display = 'none';
-                      }
-                    }}
+                    src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}`}
+                    // src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
+                  className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
+                  title={`${template.name} Preview`}
+                  style={{
+                    transform: 'scale(0.25)',
+                    transformOrigin: 'top left',
+                    width: '400%',
+                    height: '400%'
+                  }}
+                  onLoad={(e) => {
+                    console.log(`Template ${template.id} loaded successfully - switching to iframe`);
+                    const iframe = e.currentTarget;
+                    const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
+                    if (staticPreview && iframe) {
+                      staticPreview.style.display = 'none';
+                      iframe.classList.remove('hidden');
+                    }
+                    const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                    if (loadingOverlay) {
+                      loadingOverlay.style.display = 'none';
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
+                    const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                    if (loadingOverlay) {
+                      loadingOverlay.style.display = 'none';
+                    }
+                  }}
                   />
                 </div>
 

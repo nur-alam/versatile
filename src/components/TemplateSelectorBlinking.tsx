@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,9 +17,10 @@ interface TemplateSelectorProps {
   selectedTemplate: string;
   onTemplateSelect: (templateId: string) => void;
   type: 'maintenance' | 'comingsoon';
+  formData?: any; // Current form data for live preview
 }
 
-const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type }: TemplateSelectorProps) => {
+const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }: TemplateSelectorProps) => {
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
@@ -83,6 +84,29 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type }: Template
     setIsPreviewLoading(false);
   };
 
+  // Memoize the form data string to prevent unnecessary re-renders
+  const formDataString = useMemo(() => {
+    return formData ? JSON.stringify(formData) : '';
+  }, [formData]);
+
+  // Add timeout for loading overlays
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const loadingOverlays = document.querySelectorAll('.iframe-loading');
+      loadingOverlays.forEach(overlay => {
+        const htmlOverlay = overlay as HTMLElement;
+        if (htmlOverlay.style.display !== 'none') {
+          console.warn('Template preview timed out, hiding loading overlay');
+          htmlOverlay.style.display = 'none';
+        }
+      });
+    }, 3000); // 1000ms second timeout
+
+    return () => clearTimeout(timer);
+  }, [formDataString]);
+
+
+
   return (
     <div className="space-y-4">
       <div className="flex gap-4 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -96,25 +120,85 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type }: Template
             onClick={() => handleTemplateSelect(template.id)}
           >
             <CardContent className="p-4">
-              {/* Template Thumbnail */}
+              {/* Template Live Preview */}
               <div className="relative mb-3">
-                <img
-                  src={template.thumbnail}
-                  alt={template.name}
-                  className="w-full h-32 object-cover rounded-md bg-gray-100"
-                  onError={(e) => {
-                    // Fallback to placeholder if image doesn't exist
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgZmlsbD0iI2Y3ZjdmNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSI+VGVtcGxhdGU8L3RleHQ+PC9zdmc+';
-                  }}
-                />
+                <div className="w-full h-32 rounded-md bg-gray-100 overflow-hidden border relative">
+                  {/* Temporary fallback to static preview while debugging iframe issues */}
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="text-center p-4">
+                      <div className="text-2xl mb-2">
+                        {template.id === 'classic' && '📄'}
+                        {template.id === 'modern' && '🎨'}
+                        {template.id === 'minimal' && '✨'}
+                        {template.id === 'creative' && '🎭'}
+                        {template.id === 'corporate' && '🏢'}
+                        {template.id === 'neon' && '⚡'}
+                      </div>
+                      <p className="text-xs font-medium text-gray-700">{template.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formData?.title || 'Preview'}
+                      </p>
+                      {formData?.background_image && (
+                        <div className="absolute inset-0 opacity-20">
+                          <img 
+                            src={formData.background_image} 
+                            alt="" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Hidden iframe for future use when backend is fixed */}
+                  <iframe
+                    key={`${template.id}-${formDataString}`}
+                    src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
+                    className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
+                    title={`${template.name} Preview`}
+                    style={{ 
+                      transform: 'scale(0.25)', 
+                      transformOrigin: 'top left',
+                      width: '400%',
+                      height: '400%'
+                    }}
+                    onLoad={(e) => {
+                      console.log(`Template ${template.id} loaded successfully - switching to iframe`);
+                      const iframe = e.currentTarget;
+                      const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
+                      if (staticPreview && iframe) {
+                        staticPreview.style.display = 'none';
+                        iframe.classList.remove('hidden');
+                      }
+                      const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
+                    onError={(e) => {
+                      console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
+                      const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
+                  />
+                </div>
 
                 {/* Selected Indicator */}
                 {selectedTemplate === template.id && (
-                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1 z-10">
                     <Check size={16} />
                   </div>
                 )}
+
+                {/* Loading Overlay */}
+                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-md iframe-loading">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-1"></div>
+                    <p className="text-xs text-gray-500">{__('Loading...', 'versatile')}</p>
+                  </div>
+                </div>
               </div>
 
               {/* Template Info */}

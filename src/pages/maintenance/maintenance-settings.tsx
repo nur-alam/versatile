@@ -36,8 +36,9 @@ const MaintenanceSettings = () => {
 
 	const { handleSubmit, watch } = maintenanceMoodForm;
 
-	// Watch form values for live preview updates
-	const watchedValues = watch();
+	// Watch only background image and logo for live preview updates
+	// const watchedValues = watch();
+	const watchedValues = watch(['background_image', 'logo']);
 
 	useEffect(() => {
 		if (isFormInitialized) {
@@ -45,7 +46,7 @@ const MaintenanceSettings = () => {
 			const timeoutId = setTimeout(() => {
 				setFormValues(watchedValues);
 			}, 100);
-			
+
 			return () => clearTimeout(timeoutId);
 		}
 	}, [JSON.stringify(watchedValues), isFormInitialized]);
