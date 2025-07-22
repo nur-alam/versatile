@@ -19,7 +19,6 @@ const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
 	const [formValues, setFormValues] = useState<ComingsoonMoodFormValues | null>(null);
 
-
 	const comingsoonMoodFrom = useForm<ComingsoonMoodFormValues>({
 		resolver: zodResolver(comingsoonMoodFormSchema),
 		defaultValues: {
@@ -103,6 +102,34 @@ const ComingsoonMode = () => {
 								/>
 							</div>
 						</div>
+						<div>
+							<FormField
+								control={comingsoonMoodFrom.control}
+								name="template"
+								render={({ field, fieldState }) => (
+									<FormItem className='mt-6'>
+										<FormLabel className="text-foreground">
+											{__('Choose Template', 'versatile')}
+										</FormLabel>
+										<FormControl>
+											<TemplateSelector
+												selectedTemplate={field.value || 'classic'}
+												onTemplateSelect={field.onChange}
+												type="comingsoon"
+												formData={formValues}
+												getFormData={getLatestFormData}
+											/>
+										</FormControl>
+										{!fieldState.error &&
+											<FormDescription>
+												{__('Select a design template for your coming soon page.', 'versatile')}
+											</FormDescription>
+										}
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 						<div className='flex gap-10 mt-5'>
 							<div className='w-1/2'>
 								<FormField
@@ -131,32 +158,6 @@ const ComingsoonMode = () => {
 									)}
 								/>
 
-								<FormField
-									control={comingsoonMoodFrom.control}
-									name="template"
-									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">
-												{__('Choose Template', 'versatile')}
-											</FormLabel>
-											<FormControl>
-												<TemplateSelector
-													selectedTemplate={field.value || 'classic'}
-													onTemplateSelect={field.onChange}
-													type="comingsoon"
-													formData={formValues}
-													getFormData={getLatestFormData}
-												/>
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Select a design template for your coming soon page.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
 								<FormField
 									control={comingsoonMoodFrom.control}
 									name="title"

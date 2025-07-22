@@ -105,6 +105,34 @@ const MaintenanceSettings = () => {
 								/>
 							</div>
 						</div>
+						<div>
+							<FormField
+								control={maintenanceMoodForm.control}
+								name="template"
+								render={({ field, fieldState }) => (
+									<FormItem className='mt-6'>
+										<FormLabel className="text-foreground">
+											{__('Choose Template', 'versatile')}
+										</FormLabel>
+										<FormControl>
+											<TemplateSelector
+												selectedTemplate={field.value || 'classic'}
+												onTemplateSelect={field.onChange}
+												type="maintenance"
+												formData={formValues}
+												getFormData={getLatestFormData}
+											/>
+										</FormControl>
+										{!fieldState.error &&
+											<FormDescription>
+												{__('Select a design template for your maintenance page.', 'versatile')}
+											</FormDescription>
+										}
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 						<div className='flex gap-10 mt-5'>
 							<div className='w-1/2'>
 								<FormField
@@ -126,33 +154,6 @@ const MaintenanceSettings = () => {
 											{!fieldState.error &&
 												<FormDescription>
 													{__('This will be displayed as the main heading.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="template"
-									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">
-												{__('Choose Template', 'versatile')}
-											</FormLabel>
-											<FormControl>
-												<TemplateSelector
-													selectedTemplate={field.value || 'classic'}
-													onTemplateSelect={field.onChange}
-													type="maintenance"
-													formData={formValues}
-													getFormData={getLatestFormData}
-												/>
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Select a design template for your maintenance page.', 'versatile')}
 												</FormDescription>
 											}
 											<FormMessage />
