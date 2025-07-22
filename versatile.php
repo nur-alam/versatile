@@ -137,7 +137,23 @@ if ( ! class_exists( 'Versatile' ) ) {
 		 * @return void
 		 */
 		public static function register_deactivation() {
+			// Delete mu-plugin file if it exists
+			self::delete_mu_plugin();
+			
 			flush_rewrite_rules();
+		}
+
+		/**
+		 * Delete mu-versatile.php file from mu-plugins directory
+		 *
+		 * @return void
+		 */
+		private static function delete_mu_plugin() {
+			$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/mu-versatile.php';
+			
+			if ( file_exists( $mu_plugin_file ) ) {
+				wp_delete_file( $mu_plugin_file );
+			}
 		}
 	}
 
