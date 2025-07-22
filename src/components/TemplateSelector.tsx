@@ -5,19 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import config from '@/config';
 
+type TemplateType = 'maintenance' | 'comingsoon';
+
 interface Template {
   id: string;
   name: string;
   description: string;
-  preview: string;
-  thumbnail: string;
 }
 
 interface TemplateSelectorProps {
   selectedTemplate: string;
   onTemplateSelect: (templateId: string) => void;
-  type: 'maintenance' | 'comingsoon';
+  type: TemplateType;
   formData?: any; // Current form data for live preview
+  getFormData?: any
 }
 
 // Define available templates
@@ -25,48 +26,44 @@ const templates: Template[] = [
   {
     id: 'classic',
     name: __('Classic', 'versatile'),
-    description: __('Clean and professional design with centered content', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/classic-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/classic-thumb.png'
+    description: __('Clean and professional design with centered content', 'versatile')
   },
   {
     id: 'modern',
     name: __('Modern', 'versatile'),
-    description: __('Sleek design with gradient backgrounds and modern typography', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/modern-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/modern-thumb.png'
+    description: __('Sleek design with gradient backgrounds and modern typography', 'versatile')
   },
   {
     id: 'minimal',
     name: __('Minimal', 'versatile'),
-    description: __('Simple and elegant with focus on content', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/minimal-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/minimal-thumb.png'
+    description: __('Simple and elegant with focus on content', 'versatile')
   },
   {
     id: 'creative',
     name: __('Creative', 'versatile'),
-    description: __('Bold design with creative layouts and animations', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/creative-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/creative-thumb.png'
+    description: __('Bold design with creative layouts and animations', 'versatile')
   },
   {
     id: 'corporate',
     name: __('Corporate', 'versatile'),
-    description: __('Professional business design with elegant typography', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/corporate-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/corporate-thumb.png'
+    description: __('Professional business design with elegant typography', 'versatile')
   },
   {
     id: 'neon',
     name: __('Neon', 'versatile'),
-    description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile'),
-    preview: '/wp-content/plugins/versatile/assets/images/templates/neon-preview.png',
-    thumbnail: '/wp-content/plugins/versatile/assets/images/templates/neon-thumb.png'
+    description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile')
   }
 ];
 
-const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }: TemplateSelectorProps) => {
+const templatePreviewAction = (type: TemplateType) => {
+  if ('maintenance' === type) {
+    return 'versatile_maintenance_template_preview';
+  }
+  return 'versatile_comingsoon_template_preview';
+}
+
+const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData, getFormData }: TemplateSelectorProps) => {
+  // Log form data whenever it changes
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
@@ -84,9 +81,9 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
     setIsPreviewLoading(false);
   };
 
-  // Memoize the form data string to prevent unnecessary re-renders
   const formDataString = useMemo(() => {
-    return formData ? JSON.stringify(formData) : '';
+    let latestFormData = getFormData();
+    return latestFormData ? JSON.stringify(latestFormData) : '';
   }, [formData]);
 
   // Add timeout for loading overlays
@@ -147,40 +144,38 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
                       )}
                     </div>
                   </div>
-
                   {/* Hidden iframe for future use when backend is fixed */}
                   <iframe
                     key={`${template.id}-${formDataString}`}
-                    src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}`}
-                    // src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
-                  className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
-                  title={`${template.name} Preview`}
-                  style={{
-                    transform: 'scale(0.25)',
-                    transformOrigin: 'top left',
-                    width: '400%',
-                    height: '400%'
-                  }}
-                  onLoad={(e) => {
-                    console.log(`Template ${template.id} loaded successfully - switching to iframe`);
-                    const iframe = e.currentTarget;
-                    const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
-                    if (staticPreview && iframe) {
-                      staticPreview.style.display = 'none';
-                      iframe.classList.remove('hidden');
-                    }
-                    const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
-                    if (loadingOverlay) {
-                      loadingOverlay.style.display = 'none';
-                    }
-                  }}
-                  onError={(e) => {
-                    console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
-                    const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
-                    if (loadingOverlay) {
-                      loadingOverlay.style.display = 'none';
-                    }
-                  }}
+                    src={`${config.ajax_url}?action=${templatePreviewAction(type)}&versatile_nonce=${config.nonce_value}&template_id=${template.id}&type=${type}&preview_mode=thumbnail${formData ? `&preview_data=${encodeURIComponent(formDataString)}` : ''}`}
+                    className="w-full h-full border-0 pointer-events-none absolute top-0 left-0 hidden"
+                    title={`${template.name} Preview`}
+                    style={{
+                      transform: 'scale(0.25)',
+                      transformOrigin: 'top left',
+                      width: '400%',
+                      height: '400%'
+                    }}
+                    onLoad={(e) => {
+                      // console.log(`Template ${template.id} loaded successfully - switching to iframe`);
+                      const iframe = e.currentTarget;
+                      const staticPreview = iframe.parentElement?.querySelector('div:not(.iframe-loading)') as HTMLElement;
+                      if (staticPreview && iframe) {
+                        staticPreview.style.display = 'none';
+                        iframe.classList.remove('hidden');
+                      }
+                      const loadingOverlay = iframe.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
+                    onError={(e) => {
+                      console.error(`Failed to load preview for template: ${template.id} - using static fallback`);
+                      const loadingOverlay = e.currentTarget.parentElement?.querySelector('.iframe-loading') as HTMLElement;
+                      if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                      }
+                    }}
                   />
                 </div>
 
@@ -263,7 +258,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData }
                   </div>
                 )}
                 <iframe
-                  src={`${config.ajax_url}?action=versatile_preview_template&versatile_nonce=${config.nonce_value}&template_id=${previewTemplate}&type=${type}`}
+                  src={`${config.ajax_url}?action=${templatePreviewAction(type)}&versatile_nonce=${config.nonce_value}&template_id=${previewTemplate}&type=${type}&preview_mode=thumbnail&preview_data=${encodeURIComponent(JSON.stringify(getFormData()))}`}
                   className="w-full h-full border-0"
                   title={__('Template Preview', 'versatile')}
                   onLoad={() => setIsPreviewLoading(false)}

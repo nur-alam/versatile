@@ -6,9 +6,10 @@ import { Eye, X } from 'lucide-react';
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
   disabled?: boolean;
+  getFormData?: any;
 }
 
-const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
+const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +36,9 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
     const nonce = window._versatileObject?.nonce_value;
     const action = type === 'maintenance' ? 'versatile_preview_maintenance' : 'versatile_preview_comingsoon';
 
-    return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}`;
+    const preview_data = JSON.stringify(getFormData());
+
+    return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}&type=${type}&preview_data=${encodeURIComponent(preview_data)}`;
   };
 
   return (
@@ -55,7 +58,7 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
       </Button>
 
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
           onClick={handleBackdropClick}
         >

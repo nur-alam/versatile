@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { maintenanceMoodFormSchema, MaintenanceMoodFormValues } from '@/utils/schema-validation';
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,9 @@ const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
 	const [formValues, setFormValues] = useState<MaintenanceMoodFormValues | null>(null);
 
+	// Function to get latest form data when needed (no re-renders)
+	const getLatestFormData = () => maintenanceMoodForm.getValues();
+
 	const maintenanceMoodForm = useForm<MaintenanceMoodFormValues>({
 		resolver: zodResolver(maintenanceMoodFormSchema),
 		defaultValues: {
@@ -34,22 +37,7 @@ const MaintenanceSettings = () => {
 		}
 	});
 
-	const { handleSubmit, watch } = maintenanceMoodForm;
-
-	// Watch only background image and logo for live preview updates
-	// const watchedValues = watch();
-	const watchedValues = watch(['background_image', 'logo']);
-
-	useEffect(() => {
-		if (isFormInitialized) {
-			// Use a timeout to debounce the updates and prevent infinite loops
-			const timeoutId = setTimeout(() => {
-				setFormValues(watchedValues);
-			}, 100);
-
-			return () => clearTimeout(timeoutId);
-		}
-	}, [JSON.stringify(watchedValues), isFormInitialized]);
+	const { handleSubmit } = maintenanceMoodForm;
 
 	const updateMaintenanceMoodMutation = useUpdateMaintenanceMood();
 
@@ -113,6 +101,7 @@ const MaintenanceSettings = () => {
 								<PreviewModal
 									type="maintenance"
 									disabled={updateMaintenanceMoodMutation.isPending}
+									getFormData={getLatestFormData}
 								/>
 							</div>
 						</div>
@@ -158,6 +147,7 @@ const MaintenanceSettings = () => {
 													onTemplateSelect={field.onChange}
 													type="maintenance"
 													formData={formValues}
+													getFormData={getLatestFormData}
 												/>
 											</FormControl>
 											{!fieldState.error &&
@@ -239,7 +229,7 @@ const MaintenanceSettings = () => {
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														maintenanceMoodForm.setValue('background_image_id', id);
+														setFormValues(maintenanceMoodForm.getValues());
 													}}
 													buttonText={__('Upload Background Image', 'versatile')}
 													allowedTypes={['image']}
@@ -265,7 +255,7 @@ const MaintenanceSettings = () => {
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														maintenanceMoodForm.setValue('logo_id', id);
+														setFormValues(maintenanceMoodForm.getValues());
 													}}
 													buttonText={__('Upload Logo', 'versatile')}
 													allowedTypes={['image']}
