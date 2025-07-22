@@ -66,6 +66,19 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData, 
   // Log form data whenever it changes
   const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  
+  // Order templates only on first render - put selected template first
+  const [orderedTemplates] = useState(() => {
+    const selectedIndex = templates.findIndex(template => template.id === selectedTemplate);
+    if (selectedIndex === -1) {
+      return templates;
+    }
+    
+    const selectedTemplateObj = templates[selectedIndex];
+    const remainingTemplates = templates.filter((_, index) => index !== selectedIndex);
+    
+    return [selectedTemplateObj, ...remainingTemplates];
+  });
 
   const handleTemplateSelect = (templateId: string) => {
     onTemplateSelect(templateId);
@@ -105,7 +118,7 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData, 
   return (
     <div className="space-y-4">
       <div className="flex gap-4 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        {templates.map((template) => (
+        {orderedTemplates.map((template) => (
           <Card
             key={template.id}
             className={`cursor-pointer transition-all duration-200 hover:shadow-lg flex-shrink-0 w-64 ${selectedTemplate === template.id
