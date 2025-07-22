@@ -23,8 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MaintenanceMode {
 	use JsonResponse;
 
-
-
 	/**
 	 * MaintenanceMode constructor.
 	 */
@@ -205,22 +203,6 @@ class MaintenanceMode {
 				$background_image = esc_url( $mood_info['background_image'] ?? '' );
 				$logo             = esc_url( $mood_info['logo'] ?? '' );
 			}
-
-			// Add thumbnail-specific styles if in thumbnail mode
-			// if ( 'thumbnail' === $preview_mode ) {
-			// echo '<style>
-			// body {
-			// margin: 0;
-			// padding: 0;
-			// overflow: hidden;
-			// transform-origin: top left;
-			// }
-			// html, body {
-			// width: 100vw;
-			// height: 100vh;
-			// }
-			// </style>';
-			// }
 
 				// Load the selected template
 				$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template_id . '.php';

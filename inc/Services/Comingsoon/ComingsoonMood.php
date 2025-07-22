@@ -44,7 +44,10 @@ class ComingsoonMood {
 	 */
 	public function versatile_update_comingsoon_mood() {
 		try {
-			$request_verify                         = versatile_verify_request();
+			$request_verify = versatile_verify_request();
+			if ( 200 !== $request_verify['code'] ) {
+				return $this->json_response( 'Security check failed', array(), 403 );
+			}
 			$params                                 = $request_verify['data'];
 			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                      = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
@@ -74,10 +77,9 @@ class ComingsoonMood {
 		try {
 			// Verify nonce for security
 			$request_verify = versatile_verify_request();
-
-			// Check if user has permission to preview
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( 200 !== $request_verify['code'] ) {
 				wp_die( 'You do not have permission to preview this page' );
+				// return $this->json_response( 'You do not have permission to preview this page', array(), 403 );
 			}
 
 			// Set headers for HTML response
