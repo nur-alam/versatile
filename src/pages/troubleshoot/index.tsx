@@ -29,7 +29,7 @@ const TroubleShoot = () => {
 	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
 
 	const chosenPluginList = disablePluginData?.data['chosenPlugins'];
-	console.log('chosenPluginList', chosenPluginList);
+	console.log('chosenPluginList', chosenPluginList, errors);
 
 	const chosenIpList = disablePluginData?.data['ipTags'];
 
@@ -67,7 +67,7 @@ const TroubleShoot = () => {
 					}
 					{errors.chosenPlugins && (
 						<p className="text-red-500 text-sm mt-1">
-							{errors.chosenPlugins.message}
+							{errors?.chosenPlugins?.message}
 						</p>
 					)}
 				</div>
@@ -81,18 +81,13 @@ const TroubleShoot = () => {
 									<TaggedInput
 										tags={field.value}
 										onChange={field.onChange}
-									// onChange={(newTags: string[]) => {
-									// 	console.log('newTags', newTags);
-									// 	const validTags = newTags.filter(tag => ipv4Regex.test(tag));
-									// 	field.onChange(validTags);
-									// }}
 									/>
 								)}
 							/>
 					}
 					{errors.ipTags && (
 						<p className="text-red-500 text-sm mt-1">
-							{errors.ipTags[0]?.message}
+							{errors?.ipTags?.message}
 						</p>
 					)}
 				</div>

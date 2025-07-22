@@ -47,7 +47,7 @@ class TroubleshootInit {
 			// Remove keys that should not be saved
 			unset( $params['action'], $params['versatile_nonce'] );
 
-			if (! empty( $params['chosenPlugins'] ) && in_array( 'versatile/versatile.php', $params['chosenPlugins'], true ) ) {
+			if ( ! empty( $params['chosenPlugins'] ) && in_array( 'versatile/versatile.php', $params['chosenPlugins'], true ) ) {
 				$filter_chosen_plugins   = array_filter(
 					$params['chosenPlugins'],
 					function ( $item ) {
@@ -62,9 +62,9 @@ class TroubleshootInit {
 
 			// update versatile addon info
 			// if ( $is_updated ) {
-			// 	$versatile_service_list                           = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			// 	$versatile_service_list['troubleshoot']['enable'] = true;
-			// 	update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
+			// $versatile_service_list                           = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
+			// $versatile_service_list['troubleshoot']['enable'] = true;
+			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
 			// }
 
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );

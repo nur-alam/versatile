@@ -9,7 +9,7 @@ export const disablePluginFormSchema = z.object({
 		z.string().refine((value) => ipv4Regex.test(value), {
 			message: 'Invalid IP address',
 		})
-	),
+	).min(1, { message: 'At least one IP address is required' }),
 });
 
 export type DisablePluginFormValues = z.infer<typeof disablePluginFormSchema>;
