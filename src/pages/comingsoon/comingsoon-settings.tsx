@@ -14,6 +14,8 @@ import PreviewModal from '@/components/PreviewModal';
 import TemplateSelector from '@/components/TemplateSelector';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { PageLoader, ButtonLoader, ComingSoonSettingsSkeleton } from '@/components/loader';
+import MoodSkeleton from '@/components/loader/MoodSkeleton';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -72,7 +74,7 @@ const ComingsoonMode = () => {
 
 	return (
 		<div className="">
-			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
+			{(isLoading || !isFormInitialized) ? <MoodSkeleton /> :
 				<Form {...comingsoonMoodFrom}>
 					<form onSubmit={handleSubmit(onSubmit, (errors) => {
 						console.error('Form validation errors:', errors);
@@ -89,10 +91,12 @@ const ComingsoonMode = () => {
 									type="submit"
 									disabled={updateComingsoonMoodMutation.isPending}
 								>
-									{updateComingsoonMoodMutation.isPending
-										? __('Saving...', 'versatile')
-										: __('Save Settings', 'versatile')
-									}
+									<ButtonLoader
+										isLoading={updateComingsoonMoodMutation.isPending}
+										loadingText={__('Saving', 'versatile')}
+									>
+										{__('Save Settings', 'versatile')}
+									</ButtonLoader>
 								</Button>
 
 								<PreviewModal

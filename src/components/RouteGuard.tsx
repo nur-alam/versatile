@@ -2,6 +2,7 @@ import { useGetEnableServiceList } from '@/services/mood-services';
 import { ServiceListType } from '@utils/versatile-declaration';
 import { Navigate, useLocation } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
+import { SkeletonLoader } from './loader';
 
 interface RouteGuardProps {
     children: React.ReactNode;
@@ -16,7 +17,7 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const currentPath = location.pathname.replace('/', ''); // Remove leading slash
 
     if (isLoading) {
-        return <div className='text-xl'>{__('Loading...', 'versatile')}</div>;
+        return <SkeletonLoader />; // Todo adjust this loader
     }
 
     // If no service list data, allow access (fallback)

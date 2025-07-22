@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import MultipleSelector from '@pages/troubleshoot/multi-selector';
 import TaggedInput from '@pages/troubleshoot/tag-input';
 import ThemeSelector from '@pages/troubleshoot/theme-selector';
+import { InlineLoader, ButtonLoader } from '@/components/loader';
 
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
@@ -82,7 +83,7 @@ const TroubleShoot = () => {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> : <Controller
+							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile')} /> : <Controller
 								name='chosenPlugins'
 								control={control}
 								render={({ field }) => (
@@ -101,7 +102,7 @@ const TroubleShoot = () => {
 					</div>
 					<div className='min-h-[64px] mt-2'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> :
+							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile')} /> :
 								<Controller
 									name='ipTags'
 									control={control}
@@ -120,7 +121,12 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						{disablePluginMutation.isPending ? __('Saving...', 'versatile') : __('Save Plugin Settings', 'versatile')}
+						<ButtonLoader 
+							isLoading={disablePluginMutation.isPending} 
+							loadingText={__('Saving', 'versatile')}
+						>
+							{__('Save List', 'versatile')}
+						</ButtonLoader>
 					</Button>
 				</form>
 			</div>
@@ -132,7 +138,7 @@ const TroubleShoot = () => {
 				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isActiveThemeFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> : <Controller
+							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile')} /> : <Controller
 								name='activeTheme'
 								control={themeControl}
 								render={({ field }) => (
@@ -150,7 +156,12 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
-						{saveActiveThemeMutation.isPending ? __('Activating...', 'versatile') : __('Activate Theme', 'versatile')}
+						<ButtonLoader 
+							isLoading={saveActiveThemeMutation.isPending} 
+							loadingText={__('Activating', 'versatile')}
+						>
+							{__('Activate Theme', 'versatile')}
+						</ButtonLoader>
 					</Button>
 				</form>
 			</div>

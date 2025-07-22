@@ -2,8 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import config from '@/config';
+import { TemplateLoader } from './loader';
+import SkeletonLoader from '@components/loader/SkeletonLoader';
+import { Skeleton } from '@/components/ui/skeleton';
+import { SkeletonCard } from '@/components/SkeletonCard';
 
 type TemplateType = 'maintenance' | 'comingsoon';
 
@@ -201,10 +205,11 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData, 
 
                 {/* Loading Overlay */}
                 <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-md iframe-loading">
-                  <div className="text-center">
+                  <SkeletonCard />
+                  {/* <div className="text-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-1"></div>
-                    <p className="text-xs text-gray-500">{__('Loading...', 'versatile')}</p>
-                  </div>
+                    <p className="text-xs text-gray-500">{__('...', 'versatile')}</p>
+                  </div> */}
                 </div>
               </div>
 
@@ -256,19 +261,14 @@ const TemplateSelector = ({ selectedTemplate, onTemplateSelect, type, formData, 
                 {__('Template Preview', 'versatile')} - {templates.find(t => t.id === previewTemplate)?.name}
               </h3>
               <Button type="button" variant="ghost" size="sm" onClick={closePreview}>
-                ×
+                <X size={16} />
               </Button>
             </div>
 
             <div className="flex-1 p-4">
               <div className="w-full h-full border rounded-lg overflow-hidden bg-gray-50 relative">
                 {isPreviewLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                      <p className="text-gray-600">{__('Loading template preview...', 'versatile')}</p>
-                    </div>
-                  </div>
+                  <TemplateLoader />
                 )}
                 <iframe
                   src={`${config.ajax_url}?action=${templatePreviewAction(type)}&versatile_nonce=${config.nonce_value}&template_id=${previewTemplate}&type=${type}&preview_mode=thumbnail&preview_data=${encodeURIComponent(JSON.stringify(getFormData()))}`}

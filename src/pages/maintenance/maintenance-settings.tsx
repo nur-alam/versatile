@@ -14,6 +14,7 @@ import PreviewModal from '@/components/PreviewModal';
 import TemplateSelector from '@/components/TemplateSelector';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import MoodSkeleton from '@/components/loader/MoodSkeleton';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -75,7 +76,7 @@ const MaintenanceSettings = () => {
 
 	return (
 		<div className="">
-			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
+			{(isLoading || !isFormInitialized) ? <MoodSkeleton /> :
 				<Form {...maintenanceMoodForm}>
 					<form onSubmit={handleSubmit(onSubmit, (errors) => {
 						console.error('Form validation errors:', errors);

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
 import { Eye, X } from 'lucide-react';
+import TemplateLoader from '@components/loader/TemplateLoader';
 
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
@@ -85,12 +86,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             <div className="flex-1 p-4">
               <div className="w-full h-full border rounded-lg overflow-hidden bg-gray-50">
                 {isLoading && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                      <p className="text-gray-600">{__('Loading preview...', 'versatile')}</p>
-                    </div>
-                  </div>
+                  <TemplateLoader />
                 )}
                 <iframe
                   src={getPreviewUrl()}

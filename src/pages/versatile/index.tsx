@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useGetEnableServiceList } from '@/services/mood-services'
 import { ServiceListType } from '@/utils/versatile-declaration'
+import { TextLoader, PageLoader, SkeletonLoader, SpinnerLoader } from '@/components/loader'
 
 
 const Dashboard = () => {
@@ -14,7 +15,7 @@ const Dashboard = () => {
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
-					isLoading ? <span className='text-xl'>{__('Loading', 'versatile')}</span> :
+					isLoading ? <SkeletonLoader lines={3} height="h-[100px]" width="w-[900px]" /> :
 						Object.entries(serviceList)
 							.filter(([key, addon]) => addon.enable) // Only show enabled services
 							.map(([key, addon]) => (
