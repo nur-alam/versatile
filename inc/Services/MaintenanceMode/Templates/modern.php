@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title><?php echo $title; ?></title>
+	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		* {
@@ -167,7 +167,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="container">
 		<?php if ( $logo ) : ?>
 		<div class="logo">
-			<img src="<?php echo $logo; ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
+			<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
 		</div>
 		<?php else : ?>
 		<div class="icon">
@@ -179,9 +179,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<?php endif; ?>
 		
-		<h1><?php echo $title; ?></h1>
-		<p class="subtitle"><?php echo $subtitle; ?></p>
-		<p class="description"><?php echo $description; ?></p>
+		<h1><?php echo esc_html( $template_title ); ?></h1>
+		<p class="subtitle"><?php echo esc_html( $subtitle ); ?></p>
+		<p class="description"><?php echo esc_html( $description ); ?></p>
 		
 		<div class="progress-bar">
 			<div class="progress-fill"></div>

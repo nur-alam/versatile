@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title><?php echo $title; ?></title>
+	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		* {
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			font-family: 'Georgia', 'Times New Roman', serif;
 			background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 			<?php if ( $background_image ) : ?>
-			background-image: linear-gradient(135deg, rgba(30, 60, 114, 0.9) 0%, rgba(42, 82, 152, 0.9) 100%), url('<?php echo $background_image; ?>');
+			background-image: linear-gradient(135deg, rgba(30, 60, 114, 0.9) 0%, rgba(42, 82, 152, 0.9) 100%), url('<?php echo esc_url( $background_image ); ?>');
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -198,7 +198,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		
 		<?php if ( $logo ) : ?>
 		<div class="logo">
-			<img src="<?php echo $logo; ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
+			<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
 		</div>
 		<?php else : ?>
 		<div class="company-icon">
@@ -210,12 +210,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<?php endif; ?>
 		
-		<h1><?php echo $title; ?></h1>
-		<p class="subtitle"><?php echo $subtitle; ?></p>
+		<h1><?php echo esc_html( $template_title ); ?></h1>
+		<p class="subtitle"><?php echo esc_html( $subtitle ); ?></p>
 		
 		<div class="divider"></div>
-		
-		<p class="description"><?php echo $description; ?></p>
+		<p class="description"><?php echo esc_html( $description ); ?></p>
 		
 		<div class="contact-info">
 			<p class="contact-text">We appreciate your patience during this maintenance period.</p>

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title><?php echo $title; ?></title>
+	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		* {
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 			background: #0f0f23;
 			<?php if ( $background_image ) : ?>
-			background-image: linear-gradient(rgba(15, 15, 35, 0.8), rgba(15, 15, 35, 0.8)), url('<?php echo $background_image; ?>');
+			background-image: linear-gradient(rgba(15, 15, 35, 0.8), rgba(15, 15, 35, 0.8)), url('<?php echo esc_url( $background_image ); ?>');
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -260,7 +260,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="container">
 		<?php if ( $logo ) : ?>
 		<div class="logo">
-			<img src="<?php echo $logo; ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
+			<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
 		</div>
 		<?php else : ?>
 		<div class="icon-container">
@@ -276,9 +276,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<?php endif; ?>
 		
-		<h1><?php echo $title; ?></h1>
-		<p class="subtitle"><?php echo $subtitle; ?></p>
-		<p class="description"><?php echo $description; ?></p>
+		<h1><?php echo esc_html( $template_title ); ?></h1>
+		<p class="subtitle"><?php echo esc_html( $subtitle ); ?></p>
+		<p class="description"><?php echo esc_html( $description ); ?></p>
 		
 		<div class="status-indicator">
 			<div class="status-dot"></div>

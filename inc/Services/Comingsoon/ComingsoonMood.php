@@ -75,11 +75,10 @@ class ComingsoonMood {
 	 */
 	public function preview_comingsoon_mode() {
 		try {
-			// Verify nonce for security
+			// Verify request
 			$request_verify = versatile_verify_request();
 			if ( 200 !== $request_verify['code'] ) {
 				wp_die( 'You do not have permission to preview this page' );
-				// return $this->json_response( 'You do not have permission to preview this page', array(), 403 );
 			}
 
 			// Set headers for HTML response
