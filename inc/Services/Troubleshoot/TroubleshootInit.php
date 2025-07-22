@@ -31,6 +31,9 @@ class TroubleshootInit {
 		add_action( 'wp_ajax_versatile_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_add_my_ip', array( $this, 'add_my_ip' ) );
+		add_action( 'wp_ajax_versatile_theme_list', array( $this, 'get_theme_list' ) );
+		add_action( 'wp_ajax_versatile_get_active_theme', array( $this, 'get_active_theme' ) );
+		add_action( 'wp_ajax_versatile_save_active_theme', array( $this, 'save_active_theme' ) );
 	}
 
 	/**
@@ -47,7 +50,7 @@ class TroubleshootInit {
 			// Remove keys that should not be saved
 			unset( $params['action'], $params['versatile_nonce'] );
 
-			if (! empty( $params['chosenPlugins'] ) && in_array( 'versatile/versatile.php', $params['chosenPlugins'], true ) ) {
+			if ( ! empty( $params['chosenPlugins'] ) && in_array( 'versatile/versatile.php', $params['chosenPlugins'], true ) ) {
 				$filter_chosen_plugins   = array_filter(
 					$params['chosenPlugins'],
 					function ( $item ) {
@@ -62,9 +65,9 @@ class TroubleshootInit {
 
 			// update versatile addon info
 			// if ( $is_updated ) {
-			// 	$versatile_service_list                           = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			// 	$versatile_service_list['troubleshoot']['enable'] = true;
-			// 	update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
+			// $versatile_service_list                           = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
+			// $versatile_service_list['troubleshoot']['enable'] = true;
+			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
 			// }
 
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );
@@ -126,6 +129,76 @@ class TroubleshootInit {
 			return $this->json_response( 'System IP address added', $data, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while retrieving IP address', array(), 400 );
+		}
+	}
+
+	/**
+	 * Get theme list
+	 */
+	public function get_theme_list() {
+		try {
+			$all_themes = wp_get_themes();
+
+			// Create array of theme names only
+			$theme_list = array();
+
+			foreach ( $all_themes as $theme_slug => $theme ) {
+				if ( isset( $theme['Name'] ) ) {
+					$theme_list[] = array(
+						'slug'  => $theme_slug,
+						'label' => $theme['Name'],
+					);
+				}
+			}
+
+			return $this->json_response( '', $theme_list, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while fetching theme list', array(), 400 );
+		}
+	}
+
+	/**
+	 * Get active theme
+	 */
+	public function get_active_theme() {
+		try {
+			$active_theme = get_option( 'stylesheet' );
+			$data = array(
+				'activeTheme' => $active_theme,
+			);
+			return $this->json_response( 'Active theme retrieved', $data, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while fetching active theme', array(), 400 );
+		}
+	}
+
+	/**
+	 * Save active theme
+	 */
+	public function save_active_theme() {
+		try {
+			$request_verify = versatile_verify_request();
+			$params         = $request_verify['data'];
+
+			// Remove keys that should not be saved
+			unset( $params['action'], $params['versatile_nonce'] );
+
+			if ( ! empty( $params['activeTheme'] ) ) {
+				// Verify theme exists
+				$theme = wp_get_theme( $params['activeTheme'] );
+				if ( ! $theme->exists() ) {
+					return $this->json_response( 'Error: Theme does not exist', array(), 400 );
+				}
+
+				// Switch theme
+				switch_theme( $params['activeTheme'] );
+
+				return $this->json_response( 'Theme activated successfully', array(), 200 );
+			}
+
+			return $this->json_response( 'Error: No theme specified', array(), 400 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while activating theme', array(), 400 );
 		}
 	}
 

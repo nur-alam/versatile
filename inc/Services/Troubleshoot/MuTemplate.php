@@ -33,8 +33,8 @@ class VersatileMu {
 		$current_ip = $this->get_client_ip();
 
 		$ip_plugin_list   = get_option( 'versatile_disable_plugin_list' );
-		$disabled_plugins = $ip_plugin_list['chosenPlugins'] ?? [];
-		$target_ips       = $ip_plugin_list['ipTags'] ?? [];
+		$disabled_plugins = $ip_plugin_list['chosenPlugins'] ?? array();
+		$target_ips       = $ip_plugin_list['ipTags'] ?? array();
 
 		if ( empty( $disabled_plugins ) || ! $disabled_plugins || empty( $target_ips ) || ! $target_ips ) {
 			return $plugins;

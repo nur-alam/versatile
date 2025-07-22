@@ -9,7 +9,7 @@ export const disablePluginFormSchema = z.object({
 		z.string().refine((value) => ipv4Regex.test(value), {
 			message: 'Invalid IP address',
 		})
-	),
+	).min(1, { message: 'At least one IP address is required' }),
 });
 
 export type DisablePluginFormValues = z.infer<typeof disablePluginFormSchema>;
@@ -43,3 +43,10 @@ export const comingsoonMoodFormSchema = z.object({
 });
 
 export type ComingsoonMoodFormValues = z.infer<typeof comingsoonMoodFormSchema>;
+
+// Theme Selector
+export const themeFormSchema = z.object({
+	activeTheme: z.string().min(1, { message: 'Please select a theme' }),
+});
+
+export type ThemeFormValues = z.infer<typeof themeFormSchema>;

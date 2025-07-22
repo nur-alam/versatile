@@ -7,9 +7,6 @@ import { ServiceListType } from '@/utils/versatile-declaration'
 
 const Dashboard = () => {
 
-	// const { data: serviceListResponse, isLoading } = useGetServiceList();
-	// const serviceList = serviceListResponse?.data as ServiceListType;
-
 	const { data: serviceListResponse, isLoading } = useGetEnableServiceList();
 	const serviceList = serviceListResponse?.data as ServiceListType;
 
