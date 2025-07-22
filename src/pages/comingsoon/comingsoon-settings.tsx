@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { comingsoonMoodFormSchema, ComingsoonMoodFormValues } from '@/utils/schema-validation';
 import { useForm } from 'react-hook-form';
@@ -11,9 +11,15 @@ import { useGetMoodInfo, useUpdateComingsoonMood } from '@/services/mood-service
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
 import PreviewModal from '@/components/PreviewModal';
+import TemplateSelector from '@/components/TemplateSelector';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
+	const [formValues, setFormValues] = useState<ComingsoonMoodFormValues | null>(null);
+
+
 	const comingsoonMoodFrom = useForm<ComingsoonMoodFormValues>({
 		resolver: zodResolver(comingsoonMoodFormSchema),
 		defaultValues: {
@@ -21,6 +27,7 @@ const ComingsoonMode = () => {
 			title: '',
 			description: '',
 			subtitle: '',
+			template: 'classic',
 			background_image: '',
 			background_image_id: 0,
 			logo: '',
@@ -28,7 +35,10 @@ const ComingsoonMode = () => {
 		}
 	});
 
-	const { handleSubmit, control, formState: { errors } } = comingsoonMoodFrom;
+	const { handleSubmit } = comingsoonMoodFrom;
+
+	// Function to get latest form data when needed (no re-renders)
+	const getLatestFormData = () => comingsoonMoodFrom.getValues();
 
 	const updateComingsoonMoodMutation = useUpdateComingsoonMood();
 
@@ -41,16 +51,17 @@ const ComingsoonMode = () => {
 	}
 
 	// Fetching saved form data
-	const { data: moodInfo, isLoading, isSuccess } = useGetMoodInfo();
+	const { data: moodInfo, isLoading } = useGetMoodInfo();
 	const comingsoonMoodInfo: ComingsoonMoodFormValues = moodInfo?.data['comingsoon'];
 
 	useEffect(() => {
 		if (comingsoonMoodInfo) {
 			comingsoonMoodFrom.reset({
 				enable_comingsoon: moodInfo?.data['enable_comingsoon'],
-				title: comingsoonMoodInfo.title,
-				description: comingsoonMoodInfo.description,
-				subtitle: comingsoonMoodInfo.subtitle,
+				title: comingsoonMoodInfo.title || '',
+				description: comingsoonMoodInfo.description || '',
+				subtitle: comingsoonMoodInfo.subtitle || '',
+				template: comingsoonMoodInfo.template || 'classic',
 				background_image: comingsoonMoodInfo.background_image || '',
 				background_image_id: comingsoonMoodInfo.background_image_id || 0,
 				logo: comingsoonMoodInfo.logo || '',
@@ -61,11 +72,38 @@ const ComingsoonMode = () => {
 	}, [comingsoonMoodInfo]);
 
 	return (
-		<div className="p-4 space-y-6">
+		<div className="">
 			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
 				<Form {...comingsoonMoodFrom}>
-					<form onSubmit={handleSubmit(onSubmit)}>
-						<div className='flex gap-10'>
+					<form onSubmit={handleSubmit(onSubmit, (errors) => {
+						console.error('Form validation errors:', errors);
+					})}>
+						<div className='flex justify-between pb-5'>
+							<h2 className='flex items-center gap-2 text-2xl'>
+								<Link to={'/'}>
+									<ArrowLeft />
+								</Link>
+								{__('Coming Soon Mode', 'versatile')}
+							</h2>
+							<div className='flex gap-5'>
+								<Button
+									type="submit"
+									disabled={updateComingsoonMoodMutation.isPending}
+								>
+									{updateComingsoonMoodMutation.isPending
+										? __('Saving...', 'versatile')
+										: __('Save Settings', 'versatile')
+									}
+								</Button>
+
+								<PreviewModal
+									type="comingsoon"
+									disabled={updateComingsoonMoodMutation.isPending}
+									getFormData={getLatestFormData}
+								/>
+							</div>
+						</div>
+						<div className='flex gap-10 mt-5'>
 							<div className='w-1/2'>
 								<FormField
 									control={comingsoonMoodFrom.control}
@@ -74,7 +112,7 @@ const ComingsoonMode = () => {
 										<FormItem>
 											<div className='flex items-center gap-2'>
 												<FormLabel className="text-foreground" htmlFor='enable_comingsoon'>
-													{__('Enable Comingsoon Mood', 'versatile')}
+													{__('Enable Coming Soon Mode', 'versatile')}
 												</FormLabel>
 												<FormControl>
 													<Switch id='enable_comingsoon'
@@ -85,7 +123,34 @@ const ComingsoonMode = () => {
 											</div>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
+													{__('Enable the coming soon page for your website.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={comingsoonMoodFrom.control}
+									name="template"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">
+												{__('Choose Template', 'versatile')}
+											</FormLabel>
+											<FormControl>
+												<TemplateSelector
+													selectedTemplate={field.value || 'classic'}
+													onTemplateSelect={field.onChange}
+													type="comingsoon"
+													formData={formValues}
+													getFormData={getLatestFormData}
+												/>
+											</FormControl>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('Select a design template for your coming soon page.', 'versatile')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -101,7 +166,7 @@ const ComingsoonMode = () => {
 												{__('Title', 'versatile')}
 											</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter comingsoon title', 'versatile')} {...field} />
+												<Input placeholder={__('Enter coming soon title', 'versatile')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
@@ -137,11 +202,11 @@ const ComingsoonMode = () => {
 										<FormItem className='mt-6'>
 											<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
 											<FormControl>
-												<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
+												<Textarea placeholder={__('Tell visitors what to expect...', 'versatile')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Provide more details about the comingsoon.', 'versatile')}
+													{__('Provide more details about your upcoming launch.', 'versatile')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -154,14 +219,14 @@ const ComingsoonMode = () => {
 									control={comingsoonMoodFrom.control}
 									name="background_image"
 									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
+										<FormItem className=''>
 											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
 											<FormControl>
 												<MediaUploader
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														comingsoonMoodFrom.setValue('background_image_id', id);
+														setFormValues(comingsoonMoodFrom.getValues());
 													}}
 													buttonText={__('Upload Background Image', 'versatile')}
 													allowedTypes={['image']}
@@ -188,7 +253,7 @@ const ComingsoonMode = () => {
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														comingsoonMoodFrom.setValue('logo_id', id);
+														setFormValues(comingsoonMoodFrom.getValues());
 													}}
 													buttonText={__('Upload Logo', 'versatile')}
 													allowedTypes={['image']}
@@ -204,22 +269,6 @@ const ComingsoonMode = () => {
 									)}
 								/>
 							</div>
-						</div>
-						<div className="flex gap-4 mt-6">
-							<Button 
-								type="submit" 
-								disabled={updateComingsoonMoodMutation.isPending}
-							>
-								{updateComingsoonMoodMutation.isPending 
-									? __('Saving...', 'versatile') 
-									: __('Save Settings', 'versatile')
-								}
-							</Button>
-							
-							<PreviewModal 
-								type="comingsoon"
-								disabled={updateComingsoonMoodMutation.isPending}
-							/>
 						</div>
 					</form>
 				</Form>
