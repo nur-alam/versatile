@@ -41,3 +41,10 @@ export const comingsoonMoodFormSchema = z.object({
 });
 
 export type ComingsoonMoodFormValues = z.infer<typeof comingsoonMoodFormSchema>;
+
+// Theme Selector
+export const themeFormSchema = z.object({
+	activeTheme: z.string().min(1, { message: 'Please select a theme' }),
+});
+
+export type ThemeFormValues = z.infer<typeof themeFormSchema>;
