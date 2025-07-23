@@ -28,6 +28,7 @@ const MaintenanceSettings = () => {
 		resolver: zodResolver(maintenanceMoodFormSchema),
 		defaultValues: {
 			enable_maintenance: true,
+			show_subscribers_only: false,
 			title: '',
 			description: '',
 			subtitle: '',
@@ -59,6 +60,7 @@ const MaintenanceSettings = () => {
 		if (maintenanceMoodInfo) {
 			maintenanceMoodForm.reset({
 				enable_maintenance: moodInfo?.data['enable_maintenance'],
+				show_subscribers_only: maintenanceMoodInfo.show_subscribers_only || false,
 				title: maintenanceMoodInfo.title || '',
 				description: maintenanceMoodInfo.description || '',
 				subtitle: maintenanceMoodInfo.subtitle || '',
@@ -188,7 +190,33 @@ const MaintenanceSettings = () => {
 												</div>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('This will be displayed as the main heading.', 'versatile')}
+														{__('Enable or disable maintenance mode for your site.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="show_subscribers_only"
+										render={({ field, fieldState }) => (
+											<FormItem className='mt-6'>
+												<div className='flex items-center gap-2'>
+													<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
+														{__('Show Only for Subscribers', 'versatile')}
+													</FormLabel>
+													<FormControl>
+														<Switch id='show_subscribers_only'
+															checked={field.value}
+															onCheckedChange={field.onChange}
+														/>
+													</FormControl>
+												</div>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('When enabled, maintenance mode will only be shown to subscribers. Other users will see the normal site.', 'versatile')}
 													</FormDescription>
 												}
 												<FormMessage />

@@ -26,6 +26,7 @@ const ComingsoonMode = () => {
 		resolver: zodResolver(comingsoonMoodFormSchema),
 		defaultValues: {
 			enable_comingsoon: true,
+			show_subscribers_only: false,
 			title: '',
 			description: '',
 			subtitle: '',
@@ -60,6 +61,7 @@ const ComingsoonMode = () => {
 		if (comingsoonMoodInfo) {
 			comingsoonMoodFrom.reset({
 				enable_comingsoon: moodInfo?.data['enable_comingsoon'],
+				show_subscribers_only: comingsoonMoodInfo.show_subscribers_only || false,
 				title: comingsoonMoodInfo.title || '',
 				description: comingsoonMoodInfo.description || '',
 				subtitle: comingsoonMoodInfo.subtitle || '',
@@ -156,6 +158,32 @@ const ComingsoonMode = () => {
 											{!fieldState.error &&
 												<FormDescription>
 													{__('Enable the coming soon page for your website.', 'versatile')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={comingsoonMoodFrom.control}
+									name="show_subscribers_only"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<div className='flex items-center gap-2'>
+												<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
+													{__('Show Only for Subscribers', 'versatile')}
+												</FormLabel>
+												<FormControl>
+													<Switch id='show_subscribers_only'
+														checked={field.value}
+														onCheckedChange={field.onChange}
+													/>
+												</FormControl>
+											</div>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('When enabled, coming soon mode will only be shown to subscribers. Other users will see the normal site.', 'versatile')}
 												</FormDescription>
 											}
 											<FormMessage />

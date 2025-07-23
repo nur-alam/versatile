@@ -75,6 +75,7 @@ class MaintenanceMode {
 
 			$params                                  = $request_verify['data'];
 			$params['enable_maintenance']            = filter_var( $params['enable_maintenance'], FILTER_VALIDATE_BOOLEAN );
+			$params['show_subscribers_only']         = filter_var( $params['show_subscribers_only'], FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_maintenance'] = $params['enable_maintenance'] ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
@@ -226,12 +227,24 @@ class MaintenanceMode {
 	 * @return void return description
 	 */
 	public function custom_maintenance_mode() {
-		$current_user = wp_get_current_user();
-		// Allow only users with 'administrator' role to bypass maintenance
-		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
-		// Load your custom maintenance HTML
-		// }
-		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
-		die();
+		$current_user          = wp_get_current_user();
+		$versatile_mood_info   = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		$show_subscribers_only = $versatile_mood_info['maintenance']['show_subscribers_only'] ?? false;
+
+		if ( empty( $current_user->roles ) ) {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
+			die();
+		}
+
+		// If show_subscribers_only is enabled, only show coming soon mode to subscribers
+		if ( $show_subscribers_only ) {
+			if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {
+				include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
+				die();
+			}
+		} else {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
+			die();
+		}
 	}
 }

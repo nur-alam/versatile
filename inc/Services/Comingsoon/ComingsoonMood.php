@@ -53,6 +53,7 @@ class ComingsoonMood {
 			}
 			$params                                 = $request_verify['data'];
 			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
+			$params['show_subscribers_only']        = filter_var( $params['show_subscribers_only'], FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                      = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_comingsoon'] = $params['enable_comingsoon'] ?? false;
 			if ( $current_mood_info['enable_comingsoon'] ) {
@@ -230,7 +231,7 @@ class ComingsoonMood {
 			$mood_info           = $versatile_mood_info[ $type ] ?? array();
 
 			// Set default content based on type
-			if ( $type === 'maintenance' ) {
+			if ( 'maintenance' === $type ) {
 				$default_title       = 'We&rsquo;ll be back soon!';
 				$default_subtitle    = 'Our site is currently undergoing scheduled maintenance.';
 				$default_description = 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.';
@@ -282,12 +283,24 @@ class ComingsoonMood {
 	 * @return void return description
 	 */
 	public function custom_comingsoon_mode() {
-		$current_user = wp_get_current_user();
-		// Allow only users with 'administrator' role to bypass comingsoon
-		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
-		// Load your custom comingsoon HTML
-		// }
-		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
-		die();
+		$current_user          = wp_get_current_user();
+		$versatile_mood_info   = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		$show_subscribers_only = $versatile_mood_info['comingsoon']['show_subscribers_only'] ?? false;
+
+		if ( empty( $current_user->roles ) ) {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+			die();
+		}
+
+		// If show_subscribers_only is enabled, only show coming soon mode to subscribers
+		if ( $show_subscribers_only ) {
+			if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {
+				include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+				die();
+			}
+		} else {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+			die();
+		}
 	}
 }

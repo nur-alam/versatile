@@ -17,6 +17,7 @@ export type DisablePluginFormValues = z.infer<typeof disablePluginFormSchema>;
 // Maintenance Mood
 export const maintenanceMoodFormSchema = z.object({
 	enable_maintenance: z.boolean(),
+	show_subscribers_only: z.boolean(),
 	title: z.string(),
 	description: z.string(),
 	subtitle: z.string(),
@@ -32,6 +33,7 @@ export type MaintenanceMoodFormValues = z.infer<typeof maintenanceMoodFormSchema
 // Comingsoon Mood
 export const comingsoonMoodFormSchema = z.object({
 	enable_comingsoon: z.boolean(),
+	show_subscribers_only: z.boolean(),
 	title: z.string(),
 	description: z.string(),
 	subtitle: z.string(),
