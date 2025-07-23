@@ -15,10 +15,11 @@ import TemplateSelector from '@/components/TemplateSelector';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import MoodSkeleton from '@/components/loader/MoodSkeleton';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
-	const [formValues, setFormValues] = useState<MaintenanceMoodFormValues | null>(null);
+	const [formValues, setFormValues] = useState<MaintenanceMoodFormValues | undefined>(undefined);
 
 	// Function to get latest form data when needed (no re-renders)
 	const getLatestFormData = () => maintenanceMoodForm.getValues();
@@ -77,141 +78,89 @@ const MaintenanceSettings = () => {
 	return (
 		<div className="">
 			{(isLoading || !isFormInitialized) ? <MoodSkeleton /> :
-				<Form {...maintenanceMoodForm}>
-					<form onSubmit={handleSubmit(onSubmit, (errors) => {
-						console.error('Form validation errors:', errors);
-					})}>
-						<div className='flex justify-between pb-5'>
-							<h2 className='flex items-center gap-2 text-2xl'>
-								<Link to={'/'}>
-									<ArrowLeft />
-								</Link>
-								{__('Maintenance Mood', 'versatile')}
-							</h2>
-							<div className='flex gap-5'>
-								<Button
-									type="submit"
-									disabled={updateMaintenanceMoodMutation.isPending}
-								>
-									{updateMaintenanceMoodMutation.isPending
-										? __('Saving...', 'versatile')
-										: __('Save Settings', 'versatile')
-									}
-								</Button>
-
-								<PreviewModal
-									type="maintenance"
-									disabled={updateMaintenanceMoodMutation.isPending}
-									getFormData={getLatestFormData}
-								/>
-							</div>
+				<ErrorBoundary
+					onError={(error, errorInfo) => {
+						console.error('Maintenance Settings Form Error:', error, errorInfo);
+					}}
+					fallback={
+						<div className="p-6 border border-red-200 bg-red-50 rounded-md">
+							<h3 className="text-lg font-medium text-red-700 mb-2">{__('Form Error', 'versatile')}</h3>
+							<p className="text-red-600">{__('There was a problem loading the maintenance settings form. Please try refreshing the page or contact support.', 'versatile')}</p>
+							<Button
+								className="mt-4"
+								onClick={() => window.location.reload()}
+							>
+								{__('Refresh Page', 'versatile')}
+							</Button>
 						</div>
-						<div>
-							<FormField
-								control={maintenanceMoodForm.control}
-								name="template"
-								render={({ field, fieldState }) => (
-									<FormItem className='mt-6'>
-										<FormLabel className="text-foreground">
-											{__('Choose Template', 'versatile')}
-										</FormLabel>
-										<FormControl>
-											<TemplateSelector
-												selectedTemplate={field.value || 'classic'}
-												onTemplateSelect={field.onChange}
-												type="maintenance"
-												formData={formValues}
-												getFormData={getLatestFormData}
-											/>
-										</FormControl>
-										{!fieldState.error &&
-											<FormDescription>
-												{__('Select a design template for your maintenance page.', 'versatile')}
-											</FormDescription>
+					}
+				>
+					<Form {...maintenanceMoodForm}>
+						<form onSubmit={handleSubmit(onSubmit, (errors) => {
+							console.error('Form validation errors:', errors);
+						})}>
+							<div className='flex justify-between pb-5'>
+								<h2 className='flex items-center gap-2 text-2xl'>
+									<Link to={'/'}>
+										<ArrowLeft />
+									</Link>
+									{__('Maintenance Mood', 'versatile')}
+								</h2>
+								<div className='flex gap-5'>
+									<Button
+										type="submit"
+										disabled={updateMaintenanceMoodMutation.isPending}
+									>
+										{updateMaintenanceMoodMutation.isPending
+											? __('Saving...', 'versatile')
+											: __('Save Settings', 'versatile')
 										}
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<div className='flex gap-10 mt-5'>
-							<div className='w-1/2'>
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="enable_maintenance"
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<div className='flex items-center gap-2'>
-												<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
-													{__('Enable Maintenance Mood', 'versatile')}
-												</FormLabel>
-												<FormControl>
-													<Switch id='enable_maintenance'
-														checked={field.value}
-														onCheckedChange={field.onChange}
-													/>
-												</FormControl>
-											</div>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+									</Button>
 
+									<ErrorBoundary
+										fallback={
+											<Button variant="outline" disabled>
+												{__('Preview Unavailable', 'versatile')}
+											</Button>
+										}
+									>
+										<PreviewModal
+											type="maintenance"
+											disabled={updateMaintenanceMoodMutation.isPending}
+											getFormData={getLatestFormData}
+										/>
+									</ErrorBoundary>
+								</div>
+							</div>
+							<div>
 								<FormField
 									control={maintenanceMoodForm.control}
-									name="title"
+									name="template"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
 											<FormLabel className="text-foreground">
-												{__('Title', 'versatile')}
+												{__('Choose Template', 'versatile')}
 											</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
+												<ErrorBoundary
+													fallback={
+														<div className="p-4 border border-red-200 bg-red-50 rounded-md">
+															<p className="text-red-700 text-sm">{__('Template selector failed to load. Please try refreshing the page.', 'versatile')}</p>
+														</div>
+													}
+												>
+													<TemplateSelector
+														selectedTemplate={field.value || 'classic'}
+														onTemplateSelect={field.onChange}
+														type="maintenance"
+														formData={formValues}
+														getFormData={getLatestFormData}
+													/>
+												</ErrorBoundary>
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="subtitle"
-									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
-											<FormControl>
-												<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Optional subtitle under the title.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="description"
-									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
-											<FormControl>
-												<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Provide more details about the maintenance.', 'versatile')}
+													{__('Select a design template for your maintenance page.', 'versatile')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -219,63 +168,165 @@ const MaintenanceSettings = () => {
 									)}
 								/>
 							</div>
-							<div className='w-1/2'>
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="background_image"
-									render={({ field, fieldState }) => (
-										<FormItem className=''>
-											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
-											<FormControl>
-												<MediaUploader
-													value={field.value || ''}
-													onChange={(url, id) => {
-														field.onChange(url);
-														setFormValues(maintenanceMoodForm.getValues());
-													}}
-													buttonText={__('Upload Background Image', 'versatile')}
-													allowedTypes={['image']}
-												/>
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Upload a background image for the maintenance page.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={maintenanceMoodForm.control}
-									name="logo"
-									render={({ field, fieldState }) => (
-										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
-											<FormControl>
-												<MediaUploader
-													value={field.value || ''}
-													onChange={(url, id) => {
-														field.onChange(url);
-														setFormValues(maintenanceMoodForm.getValues());
-													}}
-													buttonText={__('Upload Logo', 'versatile')}
-													allowedTypes={['image']}
-												/>
-											</FormControl>
-											{!fieldState.error &&
-												<FormDescription>
-													{__('Upload a logo to display on the maintenance page.', 'versatile')}
-												</FormDescription>
-											}
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+							<div className='flex gap-10 mt-5'>
+								<div className='w-1/2'>
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="enable_maintenance"
+										render={({ field, fieldState }) => (
+											<FormItem>
+												<div className='flex items-center gap-2'>
+													<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
+														{__('Enable Maintenance Mood', 'versatile')}
+													</FormLabel>
+													<FormControl>
+														<Switch id='enable_maintenance'
+															checked={field.value}
+															onCheckedChange={field.onChange}
+														/>
+													</FormControl>
+												</div>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('This will be displayed as the main heading.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="title"
+										render={({ field, fieldState }) => (
+											<FormItem className='mt-6'>
+												<FormLabel className="text-foreground">
+													{__('Title', 'versatile')}
+												</FormLabel>
+												<FormControl>
+													<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
+												</FormControl>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('This will be displayed as the main heading.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="subtitle"
+										render={({ field, fieldState }) => (
+											<FormItem className='mt-6'>
+												<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
+												<FormControl>
+													<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
+												</FormControl>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('Optional subtitle under the title.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="description"
+										render={({ field, fieldState }) => (
+											<FormItem className='mt-6'>
+												<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
+												<FormControl>
+													<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
+												</FormControl>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('Provide more details about the maintenance.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className='w-1/2'>
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="background_image"
+										render={({ field, fieldState }) => (
+											<FormItem className=''>
+												<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+												<FormControl>
+													<ErrorBoundary
+														fallback={
+															<div className="p-4 border border-red-200 bg-red-50 rounded-md">
+																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile')}</p>
+															</div>
+														}
+													>
+														<MediaUploader
+															value={field.value || ''}
+															onChange={(url, id) => {
+																field.onChange(url);
+																setFormValues(maintenanceMoodForm.getValues());
+															}}
+															buttonText={__('Upload Background Image', 'versatile')}
+															allowedTypes={['image']}
+														/>
+													</ErrorBoundary>
+												</FormControl>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('Upload a background image for the maintenance page.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={maintenanceMoodForm.control}
+										name="logo"
+										render={({ field, fieldState }) => (
+											<FormItem className='mt-6'>
+												<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+												<FormControl>
+													<ErrorBoundary
+														fallback={
+															<div className="p-4 border border-red-200 bg-red-50 rounded-md">
+																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile')}</p>
+															</div>
+														}
+													>
+														<MediaUploader
+															value={field.value || ''}
+															onChange={(url, id) => {
+																field.onChange(url);
+																setFormValues(maintenanceMoodForm.getValues());
+															}}
+															buttonText={__('Upload Logo', 'versatile')}
+															allowedTypes={['image']}
+														/>
+													</ErrorBoundary>
+												</FormControl>
+												{!fieldState.error &&
+													<FormDescription>
+														{__('Upload a logo to display on the maintenance page.', 'versatile')}
+													</FormDescription>
+												}
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
 							</div>
-						</div>
-					</form>
-				</Form>
+						</form>
+					</Form>
+				</ErrorBoundary>
 			}
 		</div>
 	)

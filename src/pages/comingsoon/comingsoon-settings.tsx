@@ -16,10 +16,11 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { PageLoader, ButtonLoader, ComingSoonSettingsSkeleton } from '@/components/loader';
 import MoodSkeleton from '@/components/loader/MoodSkeleton';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
-	const [formValues, setFormValues] = useState<ComingsoonMoodFormValues | null>(null);
+	const [formValues, setFormValues] = useState<ComingsoonMoodFormValues | undefined>(undefined);
 
 	const comingsoonMoodFrom = useForm<ComingsoonMoodFormValues>({
 		resolver: zodResolver(comingsoonMoodFormSchema),
