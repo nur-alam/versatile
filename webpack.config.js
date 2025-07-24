@@ -86,6 +86,7 @@ module.exports = (env, options) => {
 			dest_path: './assets/dist/js',
 			src_files: {
 				'backend-bundle.min': './src/index.tsx',
+				'template-designer.min': './src/pages/TemplateDesigner/index.tsx',
 			},
 		},
 	];

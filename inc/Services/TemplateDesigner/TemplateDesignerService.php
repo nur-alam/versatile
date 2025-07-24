@@ -59,40 +59,18 @@ class TemplateDesignerService {
 	 * @return void
 	 */
 	public function create_database_tables() {
-		global $wpdb;
-
-		$table_name = $wpdb->prefix . 'versatile_custom_templates';
-
-		// Check if table already exists
-		$existing_table = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+		// Use the TemplateDatabase class for table creation
+		$database = new \Versatile\Services\TemplateDesigner\Database\TemplateDatabase();
 		
-		if ( $existing_table !== $table_name ) {
-			$charset_collate = $wpdb->get_charset_collate();
-
-			$sql = "CREATE TABLE $table_name (
-				id bigint(20) NOT NULL AUTO_INCREMENT,
-				name varchar(255) NOT NULL,
-				description text,
-				type enum('maintenance', 'comingsoon', 'both') DEFAULT 'both',
-				template_data longtext NOT NULL,
-				custom_css longtext,
-				settings longtext,
-				is_active tinyint(1) DEFAULT 0,
-				created_by bigint(20),
-				created_at datetime DEFAULT CURRENT_TIMESTAMP,
-				updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-				PRIMARY KEY (id),
-				KEY idx_type (type),
-				KEY idx_active (is_active),
-				KEY idx_created_by (created_by)
-			) $charset_collate;";
-
-			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-			$result = dbDelta( $sql );
+		// Check if table already exists
+		$health_check = $database->check_table_health();
+		
+		if ( ! $health_check['success'] || ! $health_check['data']['table_exists'] ) {
+			$result = $database->create_table();
 			
 			// Log the result for debugging
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Versatile Template Designer: Database table creation result: ' . print_r( $result, true ) );
+				error_log( 'Versatile Template Designer: Database table creation result: ' . ( $result ? 'Success' : 'Failed' ) );
 			}
 		}
 	}
@@ -135,7 +113,48 @@ class TemplateDesignerService {
 			wp_die( __( 'You do not have sufficient permissions to access this page.', 'versatile' ) );
 		}
 
-		echo '<div id="versatile-template-designer-root"></div>';
+		// Get template ID from URL parameters if editing existing template
+		$template_id = isset( $_GET['template_id'] ) ? sanitize_text_field( $_GET['template_id'] ) : '';
+		$mode = isset( $_GET['mode'] ) ? sanitize_text_field( $_GET['mode'] ) : 'maintenance';
+
+		// Validate mode
+		if ( ! in_array( $mode, array( 'maintenance', 'comingsoon' ), true ) ) {
+			$mode = 'maintenance';
+		}
+
+		?>
+		<div class="wrap">
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Template Designer', 'versatile' ); ?></h1>
+			<?php if ( $template_id ) : ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=versatile-template-designer' ) ); ?>" class="page-title-action">
+					<?php esc_html_e( 'Add New', 'versatile' ); ?>
+				</a>
+			<?php endif; ?>
+			<hr class="wp-header-end">
+			
+			<div 
+				id="versatile-template-designer-root" 
+				data-template-id="<?php echo esc_attr( $template_id ); ?>"
+				data-mode="<?php echo esc_attr( $mode ); ?>"
+				style="margin-top: 20px;"
+			>
+				<!-- Loading state -->
+				<div style="display: flex; align-items: center; justify-content: center; min-height: 400px; background: #f9f9f9; border-radius: 8px;">
+					<div style="text-align: center;">
+						<div style="width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+						<p style="color: #6b7280; margin: 0;"><?php esc_html_e( 'Loading Template Designer...', 'versatile' ); ?></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<style>
+			@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -158,31 +177,66 @@ class TemplateDesignerService {
 		// Enqueue WordPress media library
 		wp_enqueue_media();
 
-		// Enqueue template designer assets (will be built later)
+		// Enqueue template designer assets
 		wp_enqueue_script(
 			'versatile-template-designer',
-			VERSATILE_PLUGIN_URL . 'assets/dist/js/template-designer.js',
+			VERSATILE_PLUGIN_URL . 'assets/dist/js/template-designer.min.js',
 			array( 'wp-element', 'wp-i18n', 'wp-api-fetch' ),
 			VERSATILE_VERSION,
 			true
 		);
 
+		// Enqueue Tailwind CSS for the template designer
 		wp_enqueue_style(
 			'versatile-template-designer',
-			VERSATILE_PLUGIN_URL . 'assets/dist/css/template-designer.css',
+			VERSATILE_PLUGIN_URL . 'assets/dist/css/backend-bundle.min.css',
 			array(),
 			VERSATILE_VERSION
 		);
+
+		// Add inline styles for the template designer container
+		$custom_css = '
+			#versatile-template-designer-root {
+				min-height: calc(100vh - 160px);
+				background: #f0f0f1;
+				border-radius: 8px;
+				overflow: hidden;
+			}
+			.wrap h1 {
+				margin-bottom: 0;
+			}
+		';
+		wp_add_inline_style( 'versatile-template-designer', $custom_css );
 
 		// Localize script with necessary data
 		wp_localize_script(
 			'versatile-template-designer',
 			'versatileTemplateDesigner',
 			array(
-				'apiUrl'    => rest_url( 'versatile/v1/' ),
-				'nonce'     => wp_create_nonce( 'wp_rest' ),
-				'adminUrl'  => admin_url(),
-				'pluginUrl' => VERSATILE_PLUGIN_URL,
+				'apiUrl'       => rest_url( 'versatile/v1/' ),
+				'nonce'        => wp_create_nonce( 'wp_rest' ),
+				'adminUrl'     => admin_url(),
+				'pluginUrl'    => VERSATILE_PLUGIN_URL,
+				'assetsUrl'    => VERSATILE_PLUGIN_URL . 'assets/',
+				'uploadsUrl'   => wp_upload_dir()['baseurl'],
+				'currentUser'  => wp_get_current_user()->display_name,
+				'capabilities' => array(
+					'manage_options' => current_user_can( 'manage_options' ),
+					'upload_files'   => current_user_can( 'upload_files' ),
+				),
+				'i18n'         => array(
+					'save'           => __( 'Save', 'versatile' ),
+					'preview'        => __( 'Preview', 'versatile' ),
+					'undo'           => __( 'Undo', 'versatile' ),
+					'redo'           => __( 'Redo', 'versatile' ),
+					'delete'         => __( 'Delete', 'versatile' ),
+					'duplicate'      => __( 'Duplicate', 'versatile' ),
+					'loading'        => __( 'Loading...', 'versatile' ),
+					'saving'         => __( 'Saving...', 'versatile' ),
+					'saved'          => __( 'Saved!', 'versatile' ),
+					'error'          => __( 'Error', 'versatile' ),
+					'success'        => __( 'Success', 'versatile' ),
+				),
 			)
 		);
 	}
