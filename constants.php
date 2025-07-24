@@ -69,24 +69,30 @@ define( 'VERSATILE_SERVICE_LIST', 'versatile_service_list' );
 define(
 	'VERSATILE_DEFAULT_SERVICE_LIST',
 	array(
-		'troubleshoot' => array(
+		'troubleshoot'      => array(
 			'label'       => 'Troubleshoot',
 			'enable'      => true,
 			'path'        => 'troubleshoot',
 			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 			// 'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 		),
-		'maintenance'  => array(
+		'maintenance'       => array(
 			'label'       => 'Maintenance Mode',
 			'enable'      => true,
 			'path'        => 'maintenance',
 			'description' => 'Display a custom maintenance page to visitors while you update your site.',
 		),
-		'comingsoon'   => array(
+		'comingsoon'        => array(
 			'label'       => 'Coming Soon',
 			'enable'      => true,
 			'path'        => 'comingsoon',
 			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
+		),
+		'template_designer' => array(
+			'label'       => 'Template Designer',
+			'enable'      => true,
+			'path'        => 'template-designer',
+			'description' => 'Create and customize maintenance and coming soon page templates with a visual drag-and-drop editor.',
 		),
 	)
 );

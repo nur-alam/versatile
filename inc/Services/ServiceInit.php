@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
+use Versatile\Services\TemplateDesigner\TemplateDesignerService;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -51,9 +52,29 @@ class ServiceInit {
 			new ComingsoonMood();
 		}
 
+		// Template Designer service - always initialize in admin area
+		if ( is_admin() ) {
+			add_action( 'init', array( $this, 'init_template_designer_service' ) );
+		}
+
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
 		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
+	}
+
+	/**
+	 * Initialize Template Designer service when WordPress is fully loaded
+	 *
+	 * @return void
+	 */
+	public function init_template_designer_service() {
+		// Log for debugging
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'Versatile: Initializing Template Designer Service' );
+		}
+		
+		// Initialize the service - capability checks are handled within the service methods
+		new TemplateDesignerService();
 	}
 
 	/**
