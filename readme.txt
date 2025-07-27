@@ -1,4 +1,4 @@
-=== Versatile - Complete WordPress Toolkit ===
+=== Versatile - Multipurpose WordPress Toolkit ===
 Contributors: nurwp
 Tags: maintenance mode, coming soon, troubleshoot, plugin management, IP control, WordPress toolkit
 Requires at least: 5.3
@@ -24,7 +24,7 @@ A comprehensive WordPress toolkit featuring maintenance mode, coming soon pages,
 * Live simulation to preview changes before applying
 
 **Maintenance Mode**
-* Professional maintenance pagess
+* Professional maintenance pages
 * Upload custom background images and logos
 * Responsive design that works on all devices
 * Easy toggle to enable/disable maintenance mode
@@ -98,11 +98,6 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 * React-based modern admin interface
 * Mobile-responsive templates
 * REST API support
-
-== Upgrade Notice ==
-
-= 1.0.0 =
-First stable release of Versatile - your complete WordPress toolkit for maintenance, coming soon pages, and troubleshooting.
 
 == Technical Requirements ==
 
