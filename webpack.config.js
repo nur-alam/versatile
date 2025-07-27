@@ -85,7 +85,7 @@ module.exports = (env, options) => {
 		{
 			dest_path: './assets/dist/js',
 			src_files: {
-				'backend-bundle.min': './src/index.tsx',
+				'versatile-js.min': './src/index.tsx',
 			},
 		},
 	];
