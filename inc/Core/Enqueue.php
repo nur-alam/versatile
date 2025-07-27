@@ -42,30 +42,36 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_admin_scripts( $page ): void {
-		$plugin_data             = Versatile::plugin_data();
-		$versatile_style_bundle  = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
-		$versatile_admin_bundle  = $plugin_data['plugin_url'] . 'assets/dist/js/backend-bundle.min.js';
+		$plugin_data            = Versatile::plugin_data();
+		$versatile_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
+		$versatile_js_bundle    = $plugin_data['plugin_url'] . 'assets/dist/js/versatile-js.min.js';
 
 		if ( 'toplevel_page_versatile' === $page ) {
 			// Enqueue WordPress media library
 			wp_enqueue_media();
-			
-			wp_enqueue_style(
+
+			// Register styles and scripts first
+			wp_register_style(
 				'versatile-style',
 				$versatile_style_bundle,
 				array(),
 				VERSATILE_VERSION,
 				'all'
 			);
-			wp_enqueue_script(
-				'versatile-admin',
-				$versatile_admin_bundle,
+			wp_register_script(
+				'versatile-js',
+				$versatile_js_bundle,
 				array( 'wp-element', 'wp-i18n' ),
 				VERSATILE_VERSION,
 				true
 			);
+
+			// Then enqueue them
+			wp_enqueue_style( 'versatile-style' );
+			wp_enqueue_script( 'versatile-js' );
+
 			wp_add_inline_script(
-				'versatile-admin',
+				'versatile-js',
 				'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
 				'before'
 			);
