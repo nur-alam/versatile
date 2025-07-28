@@ -39,7 +39,7 @@ const SpinnerLoader = ({
   showText = false,
   speed = 'normal'
 }: SpinnerLoaderProps) => {
-  const loadingText = text || __('Loading', 'versatile');
+  const loadingText = text || __('Loading', 'versatile-toolkit');
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

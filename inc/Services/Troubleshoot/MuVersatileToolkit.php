@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: VersatileMu
+ * Plugin Name: Versatile Toolkit Mu
  * Description: Conditionally disabled themes or plugins on your site for a given session, used to rule out conflicts during troubleshooting.
  * Version: 1.0.0
  *
- * @package VersatileMu
+ * @package VersatileToolkitMu
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * VersatileMu description
+ * VersatileToolkitMu description
  */
-class VersatileMu {
+class VersatileToolkitMu {
 	/**
-	 * VersatileMu constructor.
+	 * VersatileToolkitMu constructor.
 	 */
 	public function __construct() {
 		add_filter( 'option_active_plugins', array( $this, 'disable_plugins' ) );
@@ -94,4 +94,4 @@ class VersatileMu {
 	}
 }
 
-new VersatileMu();
+new VersatileToolkitMu();

@@ -24,7 +24,7 @@ const InlineLoader = ({
   text,
   showText = true
 }: LoaderProps) => {
-  const loadingText = text || __('Loading', 'versatile');
+  const loadingText = text || __('Loading', 'versatile-toolkit');
 
   return (
     <div className={cn(

@@ -44,7 +44,7 @@ function versatile_verify_request( $check_auth = true ) {
 	if ( $check_auth && ! is_user_logged_in() ) {
 		return array(
 			'success' => false,
-			'message' => __( 'Access denied! Please login to access this feature.', 'versatile' ),
+			'message' => __( 'Access denied! Please login to access this feature.', 'versatile-toolkit' ),
 			'code'    => 403,
 		);
 	}
@@ -62,7 +62,7 @@ function versatile_verify_request( $check_auth = true ) {
 	) {
 		return array(
 			'success' => false,
-			'message' => __( 'Invalid security token!', 'versatile' ),
+			'message' => __( 'Invalid security token!', 'versatile-toolkit' ),
 			'code'    => 400,
 		);
 	}
@@ -73,7 +73,7 @@ function versatile_verify_request( $check_auth = true ) {
 	// Return success with sanitized POST data
 	return array(
 		'success' => true,
-		'message' => __( 'Verification successful.', 'versatile' ),
+		'message' => __( 'Verification successful.', 'versatile-toolkit' ),
 		'code'    => 200,
 		'data'    => UtilityHelper::sanitize_array( $_REQUEST ),
 	);

@@ -209,18 +209,18 @@ class TroubleshootInit {
 	 */
 	public function versatile_create_mu_plugin() {
 		try {
-			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/mu-versatile.php' ) ) {
+			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/MuVersatileToolkit.php' ) ) {
 				return;
 			}
-			$template_file  = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuTemplate.php';
+			$template_file  = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuVersatileToolkit.php';
 			$mu_plugin_dir  = WP_CONTENT_DIR . '/mu-plugins';
-			$mu_plugin_file = $mu_plugin_dir . '/mu-versatile.php';
+			$mu_plugin_file = $mu_plugin_dir . '/MuVersatileToolkit.php';
 
 			if ( ! file_exists( $mu_plugin_dir ) ) {
 				wp_mkdir_p( $mu_plugin_dir );
 			}
 
-			if ( file_exists( $template_file ) ) {
+			if ( ! file_exists( $mu_plugin_file ) ) {
 				copy( $template_file, $mu_plugin_file );
 			}
 		} catch ( \Throwable $th ) {

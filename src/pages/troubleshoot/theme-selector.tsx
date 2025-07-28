@@ -52,7 +52,7 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 							{selectedThemeData ? (
 								<span className="font-medium">{selectedThemeData.label}</span>
 							) : (
-								<span className="text-muted-foreground">{__('Select a theme...', 'versatile')}</span>
+								<span className="text-muted-foreground">{__('Select a theme...', 'versatile-toolkit')}</span>
 							)}
 						</div>
 						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />

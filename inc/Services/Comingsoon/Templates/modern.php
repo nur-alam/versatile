@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			<?php if ( $background_image ) : ?>
-			background-image: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%), url('<?php echo $background_image; ?>');
+			background-image: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%), url('<?php echo esc_url( $background_image ); ?>');
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;

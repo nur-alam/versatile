@@ -86,13 +86,13 @@ const MaintenanceSettings = () => {
 					}}
 					fallback={
 						<div className="p-6 border border-red-200 bg-red-50 rounded-md">
-							<h3 className="text-lg font-medium text-red-700 mb-2">{__('Form Error', 'versatile')}</h3>
-							<p className="text-red-600">{__('There was a problem loading the maintenance settings form. Please try refreshing the page or contact support.', 'versatile')}</p>
+							<h3 className="text-lg font-medium text-red-700 mb-2">{__('Form Error', 'versatile-toolkit')}</h3>
+							<p className="text-red-600">{__('There was a problem loading the maintenance settings form. Please try refreshing the page or contact support.', 'versatile-toolkit')}</p>
 							<Button
 								className="mt-4"
 								onClick={() => window.location.reload()}
 							>
-								{__('Refresh Page', 'versatile')}
+								{__('Refresh Page', 'versatile-toolkit')}
 							</Button>
 						</div>
 					}
@@ -106,7 +106,7 @@ const MaintenanceSettings = () => {
 									<Link to={'/'}>
 										<ArrowLeft />
 									</Link>
-									{__('Maintenance Mood', 'versatile')}
+									{__('Maintenance Mood', 'versatile-toolkit')}
 								</h2>
 								<div className='flex gap-5'>
 									<Button
@@ -114,15 +114,15 @@ const MaintenanceSettings = () => {
 										disabled={updateMaintenanceMoodMutation.isPending}
 									>
 										{updateMaintenanceMoodMutation.isPending
-											? __('Saving...', 'versatile')
-											: __('Save Settings', 'versatile')
+											? __('Saving...', 'versatile-toolkit')
+											: __('Save Settings', 'versatile-toolkit')
 										}
 									</Button>
 
 									<ErrorBoundary
 										fallback={
 											<Button variant="outline" disabled>
-												{__('Preview Unavailable', 'versatile')}
+												{__('Preview Unavailable', 'versatile-toolkit')}
 											</Button>
 										}
 									>
@@ -141,13 +141,13 @@ const MaintenanceSettings = () => {
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
 											<FormLabel className="text-foreground">
-												{__('Choose Template', 'versatile')}
+												{__('Choose Template', 'versatile-toolkit')}
 											</FormLabel>
 											<FormControl>
 												<ErrorBoundary
 													fallback={
 														<div className="p-4 border border-red-200 bg-red-50 rounded-md">
-															<p className="text-red-700 text-sm">{__('Template selector failed to load. Please try refreshing the page.', 'versatile')}</p>
+															<p className="text-red-700 text-sm">{__('Template selector failed to load. Please try refreshing the page.', 'versatile-toolkit')}</p>
 														</div>
 													}
 												>
@@ -162,7 +162,7 @@ const MaintenanceSettings = () => {
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Select a design template for your maintenance page.', 'versatile')}
+													{__('Select a design template for your maintenance page.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -179,7 +179,7 @@ const MaintenanceSettings = () => {
 											<FormItem>
 												<div className='flex items-center gap-2'>
 													<FormLabel className="text-foreground" htmlFor='enable_maintenance'>
-														{__('Enable Maintenance Mood', 'versatile')}
+														{__('Enable Maintenance Mood', 'versatile-toolkit')}
 													</FormLabel>
 													<FormControl>
 														<Switch id='enable_maintenance'
@@ -190,7 +190,7 @@ const MaintenanceSettings = () => {
 												</div>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('Enable or disable maintenance mode for your site.', 'versatile')}
+														{__('Enable or disable maintenance mode for your site.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -205,7 +205,7 @@ const MaintenanceSettings = () => {
 											<FormItem className='mt-6'>
 												<div className='flex items-center gap-2'>
 													<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
-														{__('Show Only for Subscribers', 'versatile')}
+														{__('Show Only for Subscribers', 'versatile-toolkit')}
 													</FormLabel>
 													<FormControl>
 														<Switch id='show_subscribers_only'
@@ -216,7 +216,7 @@ const MaintenanceSettings = () => {
 												</div>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('When enabled, maintenance mode will only be shown to subscribers. Other users will see the normal site.', 'versatile')}
+														{__('When enabled, maintenance mode will only be shown to subscribers. Other users will see the normal site.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -230,14 +230,14 @@ const MaintenanceSettings = () => {
 										render={({ field, fieldState }) => (
 											<FormItem className='mt-6'>
 												<FormLabel className="text-foreground">
-													{__('Title', 'versatile')}
+													{__('Title', 'versatile-toolkit')}
 												</FormLabel>
 												<FormControl>
-													<Input placeholder={__('Enter maintenance title', 'versatile')} {...field} />
+													<Input placeholder={__('Enter maintenance title', 'versatile-toolkit')} {...field} />
 												</FormControl>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('This will be displayed as the main heading.', 'versatile')}
+														{__('This will be displayed as the main heading.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -249,13 +249,13 @@ const MaintenanceSettings = () => {
 										name="subtitle"
 										render={({ field, fieldState }) => (
 											<FormItem className='mt-6'>
-												<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
+												<FormLabel className="text-foreground">{__('Subtitle', 'versatile-toolkit')}</FormLabel>
 												<FormControl>
-													<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
+													<Input placeholder={__('Enter subtitle', 'versatile-toolkit')} {...field} />
 												</FormControl>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('Optional subtitle under the title.', 'versatile')}
+														{__('Optional subtitle under the title.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -267,13 +267,13 @@ const MaintenanceSettings = () => {
 										name="description"
 										render={({ field, fieldState }) => (
 											<FormItem className='mt-6'>
-												<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
+												<FormLabel className="text-foreground">{__('Description', 'versatile-toolkit')}</FormLabel>
 												<FormControl>
-													<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
+													<Textarea placeholder={__('Describe what is happening...', 'versatile-toolkit')} {...field} />
 												</FormControl>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('Provide more details about the maintenance.', 'versatile')}
+														{__('Provide more details about the maintenance.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -287,12 +287,12 @@ const MaintenanceSettings = () => {
 										name="background_image"
 										render={({ field, fieldState }) => (
 											<FormItem className=''>
-												<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+												<FormLabel className="text-foreground">{__('Background Image', 'versatile-toolkit')}</FormLabel>
 												<FormControl>
 													<ErrorBoundary
 														fallback={
 															<div className="p-4 border border-red-200 bg-red-50 rounded-md">
-																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile')}</p>
+																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile-toolkit')}</p>
 															</div>
 														}
 													>
@@ -302,14 +302,14 @@ const MaintenanceSettings = () => {
 																field.onChange(url);
 																setFormValues(maintenanceMoodForm.getValues());
 															}}
-															buttonText={__('Upload Background Image', 'versatile')}
+															buttonText={__('Upload Background Image', 'versatile-toolkit')}
 															allowedTypes={['image']}
 														/>
 													</ErrorBoundary>
 												</FormControl>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('Upload a background image for the maintenance page.', 'versatile')}
+														{__('Upload a background image for the maintenance page.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />
@@ -321,12 +321,12 @@ const MaintenanceSettings = () => {
 										name="logo"
 										render={({ field, fieldState }) => (
 											<FormItem className='mt-6'>
-												<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+												<FormLabel className="text-foreground">{__('Logo', 'versatile-toolkit')}</FormLabel>
 												<FormControl>
 													<ErrorBoundary
 														fallback={
 															<div className="p-4 border border-red-200 bg-red-50 rounded-md">
-																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile')}</p>
+																<p className="text-red-700 text-sm">{__('Media uploader failed to load. Please try refreshing the page.', 'versatile-toolkit')}</p>
 															</div>
 														}
 													>
@@ -336,14 +336,14 @@ const MaintenanceSettings = () => {
 																field.onChange(url);
 																setFormValues(maintenanceMoodForm.getValues());
 															}}
-															buttonText={__('Upload Logo', 'versatile')}
+															buttonText={__('Upload Logo', 'versatile-toolkit')}
 															allowedTypes={['image']}
 														/>
 													</ErrorBoundary>
 												</FormControl>
 												{!fieldState.error &&
 													<FormDescription>
-														{__('Upload a logo to display on the maintenance page.', 'versatile')}
+														{__('Upload a logo to display on the maintenance page.', 'versatile-toolkit')}
 													</FormDescription>
 												}
 												<FormMessage />

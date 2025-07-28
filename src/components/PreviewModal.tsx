@@ -53,8 +53,8 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
       >
         <Eye size={16} />
         {type === 'maintenance'
-          ? __('Preview', 'versatile')
-          : __('Preview', 'versatile')
+          ? __('Preview', 'versatile-toolkit') 
+          : __('Preview', 'versatile-toolkit')
         }
       </Button>
 
@@ -68,8 +68,8 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
                 {type === 'maintenance'
-                  ? __('Maintenance Page Preview', 'versatile')
-                  : __('Coming Soon Page Preview', 'versatile')
+                  ? __('Maintenance Page Preview', 'versatile-toolkit') 
+                  : __('Coming Soon Page Preview', 'versatile-toolkit')
                 }
               </h3>
               <Button
@@ -91,7 +91,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
                 <iframe
                   src={getPreviewUrl()}
                   className="w-full h-full border-0"
-                  title={type === 'maintenance' ? __('Maintenance Preview', 'versatile') : __('Coming Soon Preview', 'versatile')}
+                  title={type === 'maintenance' ? __('Maintenance Preview', 'versatile-toolkit') : __('Coming Soon Preview', 'versatile-toolkit')}
                   onLoad={() => setIsLoading(false)}
                   style={{ display: isLoading ? 'none' : 'block' }}
                 />
@@ -102,10 +102,10 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             <div className="p-4 border-t bg-gray-50 rounded-b-lg">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">
-                  {__('This is how your page will look to visitors.', 'versatile')}
+                  {__('This is how your page will look to visitors.', 'versatile-toolkit')} 
                 </p>
                 <Button onClick={handleClose} variant="outline">
-                  {__('Close Preview', 'versatile')}
+                  {__('Close Preview', 'versatile-toolkit')}
                 </Button>
               </div>
             </div>

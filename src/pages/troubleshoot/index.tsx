@@ -73,17 +73,17 @@ const TroubleShoot = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Troubleshoot Settings', 'versatile')}
+				{__('Troubleshoot Settings', 'versatile-toolkit')}
 			</h2>
 			
 			{/* Plugin Disable Section */}
 			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'versatile')}</p>
+				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'versatile-toolkit')}</p>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile')} /> : <Controller
+							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> : <Controller
 								name='chosenPlugins'
 								control={control}
 								render={({ field }) => (
@@ -102,7 +102,7 @@ const TroubleShoot = () => {
 					</div>
 					<div className='min-h-[64px] mt-2'>
 						{
-							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile')} /> :
+							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile-toolkit')} /> :
 								<Controller
 									name='ipTags'
 									control={control}
@@ -123,9 +123,9 @@ const TroubleShoot = () => {
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
 						<ButtonLoader 
 							isLoading={disablePluginMutation.isPending} 
-							loadingText={__('Saving', 'versatile')}
+							loadingText={__('Saving', 'versatile-toolkit')}
 						>
-							{__('Save List', 'versatile')}
+							{__('Save List', 'versatile-toolkit')}
 						</ButtonLoader>
 					</Button>
 				</form>
@@ -133,12 +133,12 @@ const TroubleShoot = () => {
 
 			{/* Theme Selector Section */}
 			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile')}</p>
+				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
 				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile')} /> : <Controller
+							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile-toolkit')} /> : <Controller
 								name='activeTheme'
 								control={themeControl}
 								render={({ field }) => (
@@ -158,9 +158,9 @@ const TroubleShoot = () => {
 					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
 						<ButtonLoader 
 							isLoading={saveActiveThemeMutation.isPending} 
-							loadingText={__('Activating', 'versatile')}
+							loadingText={__('Activating', 'versatile-toolkit')}
 						>
-							{__('Activate Theme', 'versatile')}
+							{__('Activate Theme', 'versatile-toolkit')}
 						</ButtonLoader>
 					</Button>
 				</form>

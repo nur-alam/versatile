@@ -48,7 +48,7 @@ class UtilityHelper {
 	/**
 	 * Sanitize get value through callable function
 	 *
-	 * @param string   $key required $_GET key.
+	 * @param string        $key required $_GET key.
 	 * @param callable|null $callback callable WP sanitize/esc func.
 	 *
 	 * @return string
@@ -68,7 +68,7 @@ class UtilityHelper {
 	/**
 	 * Sanitize post value through callable function
 	 *
-	 * @param string   $key required $_POST key.
+	 * @param string        $key required $_POST key.
 	 * @param callable|null $callback callable WP sanitize/esc func.
 	 *
 	 * @return string

@@ -11,8 +11,6 @@
 namespace Versatile\Core;
 
 use Versatile;
-use Versatile\Frontend\CustomTemplate;
-use Versatile\Helpers\UtilityHelper;
 use Versatile\RestAPI\Routes;
 
 /**
@@ -135,6 +133,6 @@ class Enqueue {
 	 */
 	public static function script_text_domain() {
 		$plugin_data = Versatile::plugin_data();
-		wp_set_script_translations( 'Versatile-backend', $plugin_data['plugin_url'] . 'assets/languages/' );
+		wp_set_script_translations( 'versatile-js', $plugin_data['plugin_url'] . 'assets/languages/' );
 	}
 }

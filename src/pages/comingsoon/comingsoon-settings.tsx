@@ -87,7 +87,7 @@ const ComingsoonMode = () => {
 								<Link to={'/'}>
 									<ArrowLeft />
 								</Link>
-								{__('Coming Soon Mode', 'versatile')}
+								{__('Coming Soon Mode', 'versatile-toolkit')}
 							</h2>
 							<div className='flex gap-5'>
 								<Button
@@ -96,9 +96,9 @@ const ComingsoonMode = () => {
 								>
 									<ButtonLoader
 										isLoading={updateComingsoonMoodMutation.isPending}
-										loadingText={__('Saving', 'versatile')}
+										loadingText={__('Saving', 'versatile-toolkit')} 
 									>
-										{__('Save Settings', 'versatile')}
+										{__('Save Settings', 'versatile-toolkit')}
 									</ButtonLoader>
 								</Button>
 
@@ -116,7 +116,7 @@ const ComingsoonMode = () => {
 								render={({ field, fieldState }) => (
 									<FormItem className='mt-6'>
 										<FormLabel className="text-foreground">
-											{__('Choose Template', 'versatile')}
+											{__('Choose Template', 'versatile-toolkit')}
 										</FormLabel>
 										<FormControl>
 											<TemplateSelector
@@ -129,7 +129,7 @@ const ComingsoonMode = () => {
 										</FormControl>
 										{!fieldState.error &&
 											<FormDescription>
-												{__('Select a design template for your coming soon page.', 'versatile')}
+												{__('Select a design template for your coming soon page.', 'versatile-toolkit')}
 											</FormDescription>
 										}
 										<FormMessage />
@@ -146,7 +146,7 @@ const ComingsoonMode = () => {
 										<FormItem>
 											<div className='flex items-center gap-2'>
 												<FormLabel className="text-foreground" htmlFor='enable_comingsoon'>
-													{__('Enable Coming Soon Mode', 'versatile')}
+													{__('Enable Comingsoon Mood', 'versatile-toolkit')}
 												</FormLabel>
 												<FormControl>
 													<Switch id='enable_comingsoon'
@@ -157,7 +157,8 @@ const ComingsoonMode = () => {
 											</div>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Enable the coming soon page for your website.', 'versatile')}
+													{__('This will be displayed as the main heading.', 'versatile-toolkit')}
+													{__('Enable the coming soon page for your website.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -172,7 +173,7 @@ const ComingsoonMode = () => {
 										<FormItem className='mt-6'>
 											<div className='flex items-center gap-2'>
 												<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
-													{__('Show Only for Subscribers', 'versatile')}
+													{__('Show Only for Subscribers', 'versatile-toolkit')}
 												</FormLabel>
 												<FormControl>
 													<Switch id='show_subscribers_only'
@@ -183,7 +184,7 @@ const ComingsoonMode = () => {
 											</div>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('When enabled, coming soon mode will only be shown to subscribers. Other users will see the normal site.', 'versatile')}
+													{__('When enabled, coming soon mode will only be shown to subscribers. Other users will see the normal site.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -197,14 +198,14 @@ const ComingsoonMode = () => {
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
 											<FormLabel className="text-foreground">
-												{__('Title', 'versatile')}
+												{__('Title', 'versatile-toolkit')}
 											</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter coming soon title', 'versatile')} {...field} />
+												<Input placeholder={__('Enter coming soon title', 'versatile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
+													{__('This will be displayed as the main heading.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -216,13 +217,13 @@ const ComingsoonMode = () => {
 									name="subtitle"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Subtitle', 'versatile-toolkit')}</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
+												<Input placeholder={__('Enter subtitle', 'versatile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Optional subtitle under the title.', 'versatile')}
+													{__('Optional subtitle under the title.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -234,13 +235,13 @@ const ComingsoonMode = () => {
 									name="description"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Description', 'versatile-toolkit')}</FormLabel>
 											<FormControl>
-												<Textarea placeholder={__('Tell visitors what to expect...', 'versatile')} {...field} />
+												<Textarea placeholder={__('Describe what is happening...', 'versatile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Provide more details about your upcoming launch.', 'versatile')}
+													{__('Provide more details about the coming soon.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -253,8 +254,8 @@ const ComingsoonMode = () => {
 									control={comingsoonMoodFrom.control}
 									name="background_image"
 									render={({ field, fieldState }) => (
-										<FormItem className=''>
-											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+										<FormItem className='mt-6'>
+											<FormLabel className="text-foreground">{__('Background Image', 'versatile-toolkit')}</FormLabel>
 											<FormControl>
 												<MediaUploader
 													value={field.value || ''}
@@ -262,13 +263,13 @@ const ComingsoonMode = () => {
 														field.onChange(url);
 														setFormValues(comingsoonMoodFrom.getValues());
 													}}
-													buttonText={__('Upload Background Image', 'versatile')}
+													buttonText={__('Upload Background Image', 'versatile-toolkit')}
 													allowedTypes={['image']}
 												/>
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Upload a background image for the coming soon page.', 'versatile')}
+													{__('Upload a background image for the coming soon page.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -281,7 +282,7 @@ const ComingsoonMode = () => {
 									name="logo"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Logo', 'versatile-toolkit')}</FormLabel>
 											<FormControl>
 												<MediaUploader
 													value={field.value || ''}
@@ -289,13 +290,13 @@ const ComingsoonMode = () => {
 														field.onChange(url);
 														setFormValues(comingsoonMoodFrom.getValues());
 													}}
-													buttonText={__('Upload Logo', 'versatile')}
+													buttonText={__('Upload Logo', 'versatile-toolkit')}
 													allowedTypes={['image']}
 												/>
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Upload a logo to display on the coming soon page.', 'versatile')}
+													{__('Upload a logo to display on the coming soon page.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />

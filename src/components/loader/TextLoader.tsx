@@ -28,7 +28,7 @@ const TextLoader = ({
   text,
   dots = true
 }: TextLoaderProps) => {
-  const loadingText = text || __('Loading', 'versatile');
+  const loadingText = text || __('Loading', 'versatile-toolkit');
   const displayText = dots ? `${loadingText}...` : loadingText;
 
   return (

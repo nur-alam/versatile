@@ -16,7 +16,7 @@ const PageLoader = ({
   fullScreen = false, 
   className 
 }: PageLoaderProps) => {
-  const loadingText = text || __('Loading', 'versatile');
+  const loadingText = text || __('Loading', 'versatile-toolkit');
 
   const containerClasses = fullScreen 
     ? 'fixed inset-0 bg-background/80 backdrop-blur-sm z-50' 

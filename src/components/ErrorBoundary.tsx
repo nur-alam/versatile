@@ -92,12 +92,12 @@ class ErrorBoundary extends Component<Props, State> {
               <AlertTriangle className="h-12 w-12 text-red-500" />
             </div>
             <CardTitle className="text-red-700">
-              {__('Something went wrong', 'versatile')}
+              {__('Something went wrong', 'versatile-toolkit')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-center text-gray-600">
-              {__('We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.', 'versatile')}
+              {__('We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.', 'versatile-toolkit')}
             </p>
             
             <div className="flex justify-center gap-3">
@@ -106,7 +106,7 @@ class ErrorBoundary extends Component<Props, State> {
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                {__('Try Again', 'versatile')}
+                {__('Try Again', 'versatile-toolkit')}
               </Button>
               
               {this.props.showDetails !== false && (
@@ -117,8 +117,8 @@ class ErrorBoundary extends Component<Props, State> {
                 >
                   <Bug className="h-4 w-4" />
                   {this.state.showErrorDetails 
-                    ? __('Hide Details', 'versatile')
-                    : __('Show Details', 'versatile')
+                    ? __('Hide Details', 'versatile-toolkit')
+                    : __('Show Details', 'versatile-toolkit')
                   }
                 </Button>
               )}
@@ -127,18 +127,18 @@ class ErrorBoundary extends Component<Props, State> {
             {this.state.showErrorDetails && this.state.error && (
               <div className="mt-6 p-4 bg-gray-100 rounded-lg border">
                 <h4 className="font-semibold text-sm mb-2 text-gray-700">
-                  {__('Error Details:', 'versatile')}
+                  {__('Error Details:', 'versatile-toolkit')}
                 </h4>
                 <div className="text-xs font-mono text-gray-600 space-y-2">
                   <div>
-                    <strong>{__('Message:', 'versatile')}</strong>
+                    <strong>{__('Message:', 'versatile-toolkit')}</strong>
                     <pre className="mt-1 whitespace-pre-wrap break-words">
                       {this.state.error.message}
                     </pre>
                   </div>
                   {this.state.error.stack && (
                     <div>
-                      <strong>{__('Stack Trace:', 'versatile')}</strong>
+                      <strong>{__('Stack Trace:', 'versatile-toolkit')}</strong>
                       <pre className="mt-1 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
                         {this.state.error.stack}
                       </pre>
@@ -146,7 +146,7 @@ class ErrorBoundary extends Component<Props, State> {
                   )}
                   {this.state.errorInfo?.componentStack && (
                     <div>
-                      <strong>{__('Component Stack:', 'versatile')}</strong>
+                      <strong>{__('Component Stack:', 'versatile-toolkit')}</strong>
                       <pre className="mt-1 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
                         {this.state.errorInfo.componentStack}
                       </pre>

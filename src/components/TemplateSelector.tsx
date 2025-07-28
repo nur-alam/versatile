@@ -36,33 +36,33 @@ interface TemplateSelectorProps<T extends TemplateType> {
 const templates: Template[] = [
   {
     id: 'classic',
-    name: __('Classic', 'versatile'),
-    description: __('Clean and professional design with centered content', 'versatile')
+    name: __('Classic', 'versatile-toolkit'),
+    description: __('Clean and professional design with centered content', 'versatile-toolkit')
   },
   {
     id: 'modern',
-    name: __('Modern', 'versatile'),
-    description: __('Sleek design with gradient backgrounds and modern typography', 'versatile')
+    name: __('Modern', 'versatile-toolkit'),
+    description: __('Sleek design with gradient backgrounds and modern typography', 'versatile-toolkit')
   },
   {
     id: 'minimal',
-    name: __('Minimal', 'versatile'),
-    description: __('Simple and elegant with focus on content', 'versatile')
+    name: __('Minimal', 'versatile-toolkit'),
+    description: __('Simple and elegant with focus on content', 'versatile-toolkit')
   },
   {
     id: 'creative',
-    name: __('Creative', 'versatile'),
-    description: __('Bold design with creative layouts and animations', 'versatile')
+    name: __('Creative', 'versatile-toolkit'),
+    description: __('Bold design with creative layouts and animations', 'versatile-toolkit')
   },
   {
     id: 'corporate',
-    name: __('Corporate', 'versatile'),
-    description: __('Professional business design with elegant typography', 'versatile')
+    name: __('Corporate', 'versatile-toolkit'),
+    description: __('Professional business design with elegant typography', 'versatile-toolkit')
   },
   {
     id: 'neon',
-    name: __('Neon', 'versatile'),
-    description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile')
+    name: __('Neon', 'versatile-toolkit'),
+    description: __('Cyberpunk-inspired design with glowing neon effects', 'versatile-toolkit')
   }
 ];
 
@@ -135,10 +135,10 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
               <Card className="cursor-pointer flex-shrink-0 w-64 border-red-200 bg-red-50">
                 <CardContent className="p-4">
                   <div className="w-full h-32 rounded-md bg-red-100 flex items-center justify-center">
-                    <p className="text-red-600 text-sm">{__('Template Error', 'versatile')}</p>
+                    <p className="text-red-600 text-sm">{__('Template Error', 'versatile-toolkit')}</p>
                   </div>
                   <h3 className="font-medium mt-2 text-red-700">{template.name}</h3>
-                  <p className="text-sm text-red-600">{__('Failed to load template', 'versatile')}</p>
+                  <p className="text-sm text-red-600">{__('Failed to load template', 'versatile-toolkit')}</p>
                 </CardContent>
               </Card>
             }
@@ -239,7 +239,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                     <SkeletonCard />
                     {/* <div className="text-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-1"></div>
-                    <p className="text-xs text-gray-500">{__('...', 'versatile')}</p>
+                    <p className="text-xs text-gray-500">{__('...', 'versatile-toolkit')}</p>
                   </div> */}
                   </div>
                 </div>
@@ -261,7 +261,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                       }}
                       className="flex-1 text-xs"
                     >
-                      {selectedTemplate === template.id ? __('Selected', 'versatile') : __('Select', 'versatile')}
+                      {selectedTemplate === template.id ? __('Selected', 'versatile-toolkit') : __('Select', 'versatile-toolkit')}
                     </Button>
 
                     <Button
@@ -274,7 +274,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                       }}
                       className="text-xs"
                     >
-                      {__('Preview', 'versatile')}
+                      {__('Preview', 'versatile-toolkit')}
                     </Button>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
           <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
-                {__('Template Preview', 'versatile')} - {templates.find(t => t.id === previewTemplate)?.name}
+                {__('Template Preview', 'versatile-toolkit')} - {templates.find(t => t.id === previewTemplate)?.name}
               </h3>
               <Button type="button" variant="ghost" size="sm" onClick={closePreview}>
                 <X size={16} />
@@ -305,7 +305,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                 <iframe
                   src={`${config.ajax_url}?action=${templatePreviewAction(type)}&versatile_nonce=${config.nonce_value}&template_id=${previewTemplate}&type=${type}&preview_mode=thumbnail&preview_data=${encodeURIComponent(JSON.stringify(getFormData()))}`}
                   className="w-full h-full border-0"
-                  title={__('Template Preview', 'versatile')}
+                  title={__('Template Preview', 'versatile-toolkit')}
                   onLoad={() => setIsPreviewLoading(false)}
                   style={{ display: isPreviewLoading ? 'none' : 'block' }}
                 />
@@ -326,10 +326,10 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                     }
                   }}
                 >
-                  {__('Use This Template', 'versatile')}
+                  {__('Use This Template', 'versatile-toolkit')}
                 </Button>
                 <Button type="button" variant="outline" onClick={closePreview}>
-                  {__('Close', 'versatile')}
+                  {__('Close', 'versatile-toolkit')}
                 </Button>
               </div>
             </div>

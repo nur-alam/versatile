@@ -21,7 +21,7 @@ const ButtonLoader = ({
     return <>{children}</>;
   }
 
-  const defaultLoadingText = __('Loading', 'versatile');
+  const defaultLoadingText = __('Loading', 'versatile-toolkit');
   const displayText = loadingText || `${defaultLoadingText}...`;
 
   return (

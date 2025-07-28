@@ -216,8 +216,8 @@ class MaintenanceMode {
 			}
 			die();
 		} catch ( \Throwable $th ) {
-			error_log( 'Versatile: Exception in preview_template: ' . $th->getMessage() );
-			wp_die( esc_html__( 'Error loading template preview: ', 'versatile' ) . esc_html( $th->getMessage() ) );
+			// error_log( 'Versatile: Exception in preview_template: ' . $th->getMessage() );
+			wp_die( esc_html__( 'Error loading template preview: ', 'versatile-toolkit' ) . esc_html( $th->getMessage() ) );
 		}
 	}
 
