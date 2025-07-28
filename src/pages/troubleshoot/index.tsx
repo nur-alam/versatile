@@ -72,17 +72,17 @@ const TroubleShoot = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Troubleshoot Settings', 'versatile')}
+				{__('Troubleshoot Settings', 'verstaile-toolkit')}
 			</h2>
 			
 			{/* Plugin Disable Section */}
 			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'versatile')}</p>
+				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'verstaile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'verstaile-toolkit')}</p>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> : <Controller
+							isFetching ? <span className='text-xl'>{__('Loading...', 'verstaile-toolkit')}</span> : <Controller
 								name='chosenPlugins'
 								control={control}
 								render={({ field }) => (
@@ -101,7 +101,7 @@ const TroubleShoot = () => {
 					</div>
 					<div className='min-h-[64px] mt-2'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> :
+							isFetching ? <span className='text-xl'>{__('Loading...', 'verstaile-toolkit')}</span> :
 								<Controller
 									name='ipTags'
 									control={control}
@@ -120,19 +120,19 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						{disablePluginMutation.isPending ? __('Saving...', 'versatile') : __('Save Plugin Settings', 'versatile')}
+						{disablePluginMutation.isPending ? __('Saving...', 'verstaile-toolkit') : __('Save Plugin Settings', 'verstaile-toolkit')}
 					</Button>
 				</form>
 			</div>
 
 			{/* Theme Selector Section */}
 			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile')}</p>
+				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'verstaile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'verstaile-toolkit')}</p>
 				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isActiveThemeFetching ? <span className='text-xl'>{__('Loading...', 'versatile')}</span> : <Controller
+							isActiveThemeFetching ? <span className='text-xl'>{__('Loading...', 'verstaile-toolkit')}</span> : <Controller
 								name='activeTheme'
 								control={themeControl}
 								render={({ field }) => (
@@ -150,7 +150,7 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
-						{saveActiveThemeMutation.isPending ? __('Activating...', 'versatile') : __('Activate Theme', 'versatile')}
+						{saveActiveThemeMutation.isPending ? __('Activating...', 'verstaile-toolkit') : __('Activate Theme', 'verstaile-toolkit')}
 					</Button>
 				</form>
 			</div>

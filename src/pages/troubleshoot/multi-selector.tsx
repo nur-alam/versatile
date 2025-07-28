@@ -86,7 +86,7 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 								</Badge>
 							))}
 							{chosenPlugins.length === 0 && (
-								<span className="text-muted-foreground">{__('Select plugins you like...', 'versatile')}</span>
+								<span className="text-muted-foreground">{__('Select plugins you like...', 'verstaile-toolkit')}</span>
 							)}
 						</div>
 						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />

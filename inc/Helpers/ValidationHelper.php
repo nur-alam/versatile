@@ -65,14 +65,14 @@ class ValidationHelper {
 						case 'required':
 							if ( ! self::has_key( $key, $data ) || self::is_empty( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is required', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' is required', 'verstaile-toolkit' );
 								$required_rule_failed        = true;
 							}
 							break;
 						case 'numeric':
 							if ( ! self::is_numeric( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'verstaile-toolkit' );
 							}
 							break;
 						/* Greater than (gt) */
@@ -80,7 +80,7 @@ class ValidationHelper {
 							if ( $data[ $key ] < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'versatile' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'verstaile-toolkit' ), $key, $nested_rules[1] );
 							}
 							break;
 						/* Less than (lt) */
@@ -88,61 +88,61 @@ class ValidationHelper {
 							if ( $data[ $key ] > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'versatile' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'verstaile-toolkit' ), $key, $nested_rules[1] );
 							}
 							break;
 						case 'email':
 							if ( ! is_email( $data[ $key ] ) ) {
 								$validation_pass = false;
 								/* translators: %s: field name */
-								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'versatile' ), $key );
+								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'verstaile-toolkit' ), $key );
 							}
 							break;
 						case 'min_length':
 							if ( strlen( $data[ $key ] ) < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'versatile' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'verstaile-toolkit' ), $key, $nested_rule[1] );
 							}
 							break;
 						case 'max_length':
 							if ( strlen( $data[ $key ] ) > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'versatile' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'verstaile-toolkit' ), $key, $nested_rule[1] );
 							}
 							break;
 						case 'mimes':
 							$extensions = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $extensions ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' extension is not valid', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' extension is not valid', 'verstaile-toolkit' );
 							}
 							break;
 						case 'match_string':
 							$strings = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $strings ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' string is not valid', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' string is not valid', 'verstaile-toolkit' );
 							}
 							break;
 						case 'boolean':
 							if ( ! self::is_boolean( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not boolean', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' is not boolean', 'verstaile-toolkit' );
 							}
 							break;
 						case 'is_array':
 							if ( ! self::is_array( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not an array', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' is not an array', 'verstaile-toolkit' );
 							}
 							break;
 						case 'date_format':
 							$format = explode( ':', $rule, 2 )[1];
 							if ( ! self::is_valid_date( $data[ $key ], $format ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' invalid date format', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' invalid date format', 'verstaile-toolkit' );
 							}
 							break;
 
@@ -151,7 +151,7 @@ class ValidationHelper {
 							$is_exists = self::is_user_exists( $user_id );
 							if ( ! $is_exists ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' user does not exist', 'versatile' );
+								$validation_errors[ $key ][] = $key . __( ' user does not exist', 'verstaile-toolkit' );
 							}
 							break;
 						default:

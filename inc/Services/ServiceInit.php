@@ -82,19 +82,22 @@ class ServiceInit {
 			$request_verify = versatile_verify_request();
 			$params         = $request_verify['data'];
 			$addon_list     = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			
+
 			// Filter only enabled services
-			$enabled_services = array_filter( $addon_list, function( $service ) {
-				return isset( $service['enable'] ) && $service['enable'] === true;
-			});
-			
+			$enabled_services = array_filter(
+				$addon_list,
+				function ( $service ) {
+					return isset( $service['enable'] ) && true === $service['enable'];
+				}
+			);
+
 			return $this->json_response( 'Enabled services retrieved successfully!', $enabled_services, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while retrieving enabled services', array(), 400 );
 		}
 	}
 
-	
+
 
 	/**
 	 * Update service status (enable/disable)
@@ -129,18 +132,17 @@ class ServiceInit {
 			$updated = update_option( VERSATILE_SERVICE_LIST, $service_list );
 
 			if ( $updated ) {
-				$status_text = $enable ? 'enabled' : 'disabled';
+				$status_text   = $enable ? 'enabled' : 'disabled';
 				$service_label = $service_list[ $service_key ]['label'];
-				
-				return $this->json_response( 
-					sprintf( '%s has been %s successfully!', $service_label, $status_text ), 
-					$service_list, 
-					200 
+
+				return $this->json_response(
+					sprintf( '%s has been %s successfully!', $service_label, $status_text ),
+					$service_list,
+					200
 				);
 			} else {
 				return $this->json_response( 'Error: Failed to update service status', array(), 500 );
 			}
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: ' . $th->getMessage(), array(), 500 );
 		}

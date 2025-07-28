@@ -85,7 +85,7 @@ export default function TaggedInput({ tags, onChange }: Props) {
 					className="absolute right-1 top-1/2 -translate-y-1/2 px-2 py-1 h-5"
 					onClick={addMyIp}
 				>
-					{__('Add My IP', 'versatile')}
+					{__('Add My IP', 'verstaile-toolkit')}
 				</Button>
 			</div>
 			{inputError && (

@@ -54,12 +54,12 @@ export const useUpdateMaintenanceMood = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			toast.success(response.message ?? __('Maintenance Mood info updated!', 'versatile'));
+			toast.success(response.message ?? __('Maintenance Mood info updated!', 'verstaile-toolkit'));
 			// Invalidate and refetch mood info
 			queryClient.invalidateQueries({ queryKey: ['getMoodInfo'] });
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed while updating maintenance mood', 'versatile'));
+			toast.error(error.message ?? __('Failed while updating maintenance mood', 'verstaile-toolkit'));
 		},
 	});
 };
@@ -76,12 +76,12 @@ export const useUpdateComingsoonMood = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'versatile'));
+			toast.success(response.message ?? __('Comingsoon Mood info updated!', 'verstaile-toolkit'));
 			// Invalidate and refetch mood info
 			queryClient.invalidateQueries({ queryKey: ['getMoodInfo'] });
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'versatile'));
+			toast.error(error.message ?? __('Failed while updating Comingsoon mood', 'verstaile-toolkit'));
 		},
 	});
 };
@@ -96,10 +96,10 @@ export const useUpdateServiceStatus = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			toast.success(response.message ?? __('Service status updated!', 'versatile'));
+			toast.success(response.message ?? __('Service status updated!', 'verstaile-toolkit'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to update service status', 'versatile'));
+			toast.error(error.message ?? __('Failed to update service status', 'verstaile-toolkit'));
 		},
 	});
 };

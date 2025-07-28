@@ -16,7 +16,7 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const currentPath = location.pathname.replace('/', ''); // Remove leading slash
 
     if (isLoading) {
-        return <div className='text-xl'>{__('Loading...', 'versatile')}</div>;
+        return <div className='text-xl'>{__('Loading...', 'verstaile-toolkit')}</div>;
     }
 
     // If no service list data, allow access (fallback)

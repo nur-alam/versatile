@@ -1,8 +1,8 @@
-## Versatile
+## Versatile Toolkit
 
 ## Description
 
-Versatile
+Versatile Toolkit is a WordPress plugin that allows you to selectively disable plugins by IP address, enable maintenance mode, set up coming soon pages, and implement various troubleshooting features.
 
 ## System Requirements
 

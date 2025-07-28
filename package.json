@@ -1,15 +1,15 @@
 {
-	"name": "versatile",
+	"name": "versatile-toolkit",
 	"version": "1.0.0",
-	"description": "versatile service app",
+	"description": "versatile toolkit service app",
 	"main": "index.js",
 	"scripts": {
 		"dev": "webpack --mode development --watch",
 		"mix": "npx mix watch",
 		"watch": "concurrently \"npm run dev\" \"npm run mix\"",
 		"prod": "webpack --mode production",
-		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile.pot",
-		"bundle": "wp dist-archive . ../versatile.zip",
+		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile-toolkit.pot",
+		"bundle": "wp dist-archive . ../versatile-toolkit.zip",
 		"build": "composer i --no-dev && npm run prod && npm run make-pot && npm run bundle"
 	},
 	"author": "nurwp",

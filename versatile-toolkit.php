@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Versatile
+ * Plugin Name: Versatile Toolkit
  * Version: 1.0.0
  * Requires at least: 5.3
  * Requires PHP: 7.4
@@ -8,10 +8,10 @@
  * Description: Versatile plugin allows you to selectively disable plugins by IP address, enable maintenance mode, set up coming soon pages, and implement various troubleshooting features.
  * Author: nurwp
  * License: GPLv3 or later
- * Text Domain: versatile
+ * Text Domain: versatile-toolkit
  * Domain Path: /languages
  *
- * @package versatile
+ * @package versatile-toolkit
  */
 
 use Versatile\Init;

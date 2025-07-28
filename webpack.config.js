@@ -8,7 +8,7 @@ const webpack = require('webpack');
 let version = '';
 
 try {
-	const data = fs.readFileSync('versatile.php', 'utf8');
+	const data = fs.readFileSync('versatile-toolkit.php', 'utf8');
 	version = data.match(/Version:\s*([\d.]+(?:-[a-zA-Z0-9]+)?)/i)?.[1] || '';
 } catch (err) {
 	console.log(err);

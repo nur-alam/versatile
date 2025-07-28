@@ -1,4 +1,4 @@
-=== Versatile - Multipurpose WordPress Toolkit ===
+=== Versatile Toolkit ===
 Contributors: nurwp
 Tags: maintenance mode, coming soon, troubleshoot, plugin management, IP control, WordPress toolkit
 Requires at least: 5.3
@@ -97,7 +97,6 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 * WordPress media library integration
 * React-based modern admin interface
 * Mobile-responsive templates
-* REST API support
 
 == Technical Requirements ==
 

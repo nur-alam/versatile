@@ -74,7 +74,7 @@ const ComingsoonMode = () => {
 										<FormItem>
 											<div className='flex items-center gap-2'>
 												<FormLabel className="text-foreground" htmlFor='enable_comingsoon'>
-													{__('Enable Comingsoon Mood', 'versatile')}
+													{__('Enable Comingsoon Mood', 'verstaile-toolkit')}
 												</FormLabel>
 												<FormControl>
 													<Switch id='enable_comingsoon'
@@ -85,7 +85,7 @@ const ComingsoonMode = () => {
 											</div>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
+													{__('This will be displayed as the main heading.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -98,14 +98,14 @@ const ComingsoonMode = () => {
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
 											<FormLabel className="text-foreground">
-												{__('Title', 'versatile')}
+												{__('Title', 'verstaile-toolkit')}
 											</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter comingsoon title', 'versatile')} {...field} />
+												<Input placeholder={__('Enter comingsoon title', 'verstaile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('This will be displayed as the main heading.', 'versatile')}
+													{__('This will be displayed as the main heading.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -117,13 +117,13 @@ const ComingsoonMode = () => {
 									name="subtitle"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Subtitle', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Subtitle', 'verstaile-toolkit')}</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter subtitle', 'versatile')} {...field} />
+												<Input placeholder={__('Enter subtitle', 'verstaile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Optional subtitle under the title.', 'versatile')}
+													{__('Optional subtitle under the title.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -135,13 +135,13 @@ const ComingsoonMode = () => {
 									name="description"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Description', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Description', 'verstaile-toolkit')}</FormLabel>
 											<FormControl>
-												<Textarea placeholder={__('Describe what is happening...', 'versatile')} {...field} />
+												<Textarea placeholder={__('Describe what is happening...', 'verstaile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Provide more details about the comingsoon.', 'versatile')}
+													{__('Provide more details about the comingsoon.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -155,7 +155,7 @@ const ComingsoonMode = () => {
 									name="background_image"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Background Image', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Background Image', 'verstaile-toolkit')}</FormLabel>
 											<FormControl>
 												<MediaUploader
 													value={field.value || ''}
@@ -163,13 +163,13 @@ const ComingsoonMode = () => {
 														field.onChange(url);
 														comingsoonMoodFrom.setValue('background_image_id', id);
 													}}
-													buttonText={__('Upload Background Image', 'versatile')}
+													buttonText={__('Upload Background Image', 'verstaile-toolkit')}
 													allowedTypes={['image']}
 												/>
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Upload a background image for the coming soon page.', 'versatile')}
+													{__('Upload a background image for the coming soon page.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -182,7 +182,7 @@ const ComingsoonMode = () => {
 									name="logo"
 									render={({ field, fieldState }) => (
 										<FormItem className='mt-6'>
-											<FormLabel className="text-foreground">{__('Logo', 'versatile')}</FormLabel>
+											<FormLabel className="text-foreground">{__('Logo', 'verstaile-toolkit')}</FormLabel>
 											<FormControl>
 												<MediaUploader
 													value={field.value || ''}
@@ -190,13 +190,13 @@ const ComingsoonMode = () => {
 														field.onChange(url);
 														comingsoonMoodFrom.setValue('logo_id', id);
 													}}
-													buttonText={__('Upload Logo', 'versatile')}
+													buttonText={__('Upload Logo', 'verstaile-toolkit')}
 													allowedTypes={['image']}
 												/>
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Upload a logo to display on the coming soon page.', 'versatile')}
+													{__('Upload a logo to display on the coming soon page.', 'verstaile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -211,8 +211,8 @@ const ComingsoonMode = () => {
 								disabled={updateComingsoonMoodMutation.isPending}
 							>
 								{updateComingsoonMoodMutation.isPending 
-									? __('Saving...', 'versatile') 
-									: __('Save Settings', 'versatile')
+									? __('Saving...', 'verstaile-toolkit') 
+									: __('Save Settings', 'verstaile-toolkit')
 								}
 							</Button>
 							

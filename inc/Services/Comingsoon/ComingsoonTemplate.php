@@ -16,17 +16,17 @@ if ( ! empty( $versatile_mood_info ) ) {
 	$versatile_comingsoon_mood_info = $versatile_mood_info['comingsoon'];
 }
 
-$title = esc_html( $versatile_comingsoon_mood_info['title'] ?? 'Coming Soon' );
-$subtitle = esc_html( $versatile_comingsoon_mood_info['subtitle'] ?? 'We\'re preparing something awesome' );
-$description = esc_html( $versatile_comingsoon_mood_info['description'] ?? 'Our site is under construction. Stay tuned!' );
+$template_title   = esc_html( $versatile_comingsoon_mood_info['title'] ?? 'We&rsquo;ll be back soon!' );
+$subtitle         = esc_html( $versatile_comingsoon_mood_info['subtitle'] ?? 'We\'re preparing something awesome' );
+$description      = esc_html( $versatile_comingsoon_mood_info['description'] ?? 'Our site is under construction. Stay tuned!' );
 $background_image = esc_url( $versatile_comingsoon_mood_info['background_image'] ?? '' );
-$logo = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
+$logo             = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title><?php echo $title; ?></title>
+	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		:root {
@@ -46,8 +46,8 @@ $logo = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			background: var(--bg);
 			<?php if ( $background_image ) : ?>
-			background-image: url('<?php echo $background_image; ?>');
-			background-size: cover;
+			background-image: url('<?php echo esc_url( $background_image ); ?>');
+			background-size: contain;
 			background-position: center;
 			background-repeat: no-repeat;
 			<?php endif; ?>
@@ -59,6 +59,7 @@ $logo = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
 			text-align: center;
 			padding: 2rem;
 		}
+
 
 		.container {
 			max-width: 600px;
@@ -117,26 +118,18 @@ $logo = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
 	<div class="container">
 		<?php if ( $logo ) : ?>
 		<div class="logo">
-			<img src="<?php echo $logo; ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
+			<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" />
 		</div>
 		<?php else : ?>
 		<div class="logo">
-			<svg width="116" height="116" viewBox="0 0 116 116" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M14.7984 29.1999C22.7513 29.1999 29.1984 22.7528 29.1984 14.7999C29.1984 6.847 22.7513 0.399902 14.7984 0.399902C6.84554 0.399902 0.398438 6.847 0.398438 14.7999C0.398438 22.7528 6.84554 29.1999 14.7984 29.1999Z" fill="#9CA3AF"/>
-				<path d="M101.197 29.1999C109.15 29.1999 115.597 22.7528 115.597 14.7999C115.597 6.847 109.15 0.399902 101.197 0.399902C93.244 0.399902 86.7969 6.847 86.7969 14.7999C86.7969 22.7528 93.244 29.1999 101.197 29.1999Z" fill="#9CA3AF"/>
-				<path d="M14.7984 115.6C22.7513 115.6 29.1984 109.153 29.1984 101.2C29.1984 93.2469 22.7513 86.7998 14.7984 86.7998C6.84554 86.7998 0.398438 93.2469 0.398438 101.2C0.398438 109.153 6.84554 115.6 14.7984 115.6Z" fill="#9CA3AF"/>
-				<path d="M101.197 115.6C109.15 115.6 115.597 109.153 115.597 101.2C115.597 93.2469 109.15 86.7998 101.197 86.7998C93.244 86.7998 86.7969 93.2469 86.7969 101.2C86.7969 109.153 93.244 115.6 101.197 115.6Z" fill="#9CA3AF"/>
-				<path d="M57.9984 79.5999C69.9278 79.5999 79.5984 69.9293 79.5984 57.9999C79.5984 46.0706 69.9278 36.3999 57.9984 36.3999C46.0691 36.3999 36.3984 46.0706 36.3984 57.9999C36.3984 69.9293 46.0691 79.5999 57.9984 79.5999Z" fill="#374151"/>
-				<path d="M29.1953 29.2L43.5953 43.6" stroke="#6374BB" stroke-width="1.5"/>
-				<path d="M86.7984 29.2L72.3984 43.6" stroke="#6374BB" stroke-width="1.5"/>
-				<path d="M29.1953 86.7999L43.5953 72.3999" stroke="#6374BB" stroke-width="1.5"/>
-				<path d="M86.7984 86.7999L72.3984 72.3999" stroke="#6374BB" stroke-width="1.5"/>
+			<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+				<path d="M10 20 L50 90 L90 20" stroke="#4F46E5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 		</div>
 		<?php endif; ?>
-		<h1><?php echo $title; ?></h1>
-		<p class="subtitle"><?php echo $subtitle; ?></p>
-		<p class="description"><?php echo $description; ?></p>
+		<h2><?php echo esc_html( $template_title ); ?></h2>
+		<p><?php echo esc_html( $subtitle ); ?></p>
+		<p><small><?php echo esc_html( $description ); ?></small></p>
 	</div>
 </body>
 </html>
