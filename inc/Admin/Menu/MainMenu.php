@@ -62,7 +62,7 @@ class MainMenu {
 	 * @return string
 	 */
 	public function page_title(): string {
-		return __( 'Versatile', 'verstaile-toolkit' );
+		return __( 'Versatile', 'versatile-toolkit' );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class MainMenu {
 	 * @return string
 	 */
 	public function menu_title(): string {
-		return __( 'Versatile', 'verstaile-toolkit' );
+		return __( 'Versatile', 'versatile-toolkit' );
 	}
 
 	/**

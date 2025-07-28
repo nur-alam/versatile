@@ -44,10 +44,10 @@ export const useDisablePlugin = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			toast.success(response.message ?? __('Plugin disabled successfully!', 'verstaile-toolkit'));
+			toast.success(response.message ?? __('Plugin disabled successfully!', 'versatile-toolkit'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to disable plugin', 'verstaile-toolkit'));
+			toast.error(error.message ?? __('Failed to disable plugin', 'versatile-toolkit'));
 		},
 	});
 };
@@ -62,10 +62,10 @@ export const useAddMyIp = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			// toast.success(response.message ?? __('IP added successfully!', 'verstaile-toolkit'));
+			// toast.success(response.message ?? __('IP added successfully!', 'versatile-toolkit'));
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to add IP', 'verstaile-toolkit'));
+			toast.error(error.message ?? __('Failed to add IP', 'versatile-toolkit'));
 		},
 	});
 }
@@ -108,12 +108,12 @@ export const useSaveActiveTheme = () => {
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {
-			toast.success(response.message ?? __('Theme activated successfully!', 'verstaile-toolkit'));
+			toast.success(response.message ?? __('Theme activated successfully!', 'versatile-toolkit'));
 			// Invalidate and refetch active theme query
 			// window.location.reload(); // Simple way to refresh the page to show theme changes
 		},
 		onError: (error: any) => {
-			toast.error(error.message ?? __('Failed to activate theme', 'verstaile-toolkit'));
+			toast.error(error.message ?? __('Failed to activate theme', 'versatile-toolkit'));
 		},
 	});
 };

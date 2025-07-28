@@ -14,7 +14,7 @@ const Dashboard = () => {
 		<>
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
-					isLoading ? <span className='text-xl'>{__('Loading', 'verstaile-toolkit')}</span> :
+					isLoading ? <span className='text-xl'>{__('Loading', 'versatile-toolkit')}</span> :
 						Object.entries(serviceList)
 							.filter(([key, addon]) => addon.enable) // Only show enabled services
 							.map(([key, addon]) => (

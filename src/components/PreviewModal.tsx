@@ -48,8 +48,8 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
       >
         <ExternalLink size={16} />
         {type === 'maintenance'
-          ? __('Preview Maintenance Page', 'verstaile-toolkit')
-          : __('Preview Coming Soon Page', 'verstaile-toolkit')
+          ? __('Preview Maintenance Page', 'versatile-toolkit') 
+          : __('Preview Coming Soon Page', 'versatile-toolkit')
         }
       </Button>
 
@@ -63,8 +63,8 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
                 {type === 'maintenance'
-                  ? __('Maintenance Page Preview', 'verstaile-toolkit')
-                  : __('Coming Soon Page Preview', 'verstaile-toolkit')
+                  ? __('Maintenance Page Preview', 'versatile-toolkit') 
+                  : __('Coming Soon Page Preview', 'versatile-toolkit')
                 }
               </h3>
               <Button
@@ -84,14 +84,14 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                      <p className="text-gray-600">{__('Loading preview...', 'verstaile-toolkit')}</p>
+                      <p className="text-gray-600">{__('Loading preview...', 'versatile-toolkit')}</p>
                     </div>
                   </div>
                 )}
                 <iframe
                   src={getPreviewUrl()}
                   className="w-full h-full border-0"
-                  title={type === 'maintenance' ? __('Maintenance Preview', 'verstaile-toolkit') : __('Coming Soon Preview', 'verstaile-toolkit')}
+                  title={type === 'maintenance' ? __('Maintenance Preview', 'versatile-toolkit') : __('Coming Soon Preview', 'versatile-toolkit')}
                   onLoad={() => setIsLoading(false)}
                   style={{ display: isLoading ? 'none' : 'block' }}
                 />
@@ -102,10 +102,10 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
             <div className="p-4 border-t bg-gray-50 rounded-b-lg">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">
-                  {__('This is how your page will look to visitors.', 'verstaile-toolkit')}
+                  {__('This is how your page will look to visitors.', 'versatile-toolkit')} 
                 </p>
                 <Button onClick={handleClose} variant="outline">
-                  {__('Close Preview', 'verstaile-toolkit')}
+                  {__('Close Preview', 'versatile-toolkit')}
                 </Button>
               </div>
             </div>

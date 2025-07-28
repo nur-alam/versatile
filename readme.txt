@@ -1,6 +1,6 @@
 === Versatile Toolkit ===
 Contributors: nurwp
-Tags: maintenance mode, coming soon, troubleshoot, plugin management, IP control, WordPress toolkit
+Tags: troubleshooting, maintenance mode, coming soon, IP control, WordPress toolkit
 Requires at least: 5.3
 Tested up to: 6.8
 Requires PHP: 7.4

@@ -15,7 +15,7 @@ const PreviewButton = ({ type, disabled = false }: PreviewButtonProps) => {
     const nonce = window._versatileObject?.nonce_value;
 
     if (!nonce) {
-      alert(__('Security nonce not found. Please refresh the page and try again.', 'verstaile-toolkit'));
+      alert(__('Security nonce not found. Please refresh the page and try again.', 'versatile-toolkit'));
       return;
     }
 
@@ -35,8 +35,8 @@ const PreviewButton = ({ type, disabled = false }: PreviewButtonProps) => {
     >
       <ExternalLink size={16} />
       {type === 'maintenance'
-        ? __('Preview Maintenance Page', 'verstaile-toolkit')
-        : __('Preview Coming Soon Page', 'verstaile-toolkit')
+        ? __('Preview Maintenance Page', 'versatile-toolkit') 
+        : __('Preview Coming Soon Page', 'versatile-toolkit')
       }
     </Button>
   );

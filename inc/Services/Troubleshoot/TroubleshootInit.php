@@ -209,12 +209,12 @@ class TroubleshootInit {
 	 */
 	public function versatile_create_mu_plugin() {
 		try {
-			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/mu-versatile.php' ) ) {
+			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/mu-versatile-toolkit.php' ) ) {
 				return;
 			}
 			$template_file  = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuTemplate.php';
 			$mu_plugin_dir  = WP_CONTENT_DIR . '/mu-plugins';
-			$mu_plugin_file = $mu_plugin_dir . '/mu-versatile.php';
+			$mu_plugin_file = $mu_plugin_dir . '/mu-versatile-toolkit.php';
 
 			if ( ! file_exists( $mu_plugin_dir ) ) {
 				wp_mkdir_p( $mu_plugin_dir );

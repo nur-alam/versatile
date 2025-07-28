@@ -24,7 +24,7 @@ interface MediaUploaderProps {
 const MediaUploader: React.FC<MediaUploaderProps> = ({
   value = '',
   onChange,
-  buttonText = __('Upload Image', 'verstaile-toolkit'),
+  buttonText = __('Upload Image', 'versatile-toolkit'),
   allowedTypes = ['image'],
   multiple = false
 }) => {
@@ -43,9 +43,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     }
 
     const mediaUploader = window.wp.media({
-      title: __('Select Image', 'verstaile-toolkit'),
+      title: __('Select Image', 'versatile-toolkit'), 
       button: {
-        text: __('Use this image', 'verstaile-toolkit')
+        text: __('Use this image', 'versatile-toolkit')
       },
       multiple: multiple,
       library: {
@@ -88,7 +88,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             size="sm"
             onClick={removeImage}
           >
-            {__('Remove', 'verstaile-toolkit')}
+            {__('Remove', 'versatile-toolkit')} 
           </Button>
         )}
       </div>
@@ -98,12 +98,12 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           <div className="border rounded-lg p-2 inline-block bg-gray-50">
             <img 
               src={imageUrl} 
-              alt={__('Preview', 'verstaile-toolkit')} 
+              alt={__('Preview', 'versatile-toolkit')} 
               className="max-w-xs max-h-32 object-cover rounded"
             />
           </div>
           <p className="text-sm text-gray-600 mt-2">
-            {__('Image selected', 'verstaile-toolkit')}
+            {__('Image selected', 'versatile-toolkit')}
           </p>
         </div>
       )}

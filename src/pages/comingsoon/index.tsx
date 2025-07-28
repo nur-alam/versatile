@@ -11,7 +11,7 @@ const Comingsoon = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Comingsoon Mood', 'verstaile-toolkit')}
+				{__('Comingsoon Mood', 'versatile-toolkit')}
 			</h2>
 			<ComingsoonMode />
 		</div>

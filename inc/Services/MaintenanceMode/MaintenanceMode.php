@@ -22,8 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class MaintenanceMode {
 	use JsonResponse;
 
-
-
 	/**
 	 * MaintenanceMode constructor.
 	 */

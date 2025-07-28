@@ -11,7 +11,7 @@ const Maintenance = () => {
 				<Link to={'/'}>
 					<ArrowLeft />
 				</Link>
-				{__('Maintenance Mood', 'verstaile-toolkit')}
+				{__('Maintenance Mood', 'versatile-toolkit')}
 			</h2>
 			<MaintenanceSettings />
 		</div>
