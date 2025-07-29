@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
+use Versatile\Services\QuickPick\QuickPick;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -50,6 +51,8 @@ class ServiceInit {
 		if ( $versatile_service_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
 		}
+
+		new QuickPick();
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
