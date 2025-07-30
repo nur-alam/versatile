@@ -28,93 +28,10 @@ $logo             = esc_url( $versatile_comingsoon_mood_info['logo'] ?? '' );
 	<meta charset="UTF-8">
 	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style>
-		:root {
-			--primary: #4f46e5;
-			--bg: #f9fafb;
-			--text: #111827;
-			--subtext: #6b7280;
-		}
-
-		* {
-			box-sizing: border-box;
-			margin: 0;
-			padding: 0;
-		}
-
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background: var(--bg);
-			<?php if ( $background_image ) : ?>
-			background-image: url('<?php echo esc_url( $background_image ); ?>');
-			background-size: contain;
-			background-position: center;
-			background-repeat: no-repeat;
-			<?php endif; ?>
-			color: var(--text);
-			min-height: 100vh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
-			padding: 2rem;
-		}
-
-
-		.container {
-			max-width: 600px;
-			background: <?php echo $background_image ? 'rgba(255, 255, 255, 0.95)' : '#fff'; ?>;
-			padding: 3rem;
-			border-radius: 1rem;
-			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-			backdrop-filter: <?php echo $background_image ? 'blur(10px)' : 'none'; ?>;
-		}
-
-		.logo {
-			margin-bottom: 1.5rem;
-		}
-
-		.logo img {
-			max-width: 200px;
-			max-height: 80px;
-			width: auto;
-			height: auto;
-		}
-
-		svg {
-			width: 80px;
-			height: 80px;
-			fill: var(--primary);
-		}
-
-		h1 {
-			font-size: 2.25rem;
-			margin-bottom: 0.75rem;
-		}
-
-		p.subtitle {
-			color: var(--primary);
-			font-size: 1.125rem;
-			margin-bottom: 1rem;
-		}
-
-		p.description {
-			color: var(--subtext);
-			font-size: 1rem;
-		}
-
-		@media (max-width: 500px) {
-			.container {
-				padding: 2rem;
-			}
-
-			h1 {
-				font-size: 1.75rem;
-			}
-		}
-	</style>
+	<?php wp_enqueue_style( 'versatile-comingsoon-style' ); ?>
+	<?php wp_head(); ?>
 </head>
-<body>
+<body style="background-image: url('<?php echo esc_url( $background_image ); ?>');">
 	<div class="container">
 		<?php if ( $logo ) : ?>
 		<div class="logo">

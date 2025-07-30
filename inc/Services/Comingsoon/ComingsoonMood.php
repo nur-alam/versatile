@@ -29,6 +29,7 @@ class ComingsoonMood {
 		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 		if ( $versatile_mood_info['enable_comingsoon'] && ! $versatile_mood_info['enable_maintenance'] ) {
 			if ( ! is_admin() ) {
+				// enqueue style
 				add_action( 'wp', array( $this, 'custom_comingsoon_mode' ) );
 			}
 		}
