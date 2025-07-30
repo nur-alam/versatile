@@ -135,7 +135,6 @@ class TroubleshootInit {
 	 * @return void
 	 */
 	public function versatile_create_mu_plugin() {
-
 		try {
 			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/MuVersatileToolkit.php';
 

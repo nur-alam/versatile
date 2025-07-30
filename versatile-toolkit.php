@@ -149,7 +149,7 @@ if ( ! class_exists( 'Versatile' ) ) {
 		 * @return void
 		 */
 		private static function delete_mu_plugin() {
-			$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/mu-versatile.php';
+			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/mu-plugins/mu-versatile.php';
 
 			if ( file_exists( $mu_plugin_file ) ) {
 				wp_delete_file( $mu_plugin_file );
