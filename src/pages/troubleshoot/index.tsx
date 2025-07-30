@@ -8,7 +8,7 @@ import ThemeSelector from '@pages/troubleshoot/theme-selector';
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
+import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -29,14 +29,9 @@ const TroubleShoot = () => {
 	});
 
 	const disablePluginMutation = useDisablePlugin();
-	const saveActiveThemeMutation = useSaveActiveTheme();
 
 	const onSubmit = async (values: DisablePluginFormValues) => {
 		await disablePluginMutation.mutateAsync({ ...values });
-	}
-
-	const onThemeSubmit = async (values: ThemeFormValues) => {
-		await saveActiveThemeMutation.mutateAsync({ ...values });
 	}
 
 	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
@@ -121,36 +116,6 @@ const TroubleShoot = () => {
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
 						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save Plugin Settings', 'versatile-toolkit')}
-					</Button>
-				</form>
-			</div>
-
-			{/* Theme Selector Section */}
-			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
-				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
-					<div className='min-h-[42px]'>
-						{
-							isActiveThemeFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> : <Controller
-								name='activeTheme'
-								control={themeControl}
-								render={({ field }) => (
-									<ThemeSelector
-										selectedTheme={field.value}
-										onChange={field.onChange}
-									/>
-								)}
-							/>
-						}
-						{themeErrors.activeTheme && (
-							<p className="text-red-500 text-sm mt-1">
-								{themeErrors?.activeTheme?.message}
-							</p>
-						)}
-					</div>
-					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
-						{saveActiveThemeMutation.isPending ? __('Activating...', 'versatile-toolkit') : __('Activate Theme', 'versatile-toolkit')}
 					</Button>
 				</form>
 			</div>
