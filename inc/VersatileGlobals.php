@@ -75,7 +75,7 @@ function versatile_verify_request( $check_auth = true ) {
 		'success' => true,
 		'message' => __( 'Verification successful.', 'versatile-toolkit' ),
 		'code'    => 200,
-		'data'    => UtilityHelper::sanitize_array( $_REQUEST ),
+		'data'    => $_REQUEST,
 	);
 }
 
