@@ -40,7 +40,7 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_admin_scripts( $page ): void {
-		$plugin_data            = Versatile::plugin_data();
+		$plugin_data            = versatile_get_plugin_data();
 		$versatile_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
 		$versatile_js_bundle    = $plugin_data['plugin_url'] . 'assets/dist/js/versatile-js.min.js';
 

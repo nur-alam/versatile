@@ -30,7 +30,7 @@ root.render(
 				// position="bottom-center"
 				containerClassName="!z-[9999999]"
 				toastOptions={{
-					duration: 50000,
+					duration: 5000,
 					style: {
 						background: '#fff',
 						color: '#333',
@@ -40,12 +40,14 @@ root.render(
 						boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
 					},
 					success: {
+						icon: '✅',
 						style: {
 							background: '#f0fdf4',
 							borderColor: '#86efac',
 						},
 					},
 					error: {
+						icon: '❌',
 						style: {
 							background: '#fef2f2',
 							borderColor: '#fecaca',
