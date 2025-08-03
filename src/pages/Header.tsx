@@ -15,6 +15,7 @@ const Header: React.FC = () => {
     const updateServiceMutation = useUpdateServiceStatus();
 
     const toggleService = async (serviceKey: string, service: ServiceItem) => {
+        console.log('serviceKey', serviceKey, 'service', service);
         updateServiceMutation.mutateAsync(
             {
                 service_key: serviceKey,
