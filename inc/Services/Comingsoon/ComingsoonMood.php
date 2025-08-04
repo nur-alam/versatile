@@ -50,7 +50,7 @@ class ComingsoonMood {
 						'name'     => 'enable_maintenance',
 						'value'    => $_POST['enable_maintenance'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|boolean',
+						'rules'    => 'boolean',
 					),
 					array(
 						'name'     => 'title',
@@ -74,37 +74,38 @@ class ComingsoonMood {
 						'name'     => 'background_image',
 						'value'    => $_POST['background_image'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|string',
+						'rules'    => 'string',
 					),
 					array(
 						'name'     => 'background_image_id',
 						'value'    => $_POST['background_image_id'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|numeric',
+						'rules'    => 'numeric',
 					),
 					array(
 						'name'     => 'logo',
 						'value'    => $_POST['logo'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|string',
+						'rules'    => 'string',
 					),
 					array(
 						'name'     => 'logo_id',
 						'value'    => $_POST['logo_id'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|numeric',
+						'rules'    => 'numeric',
 					),
 				)
 			);
 
 			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+				$error_message = versatile_grab_error_message( $sanitized_data->errors );
+				return $this->json_response( $error_message ?? 'Error: Required fields missing!', $sanitized_data->errors, 400 );
 			}
 
 			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
 			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+				return $this->json_response( $request_verify->message ?? 'Error: while updating comingsoon mood info', array(), $request_verify->code );
 			}
 
 			$sanitized_data->enable_comingsoon      = filter_var( $sanitized_data->enable_comingsoon, FILTER_VALIDATE_BOOLEAN );

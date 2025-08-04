@@ -7,7 +7,7 @@
  * @package Versatile\Helpers
  * @author  Versatile<support@versatile.com>
  * @link    https://versatile.com
- * @since   2.6.0
+ * @since   1.0.0
  */
 
 namespace Versatile\Helpers;
@@ -65,20 +65,20 @@ class ValidationHelper {
 						case 'required':
 							if ( ! self::has_key( $key, $data ) || self::is_empty( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is required', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is required', 'versatile-toolkit' );
 								$required_rule_failed        = true;
 							}
 							break;
 						case 'numeric':
 							if ( ! self::is_numeric( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not numeric', 'versatile-toolkit' );
 							}
 							break;
 						case 'alphanumeric':
 							if ( ! preg_match( '/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/', $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not alphanumeric', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not alphanumeric', 'versatile-toolkit' );
 							}
 							break;
 						/* Greater than (gt) */
@@ -86,7 +86,7 @@ class ValidationHelper {
 							if ( $data[ $key ] < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'versatile-toolkit' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be greater than %2$d', 'versatile-toolkit' ), versatile_readable_key( $key ), $nested_rules[1] );
 							}
 							break;
 						/* Less than (lt) */
@@ -94,61 +94,61 @@ class ValidationHelper {
 							if ( $data[ $key ] > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'versatile-toolkit' ), $key, $nested_rules[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s need to be less than %2$d', 'versatile-toolkit' ), versatile_readable_key( $key ), $nested_rules[1] );
 							}
 							break;
 						case 'email':
 							if ( ! is_email( $data[ $key ] ) ) {
 								$validation_pass = false;
 								/* translators: %s: field name */
-								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'versatile-toolkit' ), $key );
+								$validation_errors[ $key ][] = sprintf( __( '%s is not valid email', 'versatile-toolkit' ), versatile_readable_key( $key ) );
 							}
 							break;
 						case 'min_length':
 							if ( strlen( $data[ $key ] ) < $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'versatile-toolkit' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s minimum length is %2$d', 'versatile-toolkit' ), versatile_readable_key( $key ), $nested_rule[1] );
 							}
 							break;
 						case 'max_length':
 							if ( strlen( $data[ $key ] ) > $nested_rules[1] ) {
 								$validation_pass = false;
 								/* translators: %1$s: field name, %2$d: value */
-								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'versatile-toolkit' ), $key, $nested_rule[1] );
+								$validation_errors[ $key ][] = sprintf( __( '%1$s maximum length is %2$d', 'versatile-toolkit' ), versatile_readable_key( $key ), $nested_rule[1] );
 							}
 							break;
 						case 'mimes':
 							$extensions = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $extensions ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' extension is not valid', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' extension is not valid', 'versatile-toolkit' );
 							}
 							break;
 						case 'match_string':
 							$strings = explode( ',', $nested_rules[1] );
 							if ( ! self::in_array( $data[ $key ], $strings ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' string is not valid', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' string is not valid', 'versatile-toolkit' );
 							}
 							break;
 						case 'boolean':
 							if ( ! self::is_boolean( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not boolean', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not boolean', 'versatile-toolkit' );
 							}
 							break;
 						case 'is_array':
 							if ( ! self::is_array( $data[ $key ] ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' is not an array', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not an array', 'versatile-toolkit' );
 							}
 							break;
 						case 'date_format':
 							$format = explode( ':', $rule, 2 )[1];
 							if ( ! self::is_valid_date( $data[ $key ], $format ) ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' invalid date format', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' invalid date format', 'versatile-toolkit' );
 							}
 							break;
 
@@ -157,7 +157,7 @@ class ValidationHelper {
 							$is_exists = self::is_user_exists( $user_id );
 							if ( ! $is_exists ) {
 								$validation_pass             = false;
-								$validation_errors[ $key ][] = $key . __( ' user does not exist', 'versatile-toolkit' );
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' user does not exist', 'versatile-toolkit' );
 							}
 							break;
 						default:

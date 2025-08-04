@@ -141,7 +141,7 @@ function versatile_sanitization_validation( $inputs = array() ) {
 	if ( ! $validation->success ) {
 		return (object) array(
 			'success' => false,
-			'message' => __( 'Error: data validation failed!!', 'versatile-toolkit' ),
+			'message' => __( 'Error: Required fields missing!', 'versatile-toolkit' ),
 			'code'    => 400,
 			'errors'  => $validation->errors,
 		);
@@ -193,4 +193,33 @@ function versatile_get_client_ip() {
 
 	// Fallback to REMOTE_ADDR even if it's private (for local development)
 	return $server_ip ?? '127.0.0.1';
+}
+
+/**
+ * Convert snake_case to Readable Key
+ *
+ * @param string $key The key to convert.
+ *
+ * @return string The converted key.
+ */
+function versatile_readable_key( $key ) {
+	return ucwords( str_replace( '_', ' ', $key ) );
+}
+
+/**
+ * Grab error message from errors array
+ *
+ * @param array $errors The errors array.
+ *
+ * @return string The error message.
+ */
+function versatile_grab_error_message( $errors ) {
+	$error_message = '';
+	if ( ! count( $errors ) ) {
+		$error_message = null;
+	} else {
+		$error_message = reset( reset( $errors ) );
+	}
+
+	return $error_message;
 }

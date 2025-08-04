@@ -77,7 +77,6 @@ define(
 			'enable'      => true,
 			'path'        => 'troubleshoot',
 			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
-			// 'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
