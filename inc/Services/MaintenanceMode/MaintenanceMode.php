@@ -34,26 +34,8 @@ class MaintenanceMode {
 		}
 
 		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
-		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
 		add_action( 'wp_ajax_versatile_preview_maintenance', array( $this, 'preview_maintenance_mode' ) );
 	}
-
-	/**
-	 * Get mood info description.
-	 *
-	 * @return array description
-	 */
-	public function get_mood_info() {
-		try {
-			$request_verify    = versatile_verify_request();
-			$params            = $request_verify['data'];
-			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
-		} catch ( \Throwable $th ) {
-			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
-		}
-	}
-
 
 	/**
 	 * Update_maintenance_mood description.
@@ -62,20 +44,81 @@ class MaintenanceMode {
 	 */
 	public function versatile_update_maintenance_mood() {
 		try {
-			$request_verify                          = versatile_verify_request();
-			$params                                  = $request_verify['data'];
-			$params['enable_maintenance']            = filter_var( $params['enable_maintenance'], FILTER_VALIDATE_BOOLEAN );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'enable_maintenance',
+						'value'    => $_POST['enable_maintenance'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+					array(
+						'name'     => 'title',
+						'value'    => $_POST['title'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'description',
+						'value'    => $_POST['description'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'subtitle',
+						'value'    => $_POST['subtitle'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'background_image',
+						'value'    => $_POST['background_image'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'background_image_id',
+						'value'    => $_POST['background_image_id'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+					array(
+						'name'     => 'logo',
+						'value'    => $_POST['logo'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'logo_id',
+						'value'    => $_POST['logo_id'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$sanitized_data->enable_maintenance      = filter_var( $sanitized_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$current_mood_info['enable_maintenance'] = $params['enable_maintenance'] ?? false;
+			$current_mood_info['enable_maintenance'] = $sanitized_data->enable_maintenance ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
 				$current_mood_info['enable_comingsoon'] = false;
 			}
-			unset( $params['enable_maintenance'] );
+			unset( $sanitized_data->enable_maintenance );
 			$current_mood_info['maintenance'] = array_merge(
 				$current_mood_info['maintenance'],
-				$params
+				(array) $sanitized_data
 			);
-			$is_mood_info_updated             = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
+			update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
@@ -90,12 +133,16 @@ class MaintenanceMode {
 	 */
 	public function preview_maintenance_mode() {
 		try {
-			// Verify nonce for security
-			$request_verify = versatile_verify_request();
+			$sanitized_data = versatile_sanitization_validation();
 
-			// Check if user has permission to preview
-			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( 'You do not have permission to preview this page' );
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
 			}
 
 			// Set headers for HTML response
@@ -116,10 +163,6 @@ class MaintenanceMode {
 	 */
 	public function custom_maintenance_mode() {
 		$current_user = wp_get_current_user();
-		// Allow only users with 'administrator' role to bypass maintenance
-		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
-		// Load your custom maintenance HTML
-		// }
 		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
 		die();
 	}

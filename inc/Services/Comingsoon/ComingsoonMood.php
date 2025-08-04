@@ -29,7 +29,6 @@ class ComingsoonMood {
 		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 		if ( $versatile_mood_info['enable_comingsoon'] && ! $versatile_mood_info['enable_maintenance'] ) {
 			if ( ! is_admin() ) {
-				// enqueue style
 				add_action( 'wp', array( $this, 'custom_comingsoon_mode' ) );
 			}
 		}
@@ -45,20 +44,81 @@ class ComingsoonMood {
 	 */
 	public function versatile_update_comingsoon_mood() {
 		try {
-			$request_verify                         = versatile_verify_request();
-			$params                                 = $request_verify['data'];
-			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'enable_maintenance',
+						'value'    => $_POST['enable_maintenance'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|boolean',
+					),
+					array(
+						'name'     => 'title',
+						'value'    => $_POST['title'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'description',
+						'value'    => $_POST['description'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'subtitle',
+						'value'    => $_POST['subtitle'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'background_image',
+						'value'    => $_POST['background_image'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'background_image_id',
+						'value'    => $_POST['background_image_id'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+					array(
+						'name'     => 'logo',
+						'value'    => $_POST['logo'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'logo_id',
+						'value'    => $_POST['logo_id'], //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$sanitized_data->enable_comingsoon      = filter_var( $sanitized_data->enable_comingsoon, FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                      = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$current_mood_info['enable_comingsoon'] = $params['enable_comingsoon'] ?? false;
+			$current_mood_info['enable_comingsoon'] = $sanitized_data->enable_comingsoon ?? false;
 			if ( $current_mood_info['enable_comingsoon'] ) {
 				$current_mood_info['enable_maintenance'] = false;
 			}
-			unset( $params['enable_comingsoon'] );
+			unset( $sanitized_data->enable_comingsoon );
 			$current_mood_info['comingsoon'] = array_merge(
 				$current_mood_info['comingsoon'],
-				$params
+				(array) $sanitized_data
 			);
-			$is_mood_info_updated            = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
+			update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
@@ -73,12 +133,16 @@ class ComingsoonMood {
 	 */
 	public function preview_comingsoon_mode() {
 		try {
-			// Verify nonce for security
-			$request_verify = versatile_verify_request();
+			$sanitized_data = versatile_sanitization_validation();
 
-			// Check if user has permission to preview
-			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( 'You do not have permission to preview this page' );
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
 			}
 
 			// Set headers for HTML response
@@ -99,10 +163,6 @@ class ComingsoonMood {
 	 */
 	public function custom_comingsoon_mode() {
 		$current_user = wp_get_current_user();
-		// Allow only users with 'administrator' role to bypass comingsoon
-		// if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {  // 'manage_options' is typically an admin capability
-		// Load your custom comingsoon HTML
-		// }
 		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
 		die();
 	}

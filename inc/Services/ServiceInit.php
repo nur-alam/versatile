@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Versatile\Helpers\UtilityHelper;
-use Versatile\Helpers\ValidationHelper;
-use Versatile\Helpers\VersatileInput;
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
@@ -39,8 +36,6 @@ class ServiceInit {
 
 		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
-		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-
 		// Troubleshoot enable_troubleshoot
 		if ( $versatile_service_list['troubleshoot']['enable'] ) {
 			new TroubleshootInit();
@@ -57,6 +52,7 @@ class ServiceInit {
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
 		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
+		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
 	}
 
 	/**
@@ -67,7 +63,7 @@ class ServiceInit {
 	public function versatile_get_service_list() {
 		try {
 			// action & nonce sanitization & validation by default don't have to pass
-			$sanitized_data = versatile_sanitization_validation( array() );
+			$sanitized_data = versatile_sanitization_validation();
 
 			if ( ! $sanitized_data->success ) {
 				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
@@ -93,8 +89,12 @@ class ServiceInit {
 	 */
 	public function versatile_get_enable_service_list() {
 		try {
-			// action & nonce sanitization & validation by default don't have to pass
-			$sanitized_data = versatile_sanitization_validation( array() );
+			// action & nonce sanitization & validation by default, don't need to pass
+			$sanitized_data = versatile_sanitization_validation();
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
 
 			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
@@ -117,8 +117,6 @@ class ServiceInit {
 			return $this->json_response( __( 'Error: while retrieving enabled services', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
-
-
 
 	/**
 	 * Update service status (enable/disable)
@@ -143,6 +141,10 @@ class ServiceInit {
 					),
 				)
 			);
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
 
 			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
@@ -181,6 +183,33 @@ class ServiceInit {
 			}
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: ' . $th->getMessage(), array(), 500 );
+		}
+	}
+
+	/**
+	 * Get mood info description.
+	 *
+	 * @return array description
+	 */
+	public function get_mood_info() {
+		try {
+			// action & nonce sanitization & validation by default, don't need to pass
+			$sanitized_data = versatile_sanitization_validation();
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
 		}
 	}
 }

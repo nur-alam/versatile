@@ -75,6 +75,12 @@ class ValidationHelper {
 								$validation_errors[ $key ][] = $key . __( ' is not numeric', 'versatile-toolkit' );
 							}
 							break;
+						case 'alphanumeric':
+							if ( ! preg_match( '/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/', $data[ $key ] ) ) {
+								$validation_pass             = false;
+								$validation_errors[ $key ][] = $key . __( ' is not alphanumeric', 'versatile-toolkit' );
+							}
+							break;
 						/* Greater than (gt) */
 						case 'gt':
 							if ( $data[ $key ] < $nested_rules[1] ) {

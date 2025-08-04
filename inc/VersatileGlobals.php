@@ -7,11 +7,8 @@
  * @since 1.0.0
  */
 
-use Versatile\Helpers\UtilityHelper;
 use Versatile\Helpers\ValidationHelper;
 use Versatile\Helpers\VersatileInput;
-
-use Tutor\Traits\JsonResponse;
 
 /**
  * Authentication checking.
@@ -74,20 +71,18 @@ function versatile_verify_request( $inputs, $check_auth = true, $permissions = a
 	$nonce_key    = $plugin_info['nonce_key'];
 	$nonce_action = $plugin_info['nonce_action'];
 
+	$is = isset( $inputs['versatile_nonce'] );
+
+	$non = wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action );
+
 	// Verify nonce
-	if ( ! isset( $inputs[ $nonce_key ] ) || ! wp_verify_nonce(
-		sanitize_text_field( wp_unslash( $inputs[ $nonce_key ] ) ),
-		$nonce_action
-	) ) {
+	if ( ! isset( $inputs['versatile_nonce'] ) || ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
 		return (object) array(
 			'success' => false,
 			'message' => __( 'Invalid security token!', 'versatile-toolkit' ),
 			'code'    => 400,
 		);
 	}
-
-	// Remove keys that should not be saved
-	unset( $inputs['action'], $inputs['versatile_nonce'] );
 
 	// Return success with sanitized POST data
 	return (object) array(
@@ -104,19 +99,19 @@ function versatile_verify_request( $inputs, $check_auth = true, $permissions = a
  *
  * @return object Sanitized and validated input data.
  */
-function versatile_sanitization_validation( $inputs ) {
+function versatile_sanitization_validation( $inputs = array() ) {
 	$default_inputs   = array(
 		array(
 			'name'     => 'action',
-			'value'    => $_POST['action'], //phpcs:ignore
+			'value'    => $_REQUEST['action'], //phpcs:ignore
 			'sanitize' => 'sanitize_text_field',
 			'rules'    => 'required|string',
 		),
 		array(
 			'name'     => 'versatile_nonce',
-			'value'    => $_POST['versatile_nonce'], //phpcs:ignore
+			'value'    => $_REQUEST['versatile_nonce'], //phpcs:ignore
 			'sanitize' => 'sanitize_text_field',
-			'rules'    => 'required|numeric',
+			'rules'    => 'required|alphanumeric',
 		),
 	);
 	$merged_inputs    = array_merge( $default_inputs, $inputs );
@@ -135,7 +130,13 @@ function versatile_sanitization_validation( $inputs ) {
 		$rules[ $value['name'] ] = $value['rules'];
 	}
 
-	$validation = ValidationHelper::validate( $sanitized_data, $rules );
+	$mapped_sanitized_data = array();
+
+	foreach ( $merged_inputs as $key => $value ) {
+		$mapped_sanitized_data[ $value['name'] ] = $sanitized_data[ $key ];
+	}
+
+	$validation = ValidationHelper::validate( $rules, $mapped_sanitized_data );
 
 	if ( ! $validation->success ) {
 		return (object) array(
@@ -144,12 +145,6 @@ function versatile_sanitization_validation( $inputs ) {
 			'code'    => 400,
 			'errors'  => $validation->errors,
 		);
-	}
-
-	$mapped_sanitized_data = array();
-
-	foreach ( $merged_inputs as $key => $value ) {
-		$mapped_sanitized_data[ $value['name'] ] = $sanitized_data[ $key ];
 	}
 
 	$mapped_sanitized_data['success'] = true;

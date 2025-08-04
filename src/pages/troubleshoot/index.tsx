@@ -16,8 +16,8 @@ const TroubleShoot = () => {
 	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
 		resolver: zodResolver(disablePluginFormSchema),
 		defaultValues: {
-			chosenPlugins: [],
-			ipTags: [],
+			chosen_plugins: [],
+			ip_tags: [],
 		}
 	});
 
@@ -35,31 +35,20 @@ const TroubleShoot = () => {
 	}
 
 	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
-	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
 
-	const chosenPluginList = disablePluginData?.data['chosenPlugins'];
+	const chosenPluginList = disablePluginData?.data['chosen_plugins'];
 
-	const chosenIpList = disablePluginData?.data['ipTags'];
-	const activeTheme = activeThemeData?.data['activeTheme'];
+	const chosenIpList = disablePluginData?.data['ip_tags'];
 
 	useEffect(() => {
 		if (chosenPluginList || chosenIpList) {
 			// Set default values when data is loaded
 			control._reset({
-				chosenPlugins: chosenPluginList || [],
-				ipTags: chosenIpList || [],
+				chosen_plugins: chosenPluginList || [],
+				ip_tags: chosenIpList || [],
 			});
 		}
 	}, [chosenPluginList, chosenIpList, control]);
-
-	useEffect(() => {
-		if (activeTheme) {
-			// Set default theme value when data is loaded
-			themeControl._reset({
-				activeTheme: activeTheme,
-			});
-		}
-	}, [activeTheme, themeControl]);
 
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
@@ -69,7 +58,7 @@ const TroubleShoot = () => {
 				</Link>
 				{__('Troubleshoot Settings', 'versatile-toolkit')}
 			</h2>
-			
+
 			{/* Plugin Disable Section */}
 			<div className="border rounded-lg p-4">
 				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile-toolkit')}</h3>
@@ -78,7 +67,7 @@ const TroubleShoot = () => {
 					<div className='min-h-[42px]'>
 						{
 							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> : <Controller
-								name='chosenPlugins'
+								name='chosen_plugins'
 								control={control}
 								render={({ field }) => (
 									<MultipleSelector
@@ -88,9 +77,9 @@ const TroubleShoot = () => {
 								)}
 							/>
 						}
-						{errors.chosenPlugins && (
+						{errors.chosen_plugins && (
 							<p className="text-red-500 text-sm mt-1">
-								{errors?.chosenPlugins?.message}
+								{errors?.chosen_plugins?.message}
 							</p>
 						)}
 					</div>
@@ -98,7 +87,7 @@ const TroubleShoot = () => {
 						{
 							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> :
 								<Controller
-									name='ipTags'
+									name='ip_tags'
 									control={control}
 									render={({ field }) => (
 										<TaggedInput
@@ -108,9 +97,9 @@ const TroubleShoot = () => {
 									)}
 								/>
 						}
-						{errors.ipTags && (
+						{errors.ip_tags && (
 							<p className="text-red-500 text-sm mt-1">
-								{errors?.ipTags?.message}
+								{errors?.ip_tags?.message}
 							</p>
 						)}
 					</div>
