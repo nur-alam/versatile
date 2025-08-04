@@ -48,7 +48,7 @@ class ComingsoonMood {
 				array(
 					array(
 						'name'     => 'enable_comingsoon',
-						'value'    => isset($_POST['enable_comingsoon']) ? $_POST['enable_comingsoon'] === true : false, //phpcs:ignore
+						'value'    => isset($_POST['enable_comingsoon']) ? $_POST['enable_comingsoon'] : 'false', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'boolean',
 					),

@@ -48,7 +48,7 @@ class MaintenanceMode {
 				array(
 					array(
 						'name'     => 'enable_maintenance',
-						'value'    => isset($_POST['enable_maintenance']) ? $_POST['enable_maintenance'] : '', //phpcs:ignore
+						'value'    => isset($_POST['enable_maintenance']) ? $_POST['enable_maintenance'] : 'false', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'boolean',
 					),
