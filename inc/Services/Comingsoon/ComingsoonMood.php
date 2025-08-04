@@ -48,49 +48,49 @@ class ComingsoonMood {
 				array(
 					array(
 						'name'     => 'enable_comingsoon',
-						'value'    => $_POST['enable_comingsoon'], //phpcs:ignore
+						'value'    => isset($_POST['enable_comingsoon']) ? $_POST['enable_comingsoon'] === true : false, //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'boolean',
 					),
 					array(
 						'name'     => 'title',
-						'value'    => $_POST['title'], //phpcs:ignore
+						'value'    => isset($_POST['title']) ? $_POST['title'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|string',
 					),
 					array(
 						'name'     => 'description',
-						'value'    => $_POST['description'], //phpcs:ignore
+						'value'    => isset($_POST['description']) ? $_POST['description'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|string',
 					),
 					array(
 						'name'     => 'subtitle',
-						'value'    => $_POST['subtitle'], //phpcs:ignore
+						'value'    => isset($_POST['subtitle']) ? $_POST['subtitle'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|string',
 					),
 					array(
 						'name'     => 'background_image',
-						'value'    => $_POST['background_image'], //phpcs:ignore
+						'value'    => isset($_POST['background_image']) ? $_POST['background_image'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'string',
 					),
 					array(
 						'name'     => 'background_image_id',
-						'value'    => $_POST['background_image_id'], //phpcs:ignore
+						'value'    => isset($_POST['background_image_id']) ? $_POST['background_image_id'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'numeric',
 					),
 					array(
 						'name'     => 'logo',
-						'value'    => $_POST['logo'], //phpcs:ignore
+						'value'    => isset($_POST['logo']) ? $_POST['logo'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'string',
 					),
 					array(
 						'name'     => 'logo_id',
-						'value'    => $_POST['logo_id'], //phpcs:ignore
+						'value'    => isset($_POST['logo_id']) ? $_POST['logo_id'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'numeric',
 					),
@@ -149,6 +149,12 @@ class ComingsoonMood {
 			// Set headers for HTML response
 			header( 'Content-Type: text/html; charset=utf-8' );
 
+			// Fix deprecated emoji styles function for WordPress 6.4+
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+			}
+
 			// Load coming soon template for preview
 			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
 			die();
@@ -164,6 +170,13 @@ class ComingsoonMood {
 	 */
 	public function custom_comingsoon_mode() {
 		$current_user = wp_get_current_user();
+
+		// Fix deprecated emoji styles function for WordPress 6.4+
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+		if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+			add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+		}
+
 		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
 		die();
 	}

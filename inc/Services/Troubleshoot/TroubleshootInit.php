@@ -46,13 +46,13 @@ class TroubleshootInit {
 				array(
 					array(
 						'name'     => 'chosen_plugins',
-						'value'    => $_POST['chosen_plugins'], //phpcs:ignore
+						'value'    => isset($_POST['chosen_plugins']) ? $_POST['chosen_plugins'] : array(), //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => '',
 					),
 					array(
 						'name'     => 'ip_tags',
-						'value'    => $_POST['ip_tags'], //phpcs:ignore
+						'value'    => isset($_POST['ip_tags']) ? $_POST['ip_tags'] : array(), //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|array',
 					),

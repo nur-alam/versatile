@@ -129,13 +129,13 @@ class ServiceInit {
 				array(
 					array(
 						'name'     => 'service_key',
-						'value'    => $_POST['service_key'], //phpcs:ignore
+						'value'    => isset($_POST['service_key']) ? $_POST['service_key'] : '', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|string',
 					),
 					array(
 						'name'     => 'enable',
-						'value'    => $_POST['enable'] === 'true' ? 1 : 0, //phpcs:ignore
+						'value'    => isset($_POST['enable']) ? $_POST['enable'] === true : false, //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required|boolean',
 					),
