@@ -87,7 +87,7 @@ abstract class DatabaseAbstract {
 		global $wpdb;
 
 		$table_name = $this->get_table_name();
-		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %s', $table_name ) );
 	}
 
 	/**

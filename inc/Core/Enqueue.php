@@ -11,8 +11,6 @@
 namespace Versatile\Core;
 
 use Versatile;
-use Versatile\Frontend\CustomTemplate;
-use Versatile\Helpers\UtilityHelper;
 use Versatile\RestAPI\Routes;
 
 /**
@@ -95,25 +93,21 @@ class Enqueue {
 		$enable_comingsoon  = $versatile_mood_info['enable_comingsoon'];
 		$enable_maintenance = $versatile_mood_info['enable_maintenance'];
 
-		if ( $enable_comingsoon ) {
-			wp_register_style(
-				'versatile-comingsoon-style',
-				$versatile_comingsoon_style_bundle,
-				array(),
-				VERSATILE_VERSION,
-				'all'
-			);
-		}
+		wp_register_style(
+			'versatile-comingsoon-style',
+			$versatile_comingsoon_style_bundle,
+			array(),
+			VERSATILE_VERSION,
+			'all'
+		);
 
-		if ( $enable_maintenance ) {
-			wp_register_style(
-				'versatile-maintenance-style',
-				$versatile_maintenance_style_bundle,
-				array(),
-				VERSATILE_VERSION,
-				'all'
-			);
-		}
+		wp_register_style(
+			'versatile-maintenance-style',
+			$versatile_maintenance_style_bundle,
+			array(),
+			VERSATILE_VERSION,
+			'all'
+		);
 	}
 
 	/**

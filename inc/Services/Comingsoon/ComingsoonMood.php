@@ -47,8 +47,8 @@ class ComingsoonMood {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
 					array(
-						'name'     => 'enable_maintenance',
-						'value'    => $_POST['enable_maintenance'], //phpcs:ignore
+						'name'     => 'enable_comingsoon',
+						'value'    => $_POST['enable_comingsoon'], //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'boolean',
 					),
