@@ -61,9 +61,11 @@ class QuickPick {
 	/**
 	 * Enqueue JavaScript for AJAX permalink reset
 	 *
+	 * @param string $page Current page.
+	 *
 	 * @return void
 	 */
-	public function enqueue_permalink_reset_script() {
+	public function enqueue_permalink_reset_script( $page ) {
 		// Only load if admin bar is showing
 		if ( ! is_admin_bar_showing() ) {
 			return;
@@ -105,11 +107,13 @@ class QuickPick {
 		);
 
 		// Add inline script with data
-		wp_add_inline_script(
-			'versatile-quickpick',
-			'const _versatileObject = ' . wp_json_encode( $versatile_data ) . ';window._versatileObject=_versatileObject;',
-			'before'
-		);
+		if ( 'toplevel_page_versatile' !== $page ) {
+			wp_add_inline_script(
+				'versatile-quickpick',
+				'const _versatileObject = ' . wp_json_encode( $versatile_data ) . ';window._versatileObject=_versatileObject;',
+				'before'
+			);
+		}
 	}
 
 	/**
@@ -137,7 +141,7 @@ class QuickPick {
 
 			// Send success response
 			$this->json_response( 'Permalinks have been reset successfully!', null, 200 );
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), null, 500 );
 		}
 	}

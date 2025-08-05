@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
 import { Eye, X } from 'lucide-react';
 import TemplateLoader from '@components/loader/TemplateLoader';
+import config from '@/config';
 
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
@@ -33,8 +34,8 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
   };
 
   const getPreviewUrl = () => {
-    const ajaxUrl = window._versatileObject?.ajax_url;
-    const nonce = window._versatileObject?.nonce_value;
+    const ajaxUrl = config?.ajax_url;
+    const nonce = config?.nonce_value;
     const action = type === 'maintenance' ? 'versatile_preview_maintenance' : 'versatile_preview_comingsoon';
 
     const preview_data = JSON.stringify(getFormData());

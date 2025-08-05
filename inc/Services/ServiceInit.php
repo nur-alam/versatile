@@ -37,8 +37,6 @@ class ServiceInit {
 
 		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
-		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-
 		// Troubleshoot enable_troubleshoot
 		if ( $versatile_service_list['troubleshoot']['enable'] ) {
 			new TroubleshootInit();
@@ -57,6 +55,7 @@ class ServiceInit {
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
 		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
+		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
 	}
 
 	/**
@@ -66,12 +65,23 @@ class ServiceInit {
 	 */
 	public function versatile_get_service_list() {
 		try {
-			$request_verify = versatile_verify_request();
-			$params         = $request_verify['data'];
-			$addon_list     = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			return $this->json_response( 'Service list retrieved successfully!', $addon_list, 200 );
+			// action & nonce sanitization & validation by default don't have to pass
+			$sanitized_data = versatile_sanitization_validation();
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
+			return $this->json_response( __( 'Service list retrieved successfully!', 'versatile-toolkit' ), $addon_list, 200 );
 		} catch ( \Throwable $th ) {
-			return $this->json_response( 'Error: while retrieving service list', array(), 400 );
+			return $this->json_response( __( 'Error: while retrieving service list', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
 
@@ -82,9 +92,20 @@ class ServiceInit {
 	 */
 	public function versatile_get_enable_service_list() {
 		try {
-			$request_verify = versatile_verify_request();
-			$params         = $request_verify['data'];
-			$addon_list     = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
+			// action & nonce sanitization & validation by default, don't need to pass
+			$sanitized_data = versatile_sanitization_validation();
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
 			// Filter only enabled services
 			$enabled_services = array_filter(
@@ -93,14 +114,12 @@ class ServiceInit {
 					return isset( $service['enable'] ) && true === $service['enable'];
 				}
 			);
-			// sleep( 5 );
-			return $this->json_response( 'Enabled services retrieved successfully!', $enabled_services, 200 );
+
+			return $this->json_response( __( 'Enabled services retrieved successfully!', 'versatile-toolkit' ), $enabled_services, 200 );
 		} catch ( \Throwable $th ) {
-			return $this->json_response( 'Error: while retrieving enabled services', array(), 400 );
+			return $this->json_response( __( 'Error: while retrieving enabled services', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
-
-
 
 	/**
 	 * Update service status (enable/disable)
@@ -109,23 +128,42 @@ class ServiceInit {
 	 */
 	public function versatile_update_service_status() {
 		try {
-			$request_verify = versatile_verify_request();
-			$params         = $request_verify['data'];
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'service_key',
+						'value'    => isset($_POST['service_key']) ? $_POST['service_key'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'enable',
+						'value'    => isset($_POST['enable']) ? $_POST['enable'] === true : false, //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|boolean',
+					),
+				)
+			);
 
-			// Validate required parameters
-			if ( ! isset( $params['service_key'] ) || ! isset( $params['enable'] ) ) {
-				return $this->json_response( 'Error: Missing required parameters (service_key, enable)', array(), 400 );
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
 			}
 
-			$service_key = sanitize_text_field( $params['service_key'] );
-			$enable      = filter_var( $params['enable'], FILTER_VALIDATE_BOOLEAN );
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$service_key = $sanitized_data->service_key;
+			$enable      = (bool) $sanitized_data->enable;
 
 			// Get current service list
 			$service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
 			// Check if service exists
 			if ( ! isset( $service_list[ $service_key ] ) ) {
-				return $this->json_response( 'Error: Service not found', array(), 404 );
+				return $this->json_response( __( 'Error: Service not found', 'versatile-toolkit' ), array(), 404 );
 			}
 
 			// Update the service status
@@ -144,10 +182,37 @@ class ServiceInit {
 					200
 				);
 			} else {
-				return $this->json_response( 'Error: Failed to update service status', array(), 500 );
+				return $this->json_response( __( 'Error: Failed to update service status', 'versatile-toolkit' ), array(), 500 );
 			}
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: ' . $th->getMessage(), array(), 500 );
+		}
+	}
+
+	/**
+	 * Get mood info description.
+	 *
+	 * @return array description
+	 */
+	public function get_mood_info() {
+		try {
+			// action & nonce sanitization & validation by default, don't need to pass
+			$sanitized_data = versatile_sanitization_validation();
+
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+			return $this->json_response( __( 'Maintenance Mood info retrieved successfully!', 'versatile-toolkit' ), $current_mood_info, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( __( 'Error: while retrieving maintenance mood info', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
 }

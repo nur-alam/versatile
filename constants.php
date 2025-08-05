@@ -17,6 +17,13 @@ define( 'VERSATILE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VERSATILE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'VERSATILE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
+// Define mu-plugins directory path - compatible with all WordPress setups
+if ( ! defined( 'VERSATILE_MU_PLUGIN_DIR' ) ) {
+	$upload_dir  = wp_get_upload_dir();
+	$content_dir = dirname( $upload_dir['basedir'] );
+	define( 'VERSATILE_MU_PLUGIN_DIR', $content_dir . '/mu-plugins' );
+}
+
 define( 'VERSATILE_REDIRECT_URI', admin_url( 'admin.php?page=versatile' ) );
 
 define( 'VERSATILE_DISABLE_PLUGIN_LIST', 'versatile_disable_plugin_list' );
@@ -74,7 +81,6 @@ define(
 			'enable'      => true,
 			'path'        => 'troubleshoot',
 			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
-			// 'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
@@ -90,3 +96,6 @@ define(
 		),
 	)
 );
+
+define( 'VERSATILE_DEFAULT_COMINGSOON_TEMPLATE', 'classic' );
+define( 'VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE', 'classic' );

@@ -9,16 +9,17 @@ import { InlineLoader, ButtonLoader } from '@/components/loader';
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
+import { useDisablePlugin, useGetActiveTheme, useGetDisablePluginList, useSaveActiveTheme } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 const TroubleShoot = () => {
+
 	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
 		resolver: zodResolver(disablePluginFormSchema),
 		defaultValues: {
-			chosenPlugins: [],
-			ipTags: [],
+			chosen_plugins: [],
+			ip_tags: [],
 		}
 	});
 
@@ -29,34 +30,14 @@ const TroubleShoot = () => {
 		}
 	});
 
-	const disablePluginMutation = useDisablePlugin();
+	// theme selector
 	const saveActiveThemeMutation = useSaveActiveTheme();
-
-	const onSubmit = async (values: DisablePluginFormValues) => {
-		await disablePluginMutation.mutateAsync({ ...values });
-	}
-
 	const onThemeSubmit = async (values: ThemeFormValues) => {
 		await saveActiveThemeMutation.mutateAsync({ ...values });
 	}
 
-	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
 	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
-
-	const chosenPluginList = disablePluginData?.data['chosenPlugins'];
-
-	const chosenIpList = disablePluginData?.data['ipTags'];
 	const activeTheme = activeThemeData?.data['activeTheme'];
-
-	useEffect(() => {
-		if (chosenPluginList || chosenIpList) {
-			// Set default values when data is loaded
-			control._reset({
-				chosenPlugins: chosenPluginList || [],
-				ipTags: chosenIpList || [],
-			});
-		}
-	}, [chosenPluginList, chosenIpList, control]);
 
 	useEffect(() => {
 		if (activeTheme) {
@@ -67,6 +48,29 @@ const TroubleShoot = () => {
 		}
 	}, [activeTheme, themeControl]);
 
+	// disable plugin
+	const disablePluginMutation = useDisablePlugin();
+
+	const onSubmit = async (values: DisablePluginFormValues) => {
+		await disablePluginMutation.mutateAsync({ ...values });
+	}
+
+	const { data: disablePluginData, isFetching, isLoading: disablePluginListLoading, isError: disablePluginListError } = useGetDisablePluginList();
+
+	const chosenPluginList = disablePluginData?.data['chosen_plugins'];
+
+	const chosenIpList = disablePluginData?.data['ip_tags'];
+
+	useEffect(() => {
+		if (chosenPluginList || chosenIpList) {
+			// Set default values when data is loaded
+			control._reset({
+				chosen_plugins: chosenPluginList || [],
+				ip_tags: chosenIpList || [],
+			});
+		}
+	}, [chosenPluginList, chosenIpList, control]);
+
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
 			<h2 className='flex items-center gap-2 text-2xl'>
@@ -75,7 +79,7 @@ const TroubleShoot = () => {
 				</Link>
 				{__('Troubleshoot Settings', 'versatile-toolkit')}
 			</h2>
-			
+
 			{/* Plugin Disable Section */}
 			<div className="border rounded-lg p-4">
 				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile-toolkit')}</h3>
@@ -83,20 +87,21 @@ const TroubleShoot = () => {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> : <Controller
-								name='chosenPlugins'
-								control={control}
-								render={({ field }) => (
-									<MultipleSelector
-										selectedPlugin={field.value}
-										onChange={field.onChange}
-									/>
-								)}
-							/>
+							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> :
+								<Controller
+									name='chosen_plugins'
+									control={control}
+									render={({ field }) => (
+										<MultipleSelector
+											selectedPlugin={field.value}
+											onChange={field.onChange}
+										/>
+									)}
+								/>
 						}
-						{errors.chosenPlugins && (
+						{errors.chosen_plugins && (
 							<p className="text-red-500 text-sm mt-1">
-								{errors?.chosenPlugins?.message}
+								{errors?.chosen_plugins?.message}
 							</p>
 						)}
 					</div>
@@ -104,7 +109,7 @@ const TroubleShoot = () => {
 						{
 							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile-toolkit')} /> :
 								<Controller
-									name='ipTags'
+									name='ip_tags'
 									control={control}
 									render={({ field }) => (
 										<TaggedInput
@@ -114,15 +119,15 @@ const TroubleShoot = () => {
 									)}
 								/>
 						}
-						{errors.ipTags && (
+						{errors.ip_tags && (
 							<p className="text-red-500 text-sm mt-1">
-								{errors?.ipTags?.message}
+								{errors?.ip_tags?.message}
 							</p>
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						<ButtonLoader 
-							isLoading={disablePluginMutation.isPending} 
+						<ButtonLoader
+							isLoading={disablePluginMutation.isPending}
 							loadingText={__('Saving', 'versatile-toolkit')}
 						>
 							{__('Save List', 'versatile-toolkit')}
@@ -156,8 +161,8 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
-						<ButtonLoader 
-							isLoading={saveActiveThemeMutation.isPending} 
+						<ButtonLoader
+							isLoading={saveActiveThemeMutation.isPending}
 							loadingText={__('Activating', 'versatile-toolkit')}
 						>
 							{__('Activate Theme', 'versatile-toolkit')}

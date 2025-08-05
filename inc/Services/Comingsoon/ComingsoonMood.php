@@ -10,7 +10,6 @@
 
 namespace Versatile\Services\Comingsoon;
 
-use Versatile\Helpers\UtilityHelper;
 use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,24 +46,95 @@ class ComingsoonMood {
 	 */
 	public function versatile_update_comingsoon_mood() {
 		try {
-			$request_verify = versatile_verify_request();
-			if ( 200 !== $request_verify['code'] ) {
-				return $this->json_response( 'Security check failed', array(), 403 );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'template',
+						'value'    => isset($_POST['template']) ? $_POST['template'] : 'false', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'show_subscribers_only',
+						'value'    => isset($_POST['show_subscribers_only']) ? $_POST['show_subscribers_only'] : 'false', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'boolean',
+					),
+					array(
+						'name'     => 'enable_comingsoon',
+						'value'    => isset($_POST['enable_comingsoon']) ? $_POST['enable_comingsoon'] : 'false', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'boolean',
+					),
+					array(
+						'name'     => 'title',
+						'value'    => isset($_POST['title']) ? $_POST['title'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'description',
+						'value'    => isset($_POST['description']) ? $_POST['description'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'subtitle',
+						'value'    => isset($_POST['subtitle']) ? $_POST['subtitle'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'background_image',
+						'value'    => isset($_POST['background_image']) ? $_POST['background_image'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+					array(
+						'name'     => 'background_image_id',
+						'value'    => isset($_POST['background_image_id']) ? $_POST['background_image_id'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'numeric',
+					),
+					array(
+						'name'     => 'logo',
+						'value'    => isset($_POST['logo']) ? $_POST['logo'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+					array(
+						'name'     => 'logo_id',
+						'value'    => isset($_POST['logo_id']) ? $_POST['logo_id'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'numeric',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				$error_message = versatile_grab_error_message( $sanitized_data->errors );
+				return $this->json_response( $error_message ?? 'Error: Required fields missing!', $sanitized_data->errors, 400 );
 			}
-			$params                                 = $request_verify['data'];
-			$params['enable_comingsoon']            = filter_var( $params['enable_comingsoon'], FILTER_VALIDATE_BOOLEAN );
-			$params['show_subscribers_only']        = filter_var( $params['show_subscribers_only'], FILTER_VALIDATE_BOOLEAN );
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message ?? 'Error: while updating comingsoon mood info', array(), $request_verify->code );
+			}
+
+			$sanitized_data->enable_comingsoon      = filter_var( $sanitized_data->enable_comingsoon, FILTER_VALIDATE_BOOLEAN );
+			$sanitized_data->show_subscribers_only  = filter_var( $sanitized_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                      = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$current_mood_info['enable_comingsoon'] = $params['enable_comingsoon'] ?? false;
+			$current_mood_info['enable_comingsoon'] = $sanitized_data->enable_comingsoon ?? false;
 			if ( $current_mood_info['enable_comingsoon'] ) {
 				$current_mood_info['enable_maintenance'] = false;
 			}
-			unset( $params['enable_comingsoon'] );
+			unset( $sanitized_data->enable_comingsoon );
 			$current_mood_info['comingsoon'] = array_merge(
 				$current_mood_info['comingsoon'],
-				$params
+				(array) $sanitized_data
 			);
-			$is_mood_info_updated            = update_option( VERSATILE_MOOD_LIST, $current_mood_info );
+			update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
 			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
@@ -79,26 +149,44 @@ class ComingsoonMood {
 	 */
 	public function preview_comingsoon_mode() {
 		try {
-			$request_verify = versatile_verify_request();
-			if ( 200 !== $request_verify['code'] ) {
-				wp_die( esc_html( $request_verify['message'] ) );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'type',
+						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'preview_data',
+						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
 			}
 
-			$params = $request_verify['data'];
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
-			// Get template ID from request
-			$template_id  = UtilityHelper::sanitize_get_field( 'template_id' ) ?? 'classic';
-			$type         = UtilityHelper::sanitize_get_field( 'type' ) ?? 'comingsoon';
-			$preview_mode = UtilityHelper::sanitize_get_field( 'preview_mode' ) ?? 'full';
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
+			}
+
+			$type         = $sanitized_data->type ?? 'comingsoon';
+			$preview_mode = $sanitized_data->preview_mode ?? 'full';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
-			if ( isset( $params['preview_data'] ) ) {
-				$preview_data_raw = UtilityHelper::sanitize_get_field( 'preview_data' );
+			if ( isset( $sanitized_data->preview_data ) ) {
+				$preview_data_raw = $sanitized_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			$template_id         = $preview_data['template'] ?? 'classic';
+			$template_id         = $preview_data['template'] ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
 			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$mood_info           = $versatile_mood_info[ $type ] ?? array();
 
@@ -121,6 +209,11 @@ class ComingsoonMood {
 			// Set headers for HTML response
 			header( 'Content-Type: text/html; charset=utf-8' );
 
+			// Fix deprecated emoji styles function for WordPress 6.4+
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+			}
 			// Load the selected template
 			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template_id . '.php';
 			if ( file_exists( $template_file ) ) {
@@ -142,27 +235,50 @@ class ComingsoonMood {
 	 */
 	public function comingsoon_template_preview() {
 		try {
-			$request_verify = versatile_verify_request();
-			if ( 200 !== $request_verify['code'] ) {
-				wp_die( esc_html( $request_verify['message'] ) );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'template_id',
+						'value'    => isset($_GET['template_id']) ? $_GET['template_id'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'type',
+						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'preview_data',
+						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
 			}
 
-			$params = $request_verify['data'];
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
+			}
 
 			// Get template ID from request
-			$template_id  = UtilityHelper::sanitize_get_field( 'template_id' ) ?? 'classic';
-			$type         = UtilityHelper::sanitize_get_field( 'type' ) ?? 'comingsoon';
-			$preview_mode = UtilityHelper::sanitize_get_field( 'preview_mode' ) ?? 'full';
+			$template_id  = $sanitized_data->template_id ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
+			$type         = $sanitized_data->type ?? 'comingsoon';
+			$preview_mode = $sanitized_data->preview_mode ?? 'full';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
-			if ( isset( $params['preview_data'] ) ) {
-				$preview_data_raw = UtilityHelper::sanitize_get_field( 'preview_data' );
+			if ( isset( $sanitized_data->preview_data ) ) {
+				$preview_data_raw = $sanitized_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
-
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
 
 			// For coming soon, use coming soon templates
 			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
@@ -182,6 +298,15 @@ class ComingsoonMood {
 				$description      = esc_html( $mood_info['description'] ?? 'Stay tuned for our exciting launch. Something great is coming your way!' );
 				$background_image = esc_url( $mood_info['background_image'] ?? '' );
 				$logo             = esc_url( $mood_info['logo'] ?? '' );
+			}
+
+			// Set headers for HTML response
+			header( 'Content-Type: text/html; charset=utf-8' );
+
+			// Fix deprecated emoji styles function for WordPress 6.4+
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
 			}
 
 			// Load the selected template
@@ -208,22 +333,56 @@ class ComingsoonMood {
 	 */
 	public function preview_template() {
 		try {
-			$request_verify = versatile_verify_request();
-			if ( 200 !== $request_verify['code'] ) {
-				wp_die( esc_html( $request_verify['message'] ) );
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'action',
+						'value'    => isset($_GET['action']) ? $_GET['action'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'template_id',
+						'value'    => isset($_GET['template_id']) ? $_GET['template_id'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'type',
+						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'preview_data',
+						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
 			}
 
-			$params = $request_verify['data'];
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
+			}
+
+			// $params = $request_verify['data'];
 
 			// Get template ID from request
-			$template_id  = UtilityHelper::sanitize_get_field( 'template_id' ) ?? 'classic';
-			$type         = UtilityHelper::sanitize_get_field( 'type' ) ?? 'comingsoon';
-			$preview_mode = UtilityHelper::sanitize_get_field( 'preview_mode' ) ?? 'full';
+			$template_id  = $sanitized_data->template_id ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
+			$type         = $sanitized_data->type ?? 'comingsoon';
+			$preview_mode = $sanitized_data->preview_mode ?? 'full';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
-			if ( isset( $params['preview_data'] ) ) {
-				$preview_data_raw = UtilityHelper::sanitize_get_field( 'preview_data' );
+			if ( isset( $sanitized_data->preview_data ) ) {
+				$preview_data_raw = $sanitized_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
@@ -262,6 +421,12 @@ class ComingsoonMood {
 			// Set headers for HTML response
 			header( 'Content-Type: text/html; charset=utf-8' );
 
+			// Fix deprecated emoji styles function for WordPress 6.4+
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+			}
+
 			// Load the selected template from the appropriate directory
 			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/' . $template_dir . '/Templates/' . $template_id . '.php';
 			if ( file_exists( $template_file ) ) {
@@ -286,8 +451,21 @@ class ComingsoonMood {
 		$current_user          = wp_get_current_user();
 		$versatile_mood_info   = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 		$show_subscribers_only = $versatile_mood_info['comingsoon']['show_subscribers_only'] ?? false;
+		$template              = $versatile_mood_info['comingsoon']['template'] ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
+
+		$template_title   = esc_html( $versatile_mood_info['comingsoon']['title'] ?? '' );
+		$subtitle         = esc_html( $versatile_mood_info['comingsoon']['subtitle'] ?? '' );
+		$description      = esc_html( $versatile_mood_info['comingsoon']['description'] ?? '' );
+		$background_image = esc_url( $versatile_mood_info['comingsoon']['background_image'] ?? '' );
+		$logo             = esc_url( $versatile_mood_info['comingsoon']['logo'] ?? '' );
+
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+		if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
+			add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+		}
 
 		if ( empty( $current_user->roles ) ) {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template . '.php';
 			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
 			die();
 		}
@@ -295,11 +473,11 @@ class ComingsoonMood {
 		// If show_subscribers_only is enabled, only show coming soon mode to subscribers
 		if ( $show_subscribers_only ) {
 			if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {
-				include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+				include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template . '.php';
 				die();
 			}
 		} else {
-			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template . '.php';
 			die();
 		}
 	}

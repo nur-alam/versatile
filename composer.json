@@ -1,5 +1,5 @@
 {
-	"name": "versatile/versatile",
+	"name": "versatile/versatile-toolkit",
 	"description": "A WordPress plugin for lots of simple wordpress helper service",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
@@ -21,5 +21,13 @@
 	"minimum-stability": "stable",
 	"require": {
 		"php": ">=7.4"
+	},
+	"extra": {
+		"plugin-type": "versatile-toolkit",
+		"plugin-name": "Versatile Toolkit",
+		"plugin-description": "A WordPress plugin for lots of simple wordpress helper service",
+		"plugin-version": "1.0.0",
+		"plugin-author": "nurwp",
+		"plugin-author-uri": "https://nurwp.com"
 	}
 }

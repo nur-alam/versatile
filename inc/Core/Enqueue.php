@@ -27,7 +27,7 @@ class Enqueue {
 	 */
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_admin_scripts' ) );
-		// add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_front_end_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_front_end_scripts' ) );
 	}
 
 	/**
@@ -84,20 +84,30 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_front_end_scripts(): void {
-		// $plugin_data             = Versatile::plugin_data();
-		// $Versatile_frontend_bundle = Versatile::plugin_data()['plugin_url'] . 'assets/dist/js/Versatile-frontend.min.js';
-		// wp_enqueue_script(
-		// 'Versatile-frontend',
-		// $Versatile_frontend_bundle,
-		// array(),
-		// VERSATILE_VERSION,
-		// true
-		// );
-		// wp_add_inline_script(
-		// 'Versatile-frontend',
-		// 'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
-		// 'before'
-		// );
+		$plugin_data                        = Versatile::plugin_data();
+		$versatile_comingsoon_style_bundle  = $plugin_data['plugin_url'] . 'assets/dist/css/comingsoon-style.min.css';
+		$versatile_maintenance_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/maintenance-style.min.css';
+
+		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+
+		$enable_comingsoon  = $versatile_mood_info['enable_comingsoon'];
+		$enable_maintenance = $versatile_mood_info['enable_maintenance'];
+
+		wp_register_style(
+			'versatile-comingsoon-style',
+			$versatile_comingsoon_style_bundle,
+			array(),
+			VERSATILE_VERSION,
+			'all'
+		);
+
+		wp_register_style(
+			'versatile-maintenance-style',
+			$versatile_maintenance_style_bundle,
+			array(),
+			VERSATILE_VERSION,
+			'all'
+		);
 	}
 
 	/**

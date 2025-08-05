@@ -52,8 +52,10 @@ if ( ! class_exists( 'Versatile' ) ) {
 		public function __construct() {
 			require_once 'constants.php';
 
-			if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-				include_once __DIR__ . '/vendor/autoload.php';
+			// Load Composer autoloader only if not already loaded
+			$autoload_file = __DIR__ . '/vendor/autoload.php';
+			if ( file_exists( $autoload_file ) ) {
+				include_once $autoload_file;
 			}
 
 			// for rest api basic auth for tools like postman, set password from application password under user edit.
@@ -61,9 +63,9 @@ if ( ! class_exists( 'Versatile' ) ) {
 
 			register_activation_hook( __FILE__, array( __CLASS__, 'register_activation' ) );
 			register_deactivation_hook( __FILE__, array( __CLASS__, 'register_deactivation' ) );
-			new Init();
+			// new Init();
 			// Initialize plugin.
-			// add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
+			add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		}
 
 		/**
@@ -149,7 +151,7 @@ if ( ! class_exists( 'Versatile' ) ) {
 		 * @return void
 		 */
 		private static function delete_mu_plugin() {
-			$mu_plugin_file = WP_CONTENT_DIR . '/mu-plugins/mu-versatile.php';
+			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/mu-plugins/mu-versatile.php';
 
 			if ( file_exists( $mu_plugin_file ) ) {
 				wp_delete_file( $mu_plugin_file );

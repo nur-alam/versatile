@@ -54,16 +54,21 @@ abstract class DatabaseAbstract {
 	 * @return void
 	 */
 	public function create_table() {
+		// Only allow table creation during plugin activation or upgrade
+		if ( ! $this->is_schema_change_allowed() ) {
+			return;
+		}
+
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = $this->get_table_schema() . $charset_collate;
 
-		if ( ! file_exists( 'dbDelta' ) ) {
+		if ( ! function_exists( 'dbDelta' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-			dbDelta( $sql );
 		}
+
+		dbDelta( $sql );
 	}
 
 	/**
@@ -74,8 +79,45 @@ abstract class DatabaseAbstract {
 	 * @return void
 	 */
 	public function drop_table() {
+		// Only allow table dropping during plugin deactivation or uninstall
+		if ( ! $this->is_schema_change_allowed() ) {
+			return;
+		}
+
 		global $wpdb;
 
-		$wpdb->query( 'DROP TABLE IF EXISTS ' . $this->get_table_name() ); //phpcs:ignore
+		$table_name = $this->get_table_name();
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %s', $table_name ) );
+	}
+
+	/**
+	 * Check if schema changes are allowed
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	private function is_schema_change_allowed(): bool {
+		// Allow during plugin activation
+		if ( did_action( 'activate_plugin' ) ) {
+			return true;
+		}
+
+		// Allow during plugin deactivation
+		if ( did_action( 'deactivate_plugin' ) ) {
+			return true;
+		}
+
+		// Allow during WordPress upgrade/install
+		if ( defined( 'WP_INSTALLING' ) && WP_INSTALLING ) {
+			return true;
+		}
+
+		// Allow if explicitly called during admin context with proper capability
+		if ( is_admin() && current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }

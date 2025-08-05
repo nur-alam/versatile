@@ -31,7 +31,7 @@ class TroubleshootInit {
 		add_action( 'wp_ajax_versatile_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_add_my_ip', array( $this, 'add_my_ip' ) );
-		add_action( 'wp_ajax_versatile_theme_list', array( $this, 'get_theme_list' ) );
+		add_action( 'wp_ajax_versatile_get_theme_list', array( $this, 'get_theme_list' ) );
 		add_action( 'wp_ajax_versatile_get_active_theme', array( $this, 'get_active_theme' ) );
 		add_action( 'wp_ajax_versatile_save_active_theme', array( $this, 'save_active_theme' ) );
 	}
@@ -44,32 +44,52 @@ class TroubleshootInit {
 	public function save_disable_plugin_list() {
 		$this->versatile_create_mu_plugin();
 		try {
-			$request_verify = versatile_verify_request();
-			$params         = $request_verify['data'];
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'chosen_plugins',
+						'value'    => isset($_POST['chosen_plugins']) ? $_POST['chosen_plugins'] : array(), //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => '',
+					),
+					array(
+						'name'     => 'ip_tags',
+						'value'    => isset($_POST['ip_tags']) ? $_POST['ip_tags'] : array(), //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|array',
+					),
+				)
+			);
 
-			// Remove keys that should not be saved
-			unset( $params['action'], $params['versatile_nonce'] );
+			// Check if sanitization was successful
+			if ( ! $sanitized_data->success ) {
+				return $this->json_response( $sanitized_data->message, array(), $sanitized_data->code );
+			}
 
-			if ( ! empty( $params['chosenPlugins'] ) && in_array( 'versatile/versatile.php', $params['chosenPlugins'], true ) ) {
-				$filter_chosen_plugins   = array_filter(
-					$params['chosenPlugins'],
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			}
+
+			// Convert object to array for easier handling
+			$params = array(
+				'chosen_plugins' => $sanitized_data->chosen_plugins,
+				'ip_tags'        => $sanitized_data->ip_tags,
+			);
+
+			if ( ! empty( $params['chosen_plugins'] ) && in_array( 'versatile-toolkit/versatile-toolkit.php', $params['chosen_plugins'], true ) ) {
+				$filter_chosen_plugins    = array_filter(
+					$params['chosen_plugins'],
 					function ( $item ) {
-						return 'versatile/versatile.php' !== $item;
+						return 'versatile-toolkit/versatile-toolkit.php' !== $item;
 					}
 				);
-				$params['chosenPlugins'] = array_values( $filter_chosen_plugins );
+				$params['chosen_plugins'] = array_values( $filter_chosen_plugins );
 			}
 
 			// Save to options table
-			$is_updated = update_option( VERSATILE_DISABLE_PLUGIN_LIST, $params );
-
-			// update versatile addon info
-			// if ( $is_updated ) {
-			// $versatile_service_list                           = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			// $versatile_service_list['troubleshoot']['enable'] = true;
-			// update_option( VERSATILE_SERVICE_LIST, $versatile_service_list );
-			// }
-
+			update_option( VERSATILE_DISABLE_PLUGIN_LIST, $params );
 			return $this->json_response( 'Disable plugin list saved', array(), 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while saving list', array(), 400 );
@@ -98,7 +118,7 @@ class TroubleshootInit {
 
 			foreach ( $all_plugins as $plugin_file => $plugin ) {
 				if ( isset( $plugin['Name'] ) ) {
-					if ( 'versatile/versatile.php' === $plugin_file ) {
+					if ( 'versatile-toolkit/versatile-toolkit.php' === $plugin_file ) {
 						continue;
 					}
 
@@ -163,7 +183,7 @@ class TroubleshootInit {
 	public function get_active_theme() {
 		try {
 			$active_theme = get_option( 'stylesheet' );
-			$data = array(
+			$data         = array(
 				'activeTheme' => $active_theme,
 			);
 			return $this->json_response( 'Active theme retrieved', $data, 200 );
@@ -177,8 +197,8 @@ class TroubleshootInit {
 	 */
 	public function save_active_theme() {
 		try {
-			$request_verify = versatile_verify_request();
-			$params         = $request_verify['data'];
+			// $request_verify = versatile_verify_request();
+			$params = $_POST; // phpcs:ignore
 
 			// Remove keys that should not be saved
 			unset( $params['action'], $params['versatile_nonce'] );
@@ -209,15 +229,16 @@ class TroubleshootInit {
 	 */
 	public function versatile_create_mu_plugin() {
 		try {
-			if ( file_exists( WP_CONTENT_DIR . '/mu-plugins/MuVersatileToolkit.php' ) ) {
+			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/MuVersatileToolkit.php';
+
+			if ( file_exists( $mu_plugin_file ) ) {
 				return;
 			}
-			$template_file  = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuVersatileToolkit.php';
-			$mu_plugin_dir  = WP_CONTENT_DIR . '/mu-plugins';
-			$mu_plugin_file = $mu_plugin_dir . '/MuVersatileToolkit.php';
 
-			if ( ! file_exists( $mu_plugin_dir ) ) {
-				wp_mkdir_p( $mu_plugin_dir );
+			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuVersatileToolkit.php';
+
+			if ( ! file_exists( VERSATILE_MU_PLUGIN_DIR ) ) {
+				wp_mkdir_p( VERSATILE_MU_PLUGIN_DIR );
 			}
 
 			if ( ! file_exists( $mu_plugin_file ) ) {

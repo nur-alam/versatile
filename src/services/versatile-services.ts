@@ -68,13 +68,13 @@ export const useAddMyIp = () => {
 			toast.error(error.message ?? __('Failed to add IP', 'versatile-toolkit'));
 		},
 	});
-}
+};
 
 export const useGetThemeList = () => {
 	return useQuery<VersatileResponseType>({
 		queryKey: ['getThemeList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'versatile_theme_list';
+			payload.action = 'versatile_get_theme_list';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});

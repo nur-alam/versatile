@@ -10,8 +10,6 @@
 
 namespace Versatile\RestAPI;
 
-use WP_REST_Server;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

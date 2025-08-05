@@ -87,6 +87,8 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 5. Live maintenance page preview
 6. Coming soon page with custom branding
 
+Source code link : https://github.com/nur-alam/versatile
+
 == Changelog ==
 
 = 1.0.0 =

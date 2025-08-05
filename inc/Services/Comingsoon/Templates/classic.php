@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<meta charset="UTF-8">
 	<title><?php echo esc_html( $template_title ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <?php wp_enqueue_style( 'versatile-comingsoon-style' ); ?> -->
+	<!-- <?php wp_head(); ?> -->
 	<style>
 		:root {
 			--primary-color: #4F46E5;
@@ -100,7 +102,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 	</style>
 </head>
-<body>
+<body style="background-image: url('<?php echo esc_url( $background_image ); ?>');">
 	<div class="container">
 		<?php if ( $logo ) : ?>
 		<div class="logo">

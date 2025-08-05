@@ -7,7 +7,8 @@
  * @since 1.0.0
  */
 
-use Versatile\Helpers\UtilityHelper;
+use Versatile\Helpers\ValidationHelper;
+use Versatile\Helpers\VersatileInput;
 
 /**
  * Authentication checking.
@@ -36,49 +37,120 @@ function versatile_get_plugin_data() {
 /**
  * Verify nonce and authentication.
  *
- * @param bool $check_auth Whether to check user authentication (default: true).
- * @return array{success: bool, message: string, code: int, data?: array} Returns array with verification result and sanitized data.
+ * @param array $inputs Array of input data to verify.
+ * @param bool  $check_auth Whether to check user authentication (default: true).
+ * @param array $permissions Array of user permission strings to check (default: empty array).
+ *
+ * @return object{success: bool, message: string, code: int, data?: array} Returns array with verification result and sanitized data.
  */
-function versatile_verify_request( $check_auth = true ) {
+function versatile_verify_request( $inputs, $check_auth = true, $permissions = array( 'manage_options' ) ) {
 	// Check authentication if required
 	if ( $check_auth && ! is_user_logged_in() ) {
-		return array(
+		return (object) array(
 			'success' => false,
 			'message' => __( 'Access denied! Please login to access this feature.', 'versatile-toolkit' ),
 			'code'    => 403,
 		);
 	}
 
+	// Check user permissions
+	if ( ! empty( $permissions ) ) {
+		$user = wp_get_current_user();
+		foreach ( $permissions as $permission ) {
+			if ( ! user_can( $user, $permission ) ) {
+				return (object) array(
+					'success' => false,
+					'message' => __( 'You do not have permission to access this feature.', 'versatile-toolkit' ),
+					'code'    => 403,
+				);
+			}
+		}
+	}
+
 	$plugin_info  = versatile_get_plugin_data();
 	$nonce_key    = $plugin_info['nonce_key'];
 	$nonce_action = $plugin_info['nonce_action'];
 
+	$is = isset( $inputs['versatile_nonce'] );
+
+	$non = wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action );
+
 	// Verify nonce
-	if ( $check_auth && ( ! isset( $_REQUEST[ $nonce_key ] )
-		|| ! wp_verify_nonce(
-			sanitize_text_field( wp_unslash( $_REQUEST[ $nonce_key ] ) ),
-			$nonce_action
-		) )
-	) {
-		return array(
+	if ( ! isset( $inputs['versatile_nonce'] ) || ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
+		return (object) array(
 			'success' => false,
 			'message' => __( 'Invalid security token!', 'versatile-toolkit' ),
 			'code'    => 400,
 		);
 	}
 
-	// Remove keys that should not be saved
-	unset( $_REQUEST['action'], $_REQUEST['versatile_nonce'] );
-
 	// Return success with sanitized POST data
-	return array(
+	return (object) array(
 		'success' => true,
 		'message' => __( 'Verification successful.', 'versatile-toolkit' ),
 		'code'    => 200,
-		'data'    => UtilityHelper::sanitize_array( $_REQUEST ),
 	);
 }
 
+/**
+ * Sanitization and validation of inputs.
+ *
+ * @param array $inputs Array of input data to sanitize and validate.
+ *
+ * @return object Sanitized and validated input data.
+ */
+function versatile_sanitization_validation( $inputs = array() ) {
+	$default_inputs   = array(
+		array(
+			'name'     => 'action',
+			'value'    => $_REQUEST['action'], //phpcs:ignore
+			'sanitize' => 'sanitize_text_field',
+			'rules'    => 'required|string',
+		),
+		array(
+			'name'     => 'versatile_nonce',
+			'value'    => $_REQUEST['versatile_nonce'], //phpcs:ignore
+			'sanitize' => 'sanitize_text_field',
+			'rules'    => 'required|alphanumeric',
+		),
+	);
+	$merged_inputs    = array_merge( $default_inputs, $inputs );
+	$input_data       = array();
+	$sanitize_mapping = array();
+
+	foreach ( $merged_inputs as $value ) {
+		array_push( $input_data, $value['value'] );
+		$sanitize_mapping[ $value['name'] ] = $value['sanitize'];
+	}
+
+	$sanitized_data = VersatileInput::sanitize_array( $input_data, $sanitize_mapping );
+
+	$rules = array();
+	foreach ( $merged_inputs as $value ) {
+		$rules[ $value['name'] ] = $value['rules'];
+	}
+
+	$mapped_sanitized_data = array();
+
+	foreach ( $merged_inputs as $key => $value ) {
+		$mapped_sanitized_data[ $value['name'] ] = $sanitized_data[ $key ];
+	}
+
+	$validation = ValidationHelper::validate( $rules, $mapped_sanitized_data );
+
+	if ( ! $validation->success ) {
+		return (object) array(
+			'success' => false,
+			'message' => __( 'Error: Required fields missing!', 'versatile-toolkit' ),
+			'code'    => 400,
+			'errors'  => $validation->errors,
+		);
+	}
+
+	$mapped_sanitized_data['success'] = true;
+
+	return (object) $mapped_sanitized_data;
+}
 /**
  * Get client IP address
  *
@@ -121,4 +193,33 @@ function versatile_get_client_ip() {
 
 	// Fallback to REMOTE_ADDR even if it's private (for local development)
 	return $server_ip ?? '127.0.0.1';
+}
+
+/**
+ * Convert snake_case to Readable Key
+ *
+ * @param string $key The key to convert.
+ *
+ * @return string The converted key.
+ */
+function versatile_readable_key( $key ) {
+	return ucwords( str_replace( '_', ' ', $key ) );
+}
+
+/**
+ * Grab error message from errors array
+ *
+ * @param array $errors The errors array.
+ *
+ * @return string The error message.
+ */
+function versatile_grab_error_message( $errors ) {
+	$error_message = '';
+	if ( ! count( $errors ) ) {
+		$error_message = null;
+	} else {
+		$error_message = reset( reset( $errors ) );
+	}
+
+	return $error_message;
 }
