@@ -23,6 +23,6 @@ Thumbs.db
 *.log
 *.map
 .phpunit.cache
-assets/dist/
+assets/dist/mix-manifest.json
 languages
 package-lock.json
