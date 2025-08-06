@@ -10,6 +10,7 @@
 
 namespace Versatile\Services\Comingsoon;
 
+use Versatile\Helpers\MoodHelper;
 use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +37,7 @@ class ComingsoonMood {
 		add_action( 'wp_ajax_versatile_update_comingsoon_mood', array( $this, 'versatile_update_comingsoon_mood' ) );
 		add_action( 'wp_ajax_versatile_preview_comingsoon', array( $this, 'preview_comingsoon_mode' ) );
 		add_action( 'wp_ajax_versatile_comingsoon_template_preview', array( $this, 'comingsoon_template_preview' ) );
-		add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
+		// add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
 	}
 
 	/**
@@ -136,14 +137,14 @@ class ComingsoonMood {
 			);
 			update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
-			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
+			return $this->json_response( __( 'Comingsoon Mood info updated!', 'versatile-toolkit' ), $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
-			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
+			return $this->json_response( __( 'Error: while updating comingsoon mood info', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
 
 	/**
-	 * Preview coming soon mode via AJAX
+	 * Preview coming soon mode via AJAX FULL PREVIEW
 	 *
 	 * @return void
 	 */
@@ -176,8 +177,7 @@ class ComingsoonMood {
 				wp_die( esc_html( $request_verify->message ) );
 			}
 
-			$type         = $sanitized_data->type ?? 'comingsoon';
-			$preview_mode = $sanitized_data->preview_mode ?? 'full';
+			$type = $sanitized_data->type ?? 'comingsoon';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
@@ -185,43 +185,10 @@ class ComingsoonMood {
 				$preview_data_raw = $sanitized_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
+			$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
 
-			$template_id         = $preview_data['template'] ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
-			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$mood_info           = $versatile_mood_info[ $type ] ?? array();
-
-			// Use preview data if available, otherwise use saved data
-			if ( $preview_data ) {
-				$template_title   = esc_html( $preview_data['title'] ?? 'Coming Soon!' );
-				$subtitle         = esc_html( $preview_data['subtitle'] ?? 'We&rsquo;re working on something amazing.' );
-				$description      = esc_html( $preview_data['description'] ?? 'Stay tuned for our exciting launch. Something great is coming your way!' );
-				$background_image = esc_url( $preview_data['background_image'] ?? '' );
-				$logo             = esc_url( $preview_data['logo'] ?? '' );
-			} else {
-				// Set up template variables with defaults for preview
-				$template_title   = esc_html( $mood_info['title'] ?? 'Coming Soon!' );
-				$subtitle         = esc_html( $mood_info['subtitle'] ?? 'We&rsquo;re working on something amazing.' );
-				$description      = esc_html( $mood_info['description'] ?? 'Stay tuned for our exciting launch. Something great is coming your way!' );
-				$background_image = esc_url( $mood_info['background_image'] ?? '' );
-				$logo             = esc_url( $mood_info['logo'] ?? '' );
-			}
-
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// Fix deprecated emoji styles function for WordPress 6.4+
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
-			}
-			// Load the selected template
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template_id . '.php';
-			if ( file_exists( $template_file ) ) {
-				include $template_file;
-			} else {
-				// Fallback to classic template
-				include VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/classic.php';
-			}
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
 			die();
 		} catch ( \Throwable $th ) {
 			wp_die( 'Error loading preview' );
@@ -229,7 +196,7 @@ class ComingsoonMood {
 	}
 
 	/**
-	 * Preview specific coming soon template via AJAX
+	 * Preview specific coming soon template via AJAX single template &.
 	 *
 	 * @return void
 	 */
@@ -269,9 +236,8 @@ class ComingsoonMood {
 			}
 
 			// Get template ID from request
-			$template_id  = $sanitized_data->template_id ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
-			$type         = $sanitized_data->type ?? 'comingsoon';
-			$preview_mode = $sanitized_data->preview_mode ?? 'full';
+			$template_id = $sanitized_data->template_id;
+			$type        = $sanitized_data->type ?? 'comingsoon';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
@@ -280,164 +246,14 @@ class ComingsoonMood {
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			// For coming soon, use coming soon templates
-			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$mood_info           = $versatile_mood_info[ $type ] ?? array();
-
-			// Use preview data if available, otherwise use saved data
-			if ( $preview_data ) {
-				$template_title   = esc_html( $preview_data['title'] ?? 'Coming Soon!' );
-				$subtitle         = esc_html( $preview_data['subtitle'] ?? 'We&rsquo;re working on something amazing.' );
-				$description      = esc_html( $preview_data['description'] ?? 'Stay tuned for our exciting launch. Something great is coming your way!' );
-				$background_image = esc_url( $preview_data['background_image'] ?? '' );
-				$logo             = esc_url( $preview_data['logo'] ?? '' );
-			} else {
-				// Set up template variables with defaults for preview
-				$template_title   = esc_html( $mood_info['title'] ?? 'Coming Soon!' );
-				$subtitle         = esc_html( $mood_info['subtitle'] ?? 'We&rsquo;re working on something amazing.' );
-				$description      = esc_html( $mood_info['description'] ?? 'Stay tuned for our exciting launch. Something great is coming your way!' );
-				$background_image = esc_url( $mood_info['background_image'] ?? '' );
-				$logo             = esc_url( $mood_info['logo'] ?? '' );
+			if ( empty( $sanitized_data->template_id ) ) {
+				$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
 			}
 
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// Fix deprecated emoji styles function for WordPress 6.4+
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
-			}
-
-			// Load the selected template
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template_id . '.php';
-			if ( file_exists( $template_file ) ) {
-				include $template_file;
-			} else {
-				// Fallback to classic template
-				include VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/classic.php';
-			}
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
 			die();
 		} catch ( \Throwable $th ) {
-			// error_log( 'Versatile: Exception in comingsoon_template_preview: ' . $th->getMessage() );
-			wp_die( esc_html__( 'Error loading template preview: ', 'versatile-toolkit' ) . esc_html( $th->getMessage() ) );
-		}
-	}
-
-
-
-	/**
-	 * Unified template preview method for both maintenance and coming soon
-	 *
-	 * @return void
-	 */
-	public function preview_template() {
-		try {
-			$sanitized_data = versatile_sanitization_validation(
-				array(
-					array(
-						'name'     => 'action',
-						'value'    => isset($_GET['action']) ? $_GET['action'] : '', //phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|string',
-					),
-					array(
-						'name'     => 'template_id',
-						'value'    => isset($_GET['template_id']) ? $_GET['template_id'] : '', //phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|string',
-					),
-					array(
-						'name'     => 'type',
-						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|string',
-					),
-					array(
-						'name'     => 'preview_data',
-						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required',
-					),
-				)
-			);
-
-			if ( ! $sanitized_data->success ) {
-				wp_die( esc_html( $sanitized_data->message ) );
-			}
-
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
-
-			if ( ! $request_verify->success ) {
-				wp_die( esc_html( $request_verify->message ) );
-			}
-
-			// $params = $request_verify['data'];
-
-			// Get template ID from request
-			$template_id  = $sanitized_data->template_id ?? VERSATILE_DEFAULT_COMINGSOON_TEMPLATE;
-			$type         = $sanitized_data->type ?? 'comingsoon';
-			$preview_mode = $sanitized_data->preview_mode ?? 'full';
-
-			// Handle preview data if provided (for live preview with user's current form data)
-			$preview_data = null;
-			if ( isset( $sanitized_data->preview_data ) ) {
-				$preview_data_raw = $sanitized_data->preview_data;
-				$preview_data     = json_decode( $preview_data_raw, true );
-			}
-
-			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$mood_info           = $versatile_mood_info[ $type ] ?? array();
-
-			// Set default content based on type
-			if ( 'maintenance' === $type ) {
-				$default_title       = 'We&rsquo;ll be back soon!';
-				$default_subtitle    = 'Our site is currently undergoing scheduled maintenance.';
-				$default_description = 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.';
-				$template_dir        = 'MaintenanceMode';
-			} else {
-				$default_title       = 'Coming Soon!';
-				$default_subtitle    = 'We&rsquo;re working on something amazing.';
-				$default_description = 'Stay tuned for our exciting launch. Something great is coming your way!';
-				$template_dir        = 'Comingsoon';
-			}
-
-			// Use preview data if available, otherwise use saved data
-			if ( $preview_data ) {
-				$template_title   = esc_html( $preview_data['title'] ?? $default_title );
-				$subtitle         = esc_html( $preview_data['subtitle'] ?? $default_subtitle );
-				$description      = esc_html( $preview_data['description'] ?? $default_description );
-				$background_image = esc_url( $preview_data['background_image'] ?? '' );
-				$logo             = esc_url( $preview_data['logo'] ?? '' );
-			} else {
-				// Set up template variables with defaults for preview
-				$template_title   = esc_html( $mood_info['title'] ?? $default_title );
-				$subtitle         = esc_html( $mood_info['subtitle'] ?? $default_subtitle );
-				$description      = esc_html( $mood_info['description'] ?? $default_description );
-				$background_image = esc_url( $mood_info['background_image'] ?? '' );
-				$logo             = esc_url( $mood_info['logo'] ?? '' );
-			}
-
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// Fix deprecated emoji styles function for WordPress 6.4+
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
-			}
-
-			// Load the selected template from the appropriate directory
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/' . $template_dir . '/Templates/' . $template_id . '.php';
-			if ( file_exists( $template_file ) ) {
-				include $template_file;
-			} else {
-				// Fallback to classic template in the appropriate directory
-				include VERSATILE_PLUGIN_DIR . 'inc/Services/' . $template_dir . '/Templates/classic.php';
-			}
-			die();
-		} catch ( \Throwable $th ) {
-			// error_log( 'Versatile: Exception in preview_template: ' . $th->getMessage() );
 			wp_die( esc_html__( 'Error loading template preview: ', 'versatile-toolkit' ) . esc_html( $th->getMessage() ) );
 		}
 	}

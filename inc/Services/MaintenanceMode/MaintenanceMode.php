@@ -11,6 +11,7 @@
 namespace Versatile\Services\MaintenanceMode;
 
 use Versatile\Traits\JsonResponse;
+use Versatile\Helpers\MoodHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,7 +37,7 @@ class MaintenanceMode {
 		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
 		add_action( 'wp_ajax_versatile_preview_maintenance', array( $this, 'preview_maintenance_mode' ) );
 		add_action( 'wp_ajax_versatile_maintenance_template_preview', array( $this, 'maintenance_template_preview' ) );
-		add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
+		// add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
 	}
 
 	/**
@@ -185,41 +186,10 @@ class MaintenanceMode {
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			$template_id         = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
-			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$mood_info           = $versatile_mood_info[ $type ] ?? array();
+			$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
 
-			// Use preview data if available, otherwise use saved data
-			if ( $preview_data ) {
-				$template_title   = esc_html( $preview_data['title'] ?? 'We&rsquo;ll be back soon!' );
-				$subtitle         = esc_html( $preview_data['subtitle'] ?? 'Our site is currently undergoing scheduled maintenance.' );
-				$description      = esc_html( $preview_data['description'] ?? 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.' );
-				$background_image = esc_url( $preview_data['background_image'] ?? '' );
-				$logo             = esc_url( $preview_data['logo'] ?? '' );
-			} else {
-				// Set up template variables with defaults for preview
-				$template_title   = esc_html( $mood_info['title'] ?? 'We&rsquo;ll be back soon!' );
-				$subtitle         = esc_html( $mood_info['subtitle'] ?? 'Our site is currently undergoing scheduled maintenance.' );
-				$description      = esc_html( $mood_info['description'] ?? 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.' );
-				$background_image = esc_url( $mood_info['background_image'] ?? '' );
-				$logo             = esc_url( $mood_info['logo'] ?? '' );
-			}
-
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// Load the selected template
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
-			}
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template_id . '.php';
-			if ( file_exists( $template_file ) ) {
-				include $template_file;
-			} else {
-				// Fallback to classic template
-				include VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/classic.php';
-			}
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
 			die();
 		} catch ( \Throwable $th ) {
 			wp_die( 'Error loading preview' );
@@ -267,9 +237,8 @@ class MaintenanceMode {
 			}
 
 			// Get template ID from request
-			$template_id  = $sanitized_data->template_id ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
-			$type         = $sanitized_data->type ?? 'maintenance';
-			$preview_mode = $sanitized_data->preview_mode ?? 'full';
+			$template_id = $sanitized_data->template_id ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
+			$type        = $sanitized_data->type ?? 'maintenance';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
@@ -278,44 +247,14 @@ class MaintenanceMode {
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// For maintenance, use maintenance templates
-			$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$mood_info           = $versatile_mood_info[ $type ] ?? array();
-
-			// Use preview data if available, otherwise use saved data
-			if ( $preview_data ) {
-				$template_title   = esc_html( $preview_data['title'] ?? 'We&rsquo;ll be back soon!' );
-				$subtitle         = esc_html( $preview_data['subtitle'] ?? 'Our site is currently undergoing scheduled maintenance.' );
-				$description      = esc_html( $preview_data['description'] ?? 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.' );
-				$background_image = esc_url( $preview_data['background_image'] ?? '' );
-				$logo             = esc_url( $preview_data['logo'] ?? '' );
-			} else {
-				// Set up template variables with defaults for preview
-				$template_title   = esc_html( $mood_info['title'] ?? 'We&rsquo;ll be back soon!' );
-				$subtitle         = esc_html( $mood_info['subtitle'] ?? 'Our site is currently undergoing scheduled maintenance.' );
-				$description      = esc_html( $mood_info['description'] ?? 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.' );
-				$background_image = esc_url( $mood_info['background_image'] ?? '' );
-				$logo             = esc_url( $mood_info['logo'] ?? '' );
+			if ( empty( $sanitized_data->template_id ) ) {
+				$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
 			}
 
-			// Load the selected template
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
-			}
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template_id . '.php';
-			if ( file_exists( $template_file ) ) {
-				include $template_file;
-			} else {
-				// Fallback to classic template
-				include VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/classic.php';
-			}
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
 			die();
 		} catch ( \Throwable $th ) {
-			// error_log( 'Versatile: Exception in preview_template: ' . $th->getMessage() );
 			wp_die( esc_html__( 'Error loading template preview: ', 'versatile-toolkit' ) . esc_html( $th->getMessage() ) );
 		}
 	}
