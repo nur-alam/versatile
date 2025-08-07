@@ -74,9 +74,6 @@ const MaintenanceSettings = () => {
 		}
 	}, [maintenanceMoodInfo]);
 
-
-
-
 	return (
 		<div className="">
 			{(isLoading || !isFormInitialized) ? <MoodSkeleton /> :

@@ -7,7 +7,7 @@
 		"dev": "webpack --mode development --watch",
 		"mix": "npx mix watch",
 		"watch": "concurrently \"npm run dev\" \"npm run mix\"",
-		"mix:prod": "npx mix --production",
+		"mix-prod": "npx mix --production",
 		"prod": "webpack --mode production",
 		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile-toolkit.pot",
 		"bundle": "wp dist-archive . ../versatile-toolkit.zip",

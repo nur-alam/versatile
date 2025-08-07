@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
 import { Eye, X } from 'lucide-react';
 import TemplateLoader from '@components/loader/TemplateLoader';
 import config from '@/config';
+import { useModalInteractions } from '../hooks/useModalInteractions';
 
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
@@ -26,23 +27,6 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
     setIsLoading(false);
   };
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only close if clicking on the backdrop itself, not on the modal content
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
-
-  useEffect(() => {
-    const handleEscKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-    document.addEventListener('keydown', handleEscKey);
-    return () => document.removeEventListener('keydown', handleEscKey);
-  }, [isOpen]);
-
   const getPreviewUrl = () => {
     const ajaxUrl = config?.ajax_url;
     const nonce = config?.nonce_value;
@@ -51,6 +35,11 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
     const preview_data = JSON.stringify(getFormData());
     return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}&type=${type}&preview_data=${encodeURIComponent(preview_data)}`;
   };
+
+  const { handleBackdropClick } = useModalInteractions({
+    isOpen,
+    onClose: handleClose
+  });
 
   return (
     <>

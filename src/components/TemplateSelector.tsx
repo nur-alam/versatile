@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useModalInteractions } from '../hooks/useModalInteractions';
 import { __ } from '@wordpress/i18n';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { ComingsoonMoodFormValues, MaintenanceMoodFormValues } from '@/utils/schema-validation';
+import { useEffect } from 'react';
 
 type TemplateType = 'maintenance' | 'comingsoon';
 
@@ -99,7 +101,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
     setIsPreviewLoading(true);
   };
 
-  const closePreview = () => {
+  const onClose = () => {
     setPreviewTemplate(null);
     setIsPreviewLoading(false);
   };
@@ -125,24 +127,10 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
     return () => clearTimeout(timer);
   }, [formDataString]);
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only close if clicking on the backdrop itself, not on the modal content
-    if (e.target === e.currentTarget) {
-      closePreview();
-    }
-  };
-
-  // Handle ESC key press to close preview
-  useEffect(() => {
-    const handleEscKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && previewTemplate) {
-        closePreview();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscKey);
-    return () => document.removeEventListener('keydown', handleEscKey);
-  }, [previewTemplate]);
+  const { handleBackdropClick } = useModalInteractions({
+    isOpen: !!previewTemplate,
+    onClose
+  });
 
   return (
     <div className="space-y-4">
@@ -309,7 +297,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
               <h3 className="text-lg font-semibold">
                 {templates.find(t => t.id === previewTemplate)?.name} - {__(` Template Preview`, 'versatile-toolkit')}
               </h3>
-              <Button type="button" variant="ghost" size="sm" onClick={closePreview}>
+              <Button type="button" variant="ghost" size="sm" onClick={onClose}>
                 <X size={16} />
               </Button>
             </div>
@@ -339,13 +327,13 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                   onClick={() => {
                     if (previewTemplate) {
                       handleTemplateSelect(previewTemplate);
-                      closePreview();
+                      onClose();
                     }
                   }}
                 >
                   {__('Use This Template', 'versatile-toolkit')}
                 </Button>
-                <Button type="button" variant="outline" onClick={closePreview}>
+                <Button type="button" variant="outline" onClick={onClose}>
                   {__('Close', 'versatile-toolkit')}
                 </Button>
               </div>
