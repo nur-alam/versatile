@@ -35,10 +35,7 @@ const PreviewButton = ({ type, disabled = false }: PreviewButtonProps) => {
       className="flex items-center gap-2"
     >
       <ExternalLink size={16} />
-      {type === 'maintenance'
-        ? __('Preview', 'versatile-toolkit') 
-        : __('Preview', 'versatile-toolkit')
-      }
+      {__(`Preview as ${type}`, 'versatile-toolkit')} 
     </Button>
   );
 };

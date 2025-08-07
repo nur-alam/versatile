@@ -37,7 +37,6 @@ class ComingsoonMood {
 		add_action( 'wp_ajax_versatile_update_comingsoon_mood', array( $this, 'versatile_update_comingsoon_mood' ) );
 		add_action( 'wp_ajax_versatile_preview_comingsoon', array( $this, 'preview_comingsoon_mode' ) );
 		add_action( 'wp_ajax_versatile_comingsoon_template_preview', array( $this, 'comingsoon_template_preview' ) );
-		// add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
 	}
 
 	/**

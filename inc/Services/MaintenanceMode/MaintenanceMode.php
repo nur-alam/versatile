@@ -37,7 +37,6 @@ class MaintenanceMode {
 		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
 		add_action( 'wp_ajax_versatile_preview_maintenance', array( $this, 'preview_maintenance_mode' ) );
 		add_action( 'wp_ajax_versatile_maintenance_template_preview', array( $this, 'maintenance_template_preview' ) );
-		// add_action( 'wp_ajax_versatile_preview_template', array( $this, 'preview_template' ) );
 	}
 
 	/**

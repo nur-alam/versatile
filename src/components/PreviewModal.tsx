@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
 import { Eye, X } from 'lucide-react';
@@ -33,13 +33,22 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
     }
   };
 
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [isOpen]);
+
   const getPreviewUrl = () => {
     const ajaxUrl = config?.ajax_url;
     const nonce = config?.nonce_value;
     const action = type === 'maintenance' ? 'versatile_preview_maintenance' : 'versatile_preview_comingsoon';
 
     const preview_data = JSON.stringify(getFormData());
-
     return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}&type=${type}&preview_data=${encodeURIComponent(preview_data)}`;
   };
 
@@ -54,7 +63,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
       >
         <Eye size={16} />
         {type === 'maintenance'
-          ? __('Preview', 'versatile-toolkit') 
+          ? __('Preview', 'versatile-toolkit')
           : __('Preview', 'versatile-toolkit')
         }
       </Button>
@@ -69,7 +78,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
                 {type === 'maintenance'
-                  ? __('Maintenance Page Preview', 'versatile-toolkit') 
+                  ? __('Maintenance Page Preview', 'versatile-toolkit')
                   : __('Coming Soon Page Preview', 'versatile-toolkit')
                 }
               </h3>
@@ -103,7 +112,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             <div className="p-4 border-t bg-gray-50 rounded-b-lg">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">
-                  {__('This is how your page will look to visitors.', 'versatile-toolkit')} 
+                  {__('This is how your page will look to visitors.', 'versatile-toolkit')}
                 </p>
                 <Button onClick={handleClose} variant="outline">
                   {__('Close Preview', 'versatile-toolkit')}

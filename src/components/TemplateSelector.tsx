@@ -125,6 +125,25 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
     return () => clearTimeout(timer);
   }, [formDataString]);
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only close if clicking on the backdrop itself, not on the modal content
+    if (e.target === e.currentTarget) {
+      closePreview();
+    }
+  };
+
+  // Handle ESC key press to close preview
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && previewTemplate) {
+        closePreview();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [previewTemplate]);
+
   return (
     <div className="space-y-4">
       <div className="flex gap-4 overflow-x-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -237,10 +256,6 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
                   {/* Loading Overlay */}
                   <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-md iframe-loading">
                     <SkeletonCard />
-                    {/* <div className="text-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto mb-1"></div>
-                    <p className="text-xs text-gray-500">{__('...', 'versatile-toolkit')}</p>
-                  </div> */}
                   </div>
                 </div>
 
@@ -286,11 +301,13 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
 
       {/* Template Preview Modal */}
       {previewTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="template-preview-wrapper fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          onClick={handleBackdropClick}
+        >
           <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
-                {__('Template Preview', 'versatile-toolkit')} - {templates.find(t => t.id === previewTemplate)?.name}
+                {templates.find(t => t.id === previewTemplate)?.name} - {__(` Template Preview`, 'versatile-toolkit')}
               </h3>
               <Button type="button" variant="ghost" size="sm" onClick={closePreview}>
                 <X size={16} />
