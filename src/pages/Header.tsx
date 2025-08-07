@@ -1,3 +1,4 @@
+import { useModalInteractions } from '@/hooks/useModalInteractions';
 import { useGetServiceList, useUpdateServiceStatus } from '@/services/mood-services';
 import { ServiceItem, ServiceListType } from '@/utils/versatile-declaration';
 import { useQueryClient } from '@tanstack/react-query';
@@ -35,6 +36,11 @@ const Header: React.FC = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    const { handleBackdropClick } = useModalInteractions({
+        isOpen: isMenuOpen,
+        onClose: toggleMenu
+    });
+
     return (
         <>
             <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
@@ -52,7 +58,7 @@ const Header: React.FC = () => {
                         <path d="M9.75004 13.5C11.8211 13.5 13.5001 11.8211 13.5001 9.75C13.5001 7.67893 11.8211 6 9.75004 6C7.67895 6 6 7.67893 6 9.75C6 11.8211 7.67895 13.5 9.75004 13.5Z" fill="#374151" />
                         <path d="M11.222 8.27273L10.2135 11H9.78738L8.77885 8.27273H9.2334L9.98624 10.446H10.0146L10.7675 8.27273H11.222Z" fill="white" />
                     </svg> */}
-                    <h2 className="text-xl font-semibold text-gray-800">{__('Versatile Toolkit', 'versatile-toolkit')}</h2> 
+                    <h2 className="text-xl font-semibold text-gray-800">{__('Versatile Toolkit', 'versatile-toolkit')}</h2>
                 </div>
 
                 {/* Right side - Toggle Menu Button */}
@@ -87,11 +93,13 @@ const Header: React.FC = () => {
 
             {/* Services Menu Popup */}
             {isMenuOpen && (
-                <div className="fixed w-[500px] top-0 z-[99999] rounded-none right-0 h-screen bg-white shadow-lg border border-gray-200">
+                <div className="fixed w-[500px] top-0 z-[99999] rounded-none right-0 h-screen bg-white shadow-lg border border-gray-200"
+                    onClick={handleBackdropClick}
+                >
                     <div className="p-4">
                         {/* Header with title and close button */}
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-medium text-gray-800">{__('Services', 'versatile-toolkit')}</h3>    
+                            <h3 className="text-lg font-medium text-gray-800">{__('Services', 'versatile-toolkit')}</h3>
                             <button
                                 onClick={toggleMenu}
                                 className="p-1 rounded-md hover:bg-gray-100 transition-colors duration-200"
