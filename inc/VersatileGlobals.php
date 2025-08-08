@@ -57,7 +57,7 @@ function versatile_verify_request( $inputs, $permissions = 'manage_options' ) {
 	$nonce_action = $plugin_info['nonce_action'];
 
 	// Verify nonce
-	if ( ! isset( $inputs['versatile_nonce'] ) || ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
+	if ( ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
 		return (object) array(
 			'success' => false,
 			'message' => __( 'Invalid security token!', 'versatile-toolkit' ),
@@ -99,9 +99,9 @@ function versatile_sanitization_validation( $inputs = array() ) {
 	$input_data       = array();
 	$sanitize_mapping = array();
 
-	foreach ( $merged_inputs as $value ) {
+	foreach ( $merged_inputs as $key => $value ) {
 		array_push( $input_data, $value['value'] );
-		$sanitize_mapping[ $value['name'] ] = $value['sanitize'];
+		$sanitize_mapping[ $key ] = $value['sanitize'];
 	}
 
 	$sanitized_data = VersatileInput::sanitize_array( $input_data, $sanitize_mapping );

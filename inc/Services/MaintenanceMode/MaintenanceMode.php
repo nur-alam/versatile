@@ -104,9 +104,6 @@ class MaintenanceMode {
 
 			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
-			unset( $sanitized_data->action );
-			unset( $sanitized_data->versatile_nonce );
-
 			if ( ! $request_verify->success ) {
 				return $this->json_response( $request_verify->message ?? 'Error: while updating maintenance mood info', array(), $request_verify->code );
 			}

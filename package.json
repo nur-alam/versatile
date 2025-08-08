@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "webpack --mode development --watch",
 		"mix": "npx mix watch",
+		"mix-prod": "npx mix --production",
 		"watch": "concurrently \"npm run dev\" \"npm run mix\"",
 		"prod": "webpack --mode production",
 		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile-toolkit.pot",
