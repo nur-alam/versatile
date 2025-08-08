@@ -38,42 +38,23 @@ function versatile_get_plugin_data() {
  * Verify nonce and authentication.
  *
  * @param array $inputs Array of input data to verify.
- * @param bool  $check_auth Whether to check user authentication (default: true).
  * @param array $permissions Array of user permission strings to check (default: empty array).
  *
  * @return object{success: bool, message: string, code: int, data?: array} Returns array with verification result and sanitized data.
  */
-function versatile_verify_request( $inputs, $check_auth = true, $permissions = array( 'manage_options' ) ) {
-	// Check authentication if required
-	if ( $check_auth && ! is_user_logged_in() ) {
+function versatile_verify_request( $inputs, $permissions = 'manage_options' ) {
+	// Check user permissions
+	if ( ! current_user_can( $permissions ) ) {
 		return (object) array(
 			'success' => false,
-			'message' => __( 'Access denied! Please login to access this feature.', 'versatile-toolkit' ),
+			'message' => __( 'You do not have permission to access this feature.', 'versatile-toolkit' ),
 			'code'    => 403,
 		);
-	}
-
-	// Check user permissions
-	if ( ! empty( $permissions ) ) {
-		$user = wp_get_current_user();
-		foreach ( $permissions as $permission ) {
-			if ( ! user_can( $user, $permission ) ) {
-				return (object) array(
-					'success' => false,
-					'message' => __( 'You do not have permission to access this feature.', 'versatile-toolkit' ),
-					'code'    => 403,
-				);
-			}
-		}
 	}
 
 	$plugin_info  = versatile_get_plugin_data();
 	$nonce_key    = $plugin_info['nonce_key'];
 	$nonce_action = $plugin_info['nonce_action'];
-
-	$is = isset( $inputs['versatile_nonce'] );
-
-	$non = wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action );
 
 	// Verify nonce
 	if ( ! isset( $inputs['versatile_nonce'] ) || ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {

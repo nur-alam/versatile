@@ -115,6 +115,8 @@ class ComingsoonMood {
 				$current_mood_info['enable_maintenance'] = false;
 			}
 			unset( $sanitized_data->enable_comingsoon );
+			unset( $sanitized_data->action );
+			unset( $sanitized_data->versatile_nonce );
 			$current_mood_info['comingsoon'] = array_merge(
 				$current_mood_info['comingsoon'],
 				(array) $sanitized_data

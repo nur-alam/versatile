@@ -135,9 +135,9 @@ class ServiceInit {
 					),
 					array(
 						'name'     => 'enable',
-						'value'    => isset($_POST['enable']) ? $_POST['enable'] === true : false, //phpcs:ignore
+						'value'    => isset($_POST['enable']) ? $_POST['enable'] : 'false', //phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|boolean',
+						'rules'    => 'boolean',
 					),
 				)
 			);
@@ -153,7 +153,7 @@ class ServiceInit {
 			}
 
 			$service_key = $sanitized_data->service_key;
-			$enable      = (bool) $sanitized_data->enable;
+			$enable      = $sanitized_data->enable;
 
 			// Get current service list
 			$service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
@@ -164,7 +164,7 @@ class ServiceInit {
 			}
 
 			// Update the service status
-			$service_list[ $service_key ]['enable'] = $enable;
+			$service_list[ $service_key ]['enable'] = filter_var( $enable, FILTER_VALIDATE_BOOLEAN );
 
 			// Save updated service list
 			$updated = update_option( VERSATILE_SERVICE_LIST, $service_list );

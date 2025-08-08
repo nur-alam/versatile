@@ -104,6 +104,9 @@ class MaintenanceMode {
 
 			$request_verify = versatile_verify_request( (array) $sanitized_data );
 
+			unset( $sanitized_data->action );
+			unset( $sanitized_data->versatile_nonce );
+
 			if ( ! $request_verify->success ) {
 				return $this->json_response( $request_verify->message ?? 'Error: while updating maintenance mood info', array(), $request_verify->code );
 			}
@@ -115,6 +118,8 @@ class MaintenanceMode {
 				$current_mood_info['enable_comingsoon'] = false;
 			}
 			unset( $sanitized_data->enable_maintenance );
+			unset( $sanitized_data->action );
+			unset( $sanitized_data->versatile_nonce );
 			$current_mood_info['maintenance'] = array_merge(
 				$current_mood_info['maintenance'],
 				(array) $sanitized_data
