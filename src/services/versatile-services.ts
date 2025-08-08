@@ -68,13 +68,13 @@ export const useAddMyIp = () => {
 			toast.error(error.message ?? __('Failed to add IP', 'versatile-toolkit'));
 		},
 	});
-}
+};
 
 export const useGetThemeList = () => {
 	return useQuery<VersatileResponseType>({
 		queryKey: ['getThemeList'],
 		queryFn: async (payload: AnyObject) => {
-			payload.action = 'versatile_theme_list';
+			payload.action = 'versatile_get_theme_list';
 			const res = await fetchUtil(config.ajax_url, {
 				body: payload,
 			});
@@ -95,5 +95,25 @@ export const useGetActiveTheme = () => {
 			return res;
 		},
 		staleTime: 5000,
+	});
+};
+
+export const useSaveActiveTheme = () => {
+	return useMutation({
+		mutationFn: async (payload: AnyObject) => {
+			payload.action = 'versatile_save_active_theme';
+			const res = await fetchUtil(config.ajax_url, {
+				body: payload,
+			});
+			return res;
+		},
+		onSuccess: (response: VersatileResponseType) => {
+			toast.success(response.message ?? __('Theme activated successfully!', 'versatile-toolkit'));
+			// Invalidate and refetch active theme query
+			// window.location.reload(); // Simple way to refresh the page to show theme changes
+		},
+		onError: (error: any) => {
+			toast.error(error.message ?? __('Failed to activate theme', 'versatile-toolkit'));
+		},
 	});
 };

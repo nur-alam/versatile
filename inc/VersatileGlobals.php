@@ -71,10 +71,6 @@ function versatile_verify_request( $inputs, $check_auth = true, $permissions = a
 	$nonce_key    = $plugin_info['nonce_key'];
 	$nonce_action = $plugin_info['nonce_action'];
 
-	$is = isset( $inputs['versatile_nonce'] );
-
-	$non = wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action );
-
 	// Verify nonce
 	if ( ! isset( $inputs['versatile_nonce'] ) || ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
 		return (object) array(

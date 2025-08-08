@@ -10,9 +10,6 @@
 
 namespace Versatile\Traits;
 
-use Versatile;
-use Versatile\Helpers\UtilityHelper;
-
 /**
  * JsonResponse trait
  *

@@ -11,6 +11,7 @@
 namespace Versatile\Services\MaintenanceMode;
 
 use Versatile\Traits\JsonResponse;
+use Versatile\Helpers\MoodHelper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,6 +36,7 @@ class MaintenanceMode {
 
 		add_action( 'wp_ajax_versatile_update_maintenance_mood', array( $this, 'versatile_update_maintenance_mood' ) );
 		add_action( 'wp_ajax_versatile_preview_maintenance', array( $this, 'preview_maintenance_mode' ) );
+		add_action( 'wp_ajax_versatile_maintenance_template_preview', array( $this, 'maintenance_template_preview' ) );
 	}
 
 	/**
@@ -46,6 +48,18 @@ class MaintenanceMode {
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
+					array(
+						'name'     => 'template',
+						'value'    => isset($_POST['template']) ? $_POST['template'] : 'false', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'show_subscribers_only',
+						'value'    => isset($_POST['show_subscribers_only']) ? $_POST['show_subscribers_only'] : 'false', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'boolean',
+					),
 					array(
 						'name'     => 'enable_maintenance',
 						'value'    => isset($_POST['enable_maintenance']) ? $_POST['enable_maintenance'] : 'false', //phpcs:ignore
@@ -109,6 +123,7 @@ class MaintenanceMode {
 			}
 
 			$sanitized_data->enable_maintenance      = filter_var( $sanitized_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
+			$sanitized_data->show_subscribers_only   = filter_var( $sanitized_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 			$current_mood_info['enable_maintenance'] = $sanitized_data->enable_maintenance ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
@@ -134,7 +149,22 @@ class MaintenanceMode {
 	 */
 	public function preview_maintenance_mode() {
 		try {
-			$sanitized_data = versatile_sanitization_validation();
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'type',
+						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'preview_data',
+						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+				)
+			);
 
 			if ( ! $sanitized_data->success ) {
 				wp_die( esc_html( $sanitized_data->message ) );
@@ -146,20 +176,85 @@ class MaintenanceMode {
 				wp_die( esc_html( $request_verify->message ) );
 			}
 
-			// Set headers for HTML response
-			header( 'Content-Type: text/html; charset=utf-8' );
+			$type = $sanitized_data->type ?? 'maintenance';
 
-			// Fix deprecated emoji styles function for WordPress 6.4+
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
-			if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
-				add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
+			// Handle preview data if provided (for live preview with user's current form data)
+			$preview_data = null;
+			if ( isset( $sanitized_data->preview_data ) ) {
+				$preview_data_raw = $sanitized_data->preview_data;
+				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			// Load maintenance template for preview
-			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
+			$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
+
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
 			die();
 		} catch ( \Throwable $th ) {
 			wp_die( 'Error loading preview' );
+		}
+	}
+
+	/**
+	 * Preview specific template via AJAX
+	 *
+	 * @return void
+	 */
+	public function maintenance_template_preview() {
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'template_id',
+						'value'    => isset($_GET['template_id']) ? $_GET['template_id'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'type',
+						'value'    => isset($_GET['type']) ? $_GET['type'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+					array(
+						'name'     => 'preview_data',
+						'value'    => isset($_GET['preview_data']) ? $_GET['preview_data'] : '', //phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'string',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				wp_die( esc_html( $sanitized_data->message ) );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				wp_die( esc_html( $request_verify->message ) );
+			}
+
+			// Get template ID from request
+			$template_id = $sanitized_data->template_id ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
+			$type        = $sanitized_data->type ?? 'maintenance';
+
+			// Handle preview data if provided (for live preview with user's current form data)
+			$preview_data = null;
+			if ( isset( $sanitized_data->preview_data ) ) {
+				$preview_data_raw = $sanitized_data->preview_data;
+				$preview_data     = json_decode( $preview_data_raw, true );
+			}
+
+			if ( empty( $sanitized_data->template_id ) ) {
+				$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
+			}
+
+			$mood_helper = new MoodHelper();
+			$mood_helper->render_template( $template_id, $type, $preview_data );
+			die();
+		} catch ( \Throwable $th ) {
+			wp_die( esc_html__( 'Error loading template preview: ', 'versatile-toolkit' ) . esc_html( $th->getMessage() ) );
 		}
 	}
 
@@ -169,15 +264,36 @@ class MaintenanceMode {
 	 * @return void return description
 	 */
 	public function custom_maintenance_mode() {
-		$current_user = wp_get_current_user();
+		$current_user          = wp_get_current_user();
+		$versatile_mood_info   = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		$show_subscribers_only = $versatile_mood_info['maintenance']['show_subscribers_only'] ?? false;
+		$template              = $versatile_mood_info['maintenance']['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
 
-		// Fix deprecated emoji styles function for WordPress 6.4+
+		$template_title   = esc_html( $versatile_mood_info['maintenance']['title'] ?? '' );
+		$subtitle         = esc_html( $versatile_mood_info['maintenance']['subtitle'] ?? '' );
+		$description      = esc_html( $versatile_mood_info['maintenance']['description'] ?? '' );
+		$background_image = esc_url( $versatile_mood_info['maintenance']['background_image'] ?? '' );
+		$logo             = esc_url( $versatile_mood_info['maintenance']['logo'] ?? '' );
+
 		remove_action( 'wp_print_styles', 'print_emoji_styles' );
 		if ( function_exists( 'wp_enqueue_emoji_styles' ) ) {
 			add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
 		}
 
-		include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/MaintenanceTemplate.php';
-		die();
+		if ( empty( $current_user->roles ) ) {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template . '.php';
+			die();
+		}
+
+		// If show_subscribers_only is enabled, only show coming soon mode to subscribers
+		if ( $show_subscribers_only ) {
+			if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {
+				include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template . '.php';
+				die();
+			}
+		} else {
+			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/MaintenanceMode/Templates/' . $template . '.php';
+			die();
+		}
 	}
 }

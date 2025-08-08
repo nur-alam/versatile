@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, ThermometerSnowflake } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useGetThemeList } from "@/services/versatile-services"
 import { __ } from "@wordpress/i18n"
+import config from "@/config"
 
 type typeThemeList = {
 	slug: string
@@ -30,6 +31,9 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 			setThemeList(themeListData.data)
 		}
 	}, [themeListData])
+
+	console.log('theme list', themeList);
+
 
 	const handleSelect = (value: string) => {
 		onChange(value)

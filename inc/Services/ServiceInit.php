@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
+use Versatile\Services\QuickPick\QuickPick;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -48,6 +49,8 @@ class ServiceInit {
 		if ( $versatile_service_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
 		}
+
+		new QuickPick();
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
@@ -160,7 +163,7 @@ class ServiceInit {
 
 			// Check if service exists
 			if ( ! isset( $service_list[ $service_key ] ) ) {
-				return $this->json_response( 'Error: Service not found', array(), 404 );
+				return $this->json_response( __( 'Error: Service not found', 'versatile-toolkit' ), array(), 404 );
 			}
 
 			// Update the service status
@@ -207,9 +210,9 @@ class ServiceInit {
 			}
 
 			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			return $this->json_response( 'Maintenance Mood info updated!', $current_mood_info, 200 );
+			return $this->json_response( __( 'Maintenance Mood info retrieved successfully!', 'versatile-toolkit' ), $current_mood_info, 200 );
 		} catch ( \Throwable $th ) {
-			return $this->json_response( 'Error: while updating maintenance mood info', array(), 400 );
+			return $this->json_response( __( 'Error: while retrieving maintenance mood info', 'versatile-toolkit' ), array(), 400 );
 		}
 	}
 }

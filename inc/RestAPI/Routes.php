@@ -10,8 +10,6 @@
 
 namespace Versatile\RestAPI;
 
-use WP_REST_Server;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -68,7 +66,6 @@ class Routes {
 	 */
 	public static function endpoints() {
 
-		return array(
-		);
+		return array();
 	}
 }

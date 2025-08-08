@@ -38,28 +38,32 @@ define(
 		'enable_maintenance'  => false,
 		'enable_comingsoon'   => false,
 		'maintenance'         => array(
-			'title'               => '',
-			'subtitle'            => '',
-			'description'         => '',
-			'background_image'    => '',
-			'background_image_id' => 0,
-			'logo'                => '',
-			'logo_id'             => 0,
-			'style'               => array(
+			'title'                 => 'We&rsquo;ll be back soon!',
+			'subtitle'              => 'Our site is currently undergoing scheduled maintenance.',
+			'description'           => 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.',
+			'template'              => 'default',
+			'background_image'      => '',
+			'background_image_id'   => 0,
+			'logo'                  => '',
+			'logo_id'               => 0,
+			'show_subscribers_only' => false,
+			'style'                 => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
 			),
 		),
 		'comingsoon'          => array(
-			'title'               => '',
-			'subtitle'            => '',
-			'description'         => '',
-			'background_image'    => '',
-			'background_image_id' => 0,
-			'logo'                => '',
-			'logo_id'             => 0,
-			'style'               => array(
+			'title'                 => 'Coming Soon!',
+			'subtitle'              => 'We&rsquo;re working on something amazing.',
+			'description'           => 'Stay tuned for our exciting launch. Something great is coming your way!',
+			'template'              => 'default',
+			'background_image'      => '',
+			'background_image_id'   => 0,
+			'logo'                  => '',
+			'logo_id'               => 0,
+			'show_subscribers_only' => false,
+			'style'                 => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
@@ -92,3 +96,6 @@ define(
 		),
 	)
 );
+
+define( 'VERSATILE_DEFAULT_COMINGSOON_TEMPLATE', 'classic' );
+define( 'VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE', 'classic' );

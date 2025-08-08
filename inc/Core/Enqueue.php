@@ -40,7 +40,7 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_admin_scripts( $page ): void {
-		$plugin_data            = Versatile::plugin_data();
+		$plugin_data            = versatile_get_plugin_data();
 		$versatile_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
 		$versatile_js_bundle    = $plugin_data['plugin_url'] . 'assets/dist/js/versatile-js.min.js';
 
@@ -143,6 +143,6 @@ class Enqueue {
 	 */
 	public static function script_text_domain() {
 		$plugin_data = Versatile::plugin_data();
-		wp_set_script_translations( 'Versatile-backend', $plugin_data['plugin_url'] . 'assets/languages/' );
+		wp_set_script_translations( 'versatile-js', $plugin_data['plugin_url'] . 'assets/languages/' );
 	}
 }

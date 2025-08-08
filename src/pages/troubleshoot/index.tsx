@@ -4,15 +4,17 @@ import { Button } from '@/components/ui/button'
 import MultipleSelector from '@pages/troubleshoot/multi-selector';
 import TaggedInput from '@pages/troubleshoot/tag-input';
 import ThemeSelector from '@pages/troubleshoot/theme-selector';
+import { InlineLoader, ButtonLoader } from '@/components/loader';
 
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme } from '@/services/versatile-services';
+import { useDisablePlugin, useGetActiveTheme, useGetDisablePluginList, useSaveActiveTheme } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 const TroubleShoot = () => {
+
 	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
 		resolver: zodResolver(disablePluginFormSchema),
 		defaultValues: {
@@ -28,6 +30,25 @@ const TroubleShoot = () => {
 		}
 	});
 
+	// theme selector
+	const saveActiveThemeMutation = useSaveActiveTheme();
+	const onThemeSubmit = async (values: ThemeFormValues) => {
+		await saveActiveThemeMutation.mutateAsync({ ...values });
+	}
+
+	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
+	const activeTheme = activeThemeData?.data['activeTheme'];
+
+	useEffect(() => {
+		if (activeTheme) {
+			// Set default theme value when data is loaded
+			themeControl._reset({
+				activeTheme: activeTheme,
+			});
+		}
+	}, [activeTheme, themeControl]);
+
+	// disable plugin
 	const disablePluginMutation = useDisablePlugin();
 
 	const onSubmit = async (values: DisablePluginFormValues) => {
@@ -66,16 +87,17 @@ const TroubleShoot = () => {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> : <Controller
-								name='chosen_plugins'
-								control={control}
-								render={({ field }) => (
-									<MultipleSelector
-										selectedPlugin={field.value}
-										onChange={field.onChange}
-									/>
-								)}
-							/>
+							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> :
+								<Controller
+									name='chosen_plugins'
+									control={control}
+									render={({ field }) => (
+										<MultipleSelector
+											selectedPlugin={field.value}
+											onChange={field.onChange}
+										/>
+									)}
+								/>
 						}
 						{errors.chosen_plugins && (
 							<p className="text-red-500 text-sm mt-1">
@@ -85,7 +107,7 @@ const TroubleShoot = () => {
 					</div>
 					<div className='min-h-[64px] mt-2'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> :
+							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile-toolkit')} /> :
 								<Controller
 									name='ip_tags'
 									control={control}
@@ -104,7 +126,47 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save Plugin Settings', 'versatile-toolkit')}
+						<ButtonLoader
+							isLoading={disablePluginMutation.isPending}
+							loadingText={__('Saving', 'versatile-toolkit')}
+						>
+							{__('Save List', 'versatile-toolkit')}
+						</ButtonLoader>
+					</Button>
+				</form>
+			</div>
+
+			{/* Theme Selector Section */}
+			<div className="border rounded-lg p-4">
+				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
+				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
+					<div className='min-h-[42px]'>
+						{
+							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile-toolkit')} /> : <Controller
+								name='activeTheme'
+								control={themeControl}
+								render={({ field }) => (
+									<ThemeSelector
+										selectedTheme={field.value}
+										onChange={field.onChange}
+									/>
+								)}
+							/>
+						}
+						{themeErrors.activeTheme && (
+							<p className="text-red-500 text-sm mt-1">
+								{themeErrors?.activeTheme?.message}
+							</p>
+						)}
+					</div>
+					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
+						<ButtonLoader
+							isLoading={saveActiveThemeMutation.isPending}
+							loadingText={__('Activating', 'versatile-toolkit')}
+						>
+							{__('Activate Theme', 'versatile-toolkit')}
+						</ButtonLoader>
 					</Button>
 				</form>
 			</div>
