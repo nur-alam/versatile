@@ -123,7 +123,7 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save Plugin Settings', 'versatile-toolkit')}
+						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save List', 'versatile-toolkit')}
 					</Button>
 				</form>
 			</div>

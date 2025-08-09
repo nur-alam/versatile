@@ -232,6 +232,7 @@ class TroubleshootInit {
 						'name'     => 'activeTheme',
 						'value'    => $_POST['activeTheme'], // phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
 					),
 				)
 			);
