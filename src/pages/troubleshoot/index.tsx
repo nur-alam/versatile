@@ -8,9 +8,11 @@ import ThemeSelector from '@pages/troubleshoot/theme-selector';
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme } from '@/services/versatile-services';
+import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import ButtonLoader from '@/components/loader/ButtonLoader';
+import InlineLoader from '@/components/loader/InlineLoader';
 
 const TroubleShoot = () => {
 	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
@@ -18,13 +20,6 @@ const TroubleShoot = () => {
 		defaultValues: {
 			chosen_plugins: [],
 			ip_tags: [],
-		}
-	});
-
-	const { handleSubmit: handleThemeSubmit, control: themeControl, formState: { errors: themeErrors } } = useForm<ThemeFormValues>({
-		resolver: zodResolver(themeFormSchema),
-		defaultValues: {
-			activeTheme: '',
 		}
 	});
 
@@ -49,6 +44,30 @@ const TroubleShoot = () => {
 			});
 		}
 	}, [chosenPluginList, chosenIpList, control]);
+
+	// theme selector
+	const { handleSubmit: handleThemeSubmit, control: themeControl, formState: { errors: themeErrors } } = useForm<ThemeFormValues>({
+		resolver: zodResolver(themeFormSchema),
+		defaultValues: {
+			activeTheme: '',
+		}
+	});
+	const saveActiveThemeMutation = useSaveActiveTheme();
+	const onThemeSubmit = async (values: ThemeFormValues) => {
+		await saveActiveThemeMutation.mutateAsync({ ...values });
+	}
+
+	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
+	const activeTheme = activeThemeData?.data['activeTheme'];
+
+	useEffect(() => {
+		if (activeTheme) {
+			// Set default theme value when data is loaded
+			themeControl._reset({
+				activeTheme: activeTheme,
+			});
+		}
+	}, [activeTheme, themeControl]);
 
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
@@ -108,6 +127,42 @@ const TroubleShoot = () => {
 					</Button>
 				</form>
 			</div>
+
+			{/* Theme Selector Section */}
+			<div className="border rounded-lg p-4">
+				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
+				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
+				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
+					<div className='min-h-[42px]'>
+						{
+							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile-toolkit')} /> : <Controller
+								name='activeTheme'
+								control={themeControl}
+								render={({ field }) => (
+									<ThemeSelector
+										selectedTheme={field.value}
+										onChange={field.onChange}
+									/>
+								)}
+							/>
+						}
+						{themeErrors.activeTheme && (
+							<p className="text-red-500 text-sm mt-1">
+								{themeErrors?.activeTheme?.message}
+							</p>
+						)}
+					</div>
+					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
+						<ButtonLoader
+							isLoading={saveActiveThemeMutation.isPending}
+							loadingText={__('Activating', 'versatile-toolkit')}
+						>
+							{__('Activate Theme', 'versatile-toolkit')}
+						</ButtonLoader>
+					</Button>
+				</form>
+			</div>
+			
 		</div>
 	);
 };

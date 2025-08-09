@@ -32,6 +32,9 @@ class TroubleshootInit {
 		add_action( 'wp_ajax_versatile_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_add_my_ip', array( $this, 'add_my_ip' ) );
+		add_action( 'wp_ajax_versatile_theme_list', array( $this, 'get_theme_list' ) );
+		add_action( 'wp_ajax_versatile_get_active_theme', array( $this, 'get_active_theme' ) );
+		add_action( 'wp_ajax_versatile_save_active_theme', array( $this, 'save_active_theme' ) );
 	}
 
 	/**
@@ -175,6 +178,94 @@ class TroubleshootInit {
 		} catch ( \Throwable $th ) {
 			// throw $th;
 			return;
+		}
+	}
+
+	/**
+	 * Get theme list
+	 */
+	public function get_theme_list() {
+		try {
+			$all_themes = wp_get_themes();
+
+			// Create array of theme names only
+			$theme_list = array();
+
+			foreach ( $all_themes as $theme_slug => $theme ) {
+				if ( isset( $theme['Name'] ) ) {
+					$theme_list[] = array(
+						'slug'  => $theme_slug,
+						'label' => $theme['Name'],
+					);
+				}
+			}
+
+			return $this->json_response( '', $theme_list, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while fetching theme list', array(), 400 );
+		}
+	}
+
+	/**
+	 * Get active theme
+	 */
+	public function get_active_theme() {
+		try {
+			$active_theme = get_option( 'stylesheet' );
+			$data         = array(
+				'activeTheme' => $active_theme,
+			);
+			return $this->json_response( 'Active theme retrieved', $data, 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while fetching active theme', array(), 400 );
+		}
+	}
+
+	/**
+	 * Save active theme
+	 */
+	public function save_active_theme() {
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'activeTheme',
+						'value'    => $_POST['activeTheme'], // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				$error_message = versatile_grab_error_message( $sanitized_data->errors );
+				return $this->json_response( $error_message, array(), 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message ?? 'Error: while updating active theme', array(), $request_verify->code );
+			}
+
+			// Remove keys that should not be saved
+			unset( $sanitized_data->action, $sanitized_data->versatile_nonce );
+
+			if ( ! empty( $sanitized_data->activeTheme ) ) { // phpcs:ignore
+				// Verify theme exists
+				$theme = wp_get_theme( $sanitized_data->activeTheme ); // phpcs:ignore
+				if ( ! $theme->exists() ) {
+					return $this->json_response( 'Error: Theme does not exist', array(), 400 );
+				}
+
+				// Switch theme
+				switch_theme( $sanitized_data->activeTheme ); // phpcs:ignore
+
+				return $this->json_response( 'Theme activated successfully', array(), 200 );
+			}
+
+			return $this->json_response( 'Error: No theme specified', array(), 400 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( 'Error: while activating theme', array(), 400 );
 		}
 	}
 }

@@ -97,3 +97,24 @@ export const useGetActiveTheme = () => {
 		staleTime: 5000,
 	});
 };
+
+export const useSaveActiveTheme = () => {
+	return useMutation({
+		mutationFn: async (payload: AnyObject) => {
+			payload.action = 'versatile_save_active_theme';
+			// payload.active_theme = payload.active_theme || '';
+			const res = await fetchUtil(config.ajax_url, {
+				body: payload,
+			});
+			return res;
+		},
+		onSuccess: (response: VersatileResponseType) => {
+			toast.success(response.message ?? __('Theme activated successfully!', 'versatile-toolkit'));
+			// Invalidate and refetch active theme query
+			// window.location.reload(); // Simple way to refresh the page to show theme changes
+		},
+		onError: (error: any) => {
+			toast.error(error.message ?? __('Failed to activate theme', 'versatile-toolkit'));
+		},
+	});
+};
