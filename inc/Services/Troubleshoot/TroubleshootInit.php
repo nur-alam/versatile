@@ -17,14 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * DisablePlugin init
+ * Troubleshoot init
  */
 class TroubleshootInit {
 
 	use JsonResponse;
 
 	/**
-	 * DisablePlugin constructor.
+	 * Troubleshoot constructor.
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_versatile_plugin_list', array( $this, 'get_plugin_list' ) );
@@ -103,7 +103,7 @@ class TroubleshootInit {
 	 */
 	public function get_disable_plugin_list() {
 		$disable_plugin_list = get_option( VERSATILE_DISABLE_PLUGIN_LIST );
-		return $this->json_response( 'Disable plugin list saved', $disable_plugin_list, 200 );
+		return $this->json_response( 'Disable plugin list retrieved', $disable_plugin_list, 200 );
 	}
 
 	/**
@@ -153,6 +153,34 @@ class TroubleshootInit {
 	}
 
 	/**
+	 * Versatile create mu plugin description.
+	 *
+	 * @return void
+	 */
+	public function versatile_create_mu_plugin() {
+		try {
+			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/MuVersatileToolkit.php';
+
+			if ( file_exists( $mu_plugin_file ) ) {
+				return;
+			}
+
+			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuVersatileToolkit.php';
+
+			if ( ! file_exists( VERSATILE_MU_PLUGIN_DIR ) ) {
+				wp_mkdir_p( VERSATILE_MU_PLUGIN_DIR );
+			}
+
+			if ( ! file_exists( $mu_plugin_file ) ) {
+				copy( $template_file, $mu_plugin_file );
+			}
+		} catch ( \Throwable $th ) {
+			// throw $th;
+			return;
+		}
+	}
+
+	/**
 	 * Get theme list
 	 */
 	public function get_theme_list() {
@@ -197,21 +225,40 @@ class TroubleshootInit {
 	 */
 	public function save_active_theme() {
 		try {
-			// $request_verify = versatile_verify_request();
-			$params = $_POST; // phpcs:ignore
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'activeTheme',
+						'value'    => $_POST['activeTheme'], // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data->success ) {
+				$error_message = versatile_grab_error_message( $sanitized_data->errors );
+				return $this->json_response( $error_message, array(), 400 );
+			}
+
+			$request_verify = versatile_verify_request( (array) $sanitized_data );
+
+			if ( ! $request_verify->success ) {
+				return $this->json_response( $request_verify->message ?? 'Error: while updating active theme', array(), $request_verify->code );
+			}
 
 			// Remove keys that should not be saved
-			unset( $params['action'], $params['versatile_nonce'] );
+			unset( $sanitized_data->action, $sanitized_data->versatile_nonce );
 
-			if ( ! empty( $params['activeTheme'] ) ) {
+			if ( ! empty( $sanitized_data->activeTheme ) ) { // phpcs:ignore
 				// Verify theme exists
-				$theme = wp_get_theme( $params['activeTheme'] );
+				$theme = wp_get_theme( $sanitized_data->activeTheme ); // phpcs:ignore
 				if ( ! $theme->exists() ) {
 					return $this->json_response( 'Error: Theme does not exist', array(), 400 );
 				}
 
 				// Switch theme
-				switch_theme( $params['activeTheme'] );
+				switch_theme( $sanitized_data->activeTheme ); // phpcs:ignore
 
 				return $this->json_response( 'Theme activated successfully', array(), 200 );
 			}
@@ -219,34 +266,6 @@ class TroubleshootInit {
 			return $this->json_response( 'Error: No theme specified', array(), 400 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( 'Error: while activating theme', array(), 400 );
-		}
-	}
-
-	/**
-	 * Versatile create mu plugin description.
-	 *
-	 * @return void
-	 */
-	public function versatile_create_mu_plugin() {
-		try {
-			$mu_plugin_file = VERSATILE_MU_PLUGIN_DIR . '/MuVersatileToolkit.php';
-
-			if ( file_exists( $mu_plugin_file ) ) {
-				return;
-			}
-
-			$template_file = VERSATILE_PLUGIN_DIR . 'inc/Services/Troubleshoot/MuVersatileToolkit.php';
-
-			if ( ! file_exists( VERSATILE_MU_PLUGIN_DIR ) ) {
-				wp_mkdir_p( VERSATILE_MU_PLUGIN_DIR );
-			}
-
-			if ( ! file_exists( $mu_plugin_file ) ) {
-				copy( $template_file, $mu_plugin_file );
-			}
-		} catch ( \Throwable $th ) {
-			// throw $th;
-			return;
 		}
 	}
 }

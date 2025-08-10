@@ -5,11 +5,10 @@ import MultipleSelector from '@pages/troubleshoot/multi-selector';
 import TaggedInput from '@pages/troubleshoot/tag-input';
 import ThemeSelector from '@pages/troubleshoot/theme-selector';
 import { InlineLoader, ButtonLoader } from '@/components/loader';
-
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useDisablePlugin, useGetActiveTheme, useGetDisablePluginList, useSaveActiveTheme } from '@/services/versatile-services';
+import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
@@ -23,32 +22,6 @@ const TroubleShoot = () => {
 		}
 	});
 
-	const { handleSubmit: handleThemeSubmit, control: themeControl, formState: { errors: themeErrors } } = useForm<ThemeFormValues>({
-		resolver: zodResolver(themeFormSchema),
-		defaultValues: {
-			activeTheme: '',
-		}
-	});
-
-	// theme selector
-	const saveActiveThemeMutation = useSaveActiveTheme();
-	const onThemeSubmit = async (values: ThemeFormValues) => {
-		await saveActiveThemeMutation.mutateAsync({ ...values });
-	}
-
-	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
-	const activeTheme = activeThemeData?.data['activeTheme'];
-
-	useEffect(() => {
-		if (activeTheme) {
-			// Set default theme value when data is loaded
-			themeControl._reset({
-				activeTheme: activeTheme,
-			});
-		}
-	}, [activeTheme, themeControl]);
-
-	// disable plugin
 	const disablePluginMutation = useDisablePlugin();
 
 	const onSubmit = async (values: DisablePluginFormValues) => {
@@ -70,6 +43,30 @@ const TroubleShoot = () => {
 			});
 		}
 	}, [chosenPluginList, chosenIpList, control]);
+
+	// theme selector
+	const { handleSubmit: handleThemeSubmit, control: themeControl, formState: { errors: themeErrors } } = useForm<ThemeFormValues>({
+		resolver: zodResolver(themeFormSchema),
+		defaultValues: {
+			activeTheme: '',
+		}
+	});
+	const saveActiveThemeMutation = useSaveActiveTheme();
+	const onThemeSubmit = async (values: ThemeFormValues) => {
+		await saveActiveThemeMutation.mutateAsync({ ...values });
+	}
+
+	const { data: activeThemeData, isFetching: isActiveThemeFetching } = useGetActiveTheme();
+	const activeTheme = activeThemeData?.data['activeTheme'];
+
+	useEffect(() => {
+		if (activeTheme) {
+			// Set default theme value when data is loaded
+			themeControl._reset({
+				activeTheme: activeTheme,
+			});
+		}
+	}, [activeTheme, themeControl]);
 
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
@@ -126,12 +123,7 @@ const TroubleShoot = () => {
 						)}
 					</div>
 					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
-						<ButtonLoader
-							isLoading={disablePluginMutation.isPending}
-							loadingText={__('Saving', 'versatile-toolkit')}
-						>
-							{__('Save List', 'versatile-toolkit')}
-						</ButtonLoader>
+						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save List', 'versatile-toolkit')}
 					</Button>
 				</form>
 			</div>
@@ -170,6 +162,7 @@ const TroubleShoot = () => {
 					</Button>
 				</form>
 			</div>
+			
 		</div>
 	);
 };

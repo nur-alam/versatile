@@ -1,4 +1,4 @@
-=== Versatile Toolkit ===
+=== Versatile - Troubleshoot, Maintenance & Comingsoon Mode  ===
 Contributors: nurwp
 Tags: troubleshooting, maintenance mode, coming soon, IP control, WordPress toolkit
 Requires at least: 5.3

@@ -75,7 +75,7 @@ class VersatileInput {
 			case self::TYPE_NUMERIC:
 			case self::TYPE_BOOL:
 			default:
-				$sanitized_value = sanitize_text_field( wp_unslash( self::get_value( $request_method, $_GET, $_POST, $key, $value ) ) );
+				$sanitized_value = sanitize_text_field( wp_unslash( self::get_value( $request_method, $key, $value ) ) );
 				if ( self::TYPE_INT === $type ) {
 					$sanitized_value = (int) $sanitized_value;
 				}
@@ -92,12 +92,11 @@ class VersatileInput {
 				if ( ! is_array( $default ) ) {
 					$sanitized_value = array();
 				} else {
+					$raw_value       = self::get_value( $request_method, $key, $value );
 					$sanitized_value = array_map(
 						'sanitize_text_field',
 						wp_unslash(
-							is_array( self::get_value( $request_method, $_GET, $_POST, $key, $value ) )
-							? ( self::get_value( $request_method, $_GET, $_POST, $key, $value ) )
-							: $default
+							is_array( $raw_value ) ? $raw_value : $default
 						)
 					);
 				}
@@ -105,13 +104,12 @@ class VersatileInput {
 				break;
 
 			case self::TYPE_TEXTAREA:
-				$sanitized_value = sanitize_textarea_field( wp_unslash( self::get_value( $request_method, $_GET, $_POST, $key, $value ) ) );
+				$sanitized_value = sanitize_textarea_field( wp_unslash( self::get_value( $request_method, $key, $value ) ) );
 				break;
 
 			case self::TYPE_KSES_POST:
-				$sanitized_value = wp_kses_post( wp_unslash( self::get_value( $request_method, $_GET, $_POST, $key, $value ) ) );
+				$sanitized_value = wp_kses_post( wp_unslash( self::get_value( $request_method, $key, $value ) ) );
 				break;
-
 		}
 
 		//phpcs:enable WordPress.Security.NonceVerification
@@ -150,22 +148,23 @@ class VersatileInput {
 	}
 
 	/**
-	 * Dynamically get value
+	 * Dynamically get value from specific superglobal key
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $request_method   detect called from get or post method.
-	 * @param array  $get              GET superglobal.
-	 * @param array  $post             POST superglobal.
 	 * @param string $key              GET or POST input key name.
 	 * @param string $value            value of variable or DB value.
 	 *
 	 * @return mixed
 	 */
-	private static function get_value( $request_method, $get, $post, $key, $value ) {
-		return self::GET_REQUEST === $request_method
-				? $get[ $key ]
-				: ( self::POST_REQUEST === $request_method ? $post[ $key ] : $value );
+	private static function get_value( $request_method, $key, $value ) {
+		if ( self::GET_REQUEST === $request_method ) {
+			return isset( $_GET[ $key ] ) ? $_GET[ $key ] : $value; //phpcs:ignore
+		} elseif ( self::POST_REQUEST === $request_method ) {
+			return isset( $_POST[ $key ] ) ? $_POST[ $key ] : $value; //phpcs:ignore
+		}
+		return $value;
 	}
 
 	/**

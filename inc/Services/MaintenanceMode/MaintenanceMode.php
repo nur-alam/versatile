@@ -130,6 +130,8 @@ class MaintenanceMode {
 				$current_mood_info['enable_comingsoon'] = false;
 			}
 			unset( $sanitized_data->enable_maintenance );
+			unset( $sanitized_data->action );
+			unset( $sanitized_data->versatile_nonce );
 			$current_mood_info['maintenance'] = array_merge(
 				$current_mood_info['maintenance'],
 				(array) $sanitized_data
