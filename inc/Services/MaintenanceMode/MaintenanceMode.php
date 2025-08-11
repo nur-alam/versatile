@@ -111,30 +111,31 @@ class MaintenanceMode {
 				)
 			);
 
-			if ( ! $sanitized_data->success ) {
-				$error_message = versatile_grab_error_message( $sanitized_data->errors );
-				return $this->json_response( $error_message ?? $sanitized_data->message, $sanitized_data->errors, 400 );
+			if ( ! $sanitized_data['success'] ) {
+				$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
+				return $this->json_response( $error_message ?? $sanitized_data['message'], $sanitized_data['errors'], 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message ?? 'Error: while updating maintenance mood info', array(), $request_verify->code );
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'] ?? 'Error: while updating maintenance mood info', array(), $verify_request['code'] );
 			}
 
-			$sanitized_data->enable_maintenance      = filter_var( $sanitized_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
-			$sanitized_data->show_subscribers_only   = filter_var( $sanitized_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
+			$verified_data = (object) $verify_request['data'];
+
+			$verified_data->enable_maintenance      = filter_var( $verified_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
+			$verified_data->show_subscribers_only   = filter_var( $verified_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
 			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$current_mood_info['enable_maintenance'] = $sanitized_data->enable_maintenance ?? false;
+			$current_mood_info['enable_maintenance'] = $verified_data->enable_maintenance ?? false;
+			$current_mood_info['show_subscribers_only'] = $verified_data->show_subscribers_only ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
 				$current_mood_info['enable_comingsoon'] = false;
 			}
-			unset( $sanitized_data->enable_maintenance );
-			unset( $sanitized_data->action );
-			unset( $sanitized_data->versatile_nonce );
+			unset( $verified_data->enable_maintenance );
 			$current_mood_info['maintenance'] = array_merge(
 				$current_mood_info['maintenance'],
-				(array) $sanitized_data
+				(array) $verified_data
 			);
 			update_option( VERSATILE_MOOD_LIST, $current_mood_info );
 
@@ -168,22 +169,24 @@ class MaintenanceMode {
 				)
 			);
 
-			if ( ! $sanitized_data->success ) {
-				wp_die( esc_html( $sanitized_data->message ) );
+			if ( ! $sanitized_data['success'] ) {
+				wp_die( esc_html( $sanitized_data['message'] ) );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				wp_die( esc_html( $request_verify->message ) );
+			if ( ! $verify_request['success'] ) {
+				wp_die( esc_html( $verify_request['message'] ) );
 			}
 
-			$type = $sanitized_data->type ?? 'maintenance';
+			$verified_data = (object) $verify_request['data'];
+
+			$type = $verified_data->type ?? 'maintenance';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
-			if ( isset( $sanitized_data->preview_data ) ) {
-				$preview_data_raw = $sanitized_data->preview_data;
+			if ( isset( $verified_data->preview_data ) ) {
+				$preview_data_raw = $verified_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
@@ -227,28 +230,30 @@ class MaintenanceMode {
 				)
 			);
 
-			if ( ! $sanitized_data->success ) {
-				wp_die( esc_html( $sanitized_data->message ) );
+			if ( ! $sanitized_data['success'] ) {
+				wp_die( esc_html( $sanitized_data['message'] ) );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$request_verify = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				wp_die( esc_html( $request_verify->message ) );
+			if ( ! $request_verify['success'] ) {
+				wp_die( esc_html( $request_verify['message'] ) );
 			}
+
+			$verified_data = (object) $request_verify['data'];
 
 			// Get template ID from request
-			$template_id = $sanitized_data->template_id ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
-			$type        = $sanitized_data->type ?? 'maintenance';
+			$template_id = $verified_data->template_id ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
+			$type        = $verified_data->type ?? 'maintenance';
 
 			// Handle preview data if provided (for live preview with user's current form data)
 			$preview_data = null;
-			if ( isset( $sanitized_data->preview_data ) ) {
-				$preview_data_raw = $sanitized_data->preview_data;
+			if ( isset( $verified_data->preview_data ) ) {
+				$preview_data_raw = $verified_data->preview_data;
 				$preview_data     = json_decode( $preview_data_raw, true );
 			}
 
-			if ( empty( $sanitized_data->template_id ) ) {
+			if ( empty( $verified_data->template_id ) ) {
 				$template_id = $preview_data['template'] ?? VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE;
 			}
 

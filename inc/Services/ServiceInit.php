@@ -68,14 +68,14 @@ class ServiceInit {
 			// action & nonce sanitization & validation by default don't have to pass
 			$sanitized_data = versatile_sanitization_validation();
 
-			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			if ( ! $sanitized_data['success'] ) {
+				return $this->json_response( $sanitized_data['message'], $sanitized_data['errors'], 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'], array(), $verify_request['code'] );
 			}
 
 			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
@@ -95,14 +95,14 @@ class ServiceInit {
 			// action & nonce sanitization & validation by default, don't need to pass
 			$sanitized_data = versatile_sanitization_validation();
 
-			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			if ( ! $sanitized_data['success'] ) {
+				return $this->json_response( $sanitized_data['message'], $sanitized_data['errors'], 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'], array(), $verify_request['code'] );
 			}
 
 			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
@@ -145,18 +145,20 @@ class ServiceInit {
 				)
 			);
 
-			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			if ( ! $sanitized_data['success'] ) {
+				return $this->json_response( $sanitized_data['message'], $sanitized_data['errors'], 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'], array(), $verify_request['code'] );
 			}
 
-			$service_key = $sanitized_data->service_key;
-			$enable      = $sanitized_data->enable;
+			$verified_data = (object) $verify_request['data'];
+
+			$service_key = $verified_data->service_key;
+			$enable      = $verified_data->enable;
 
 			// Get current service list
 			$service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
@@ -199,14 +201,14 @@ class ServiceInit {
 			// action & nonce sanitization & validation by default, don't need to pass
 			$sanitized_data = versatile_sanitization_validation();
 
-			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, $sanitized_data->errors, 400 );
+			if ( ! $sanitized_data['success'] ) {
+				return $this->json_response( $sanitized_data['message'], $sanitized_data['errors'], 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'], array(), $verify_request['code'] );
 			}
 
 			$current_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );

@@ -124,20 +124,19 @@ class QuickPick {
 	public function versatile_reset_permalinks() {
 		try {
 			// Verify nonce for security
-			$response = versatile_verify_request( true );
-			if ( ! $response['success'] ) {
-				$this->json_response( $response['message'], null, $response['status_code'] );
+			$sanitized_data = versatile_sanitization_validation();
+			if ( ! $sanitized_data['success'] ) {
+				$this->json_response( $sanitized_data['message'], null, $sanitized_data['status_code'] );
 			}
 
-			// Check user capabilities
-			if ( ! current_user_can( 'manage_options' ) ) {
-				$this->json_response( 'You do not have sufficient permissions to perform this action.', null, 403 );
+			$verify_request = versatile_verify_request( $sanitized_data );
+
+			if ( ! $verify_request['success'] ) {
+				$this->json_response( $verify_request['message'], null, $verify_request['status_code'] );
 			}
 
 			// Reset permalinks
 			flush_rewrite_rules();
-
-			sleep( 1 );
 
 			// Send success response
 			$this->json_response( 'Permalinks have been reset successfully!', null, 200 );

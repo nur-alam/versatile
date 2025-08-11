@@ -16,7 +16,6 @@ const menuItems = [
 ]
 
 const Quickpick = () => {
-
 	const quickpickServicesMutation = useQuickpickServices();
 
 	const handleClick = async (value: MenuItem, event?: MouseEvent) => {
@@ -33,11 +32,11 @@ const Quickpick = () => {
 				{__('Quick Actions', 'versatile-toolkit')}
 				<span className='quickpick-arrow !ml-2' aria-hidden="true">▼</span>
 			</div>
-			<div className='quickpick-menu flex-col gap-2 hidden group-hover:flex absolute top-full left-0 border' style={{padding: '0px 10px 10px 10px'}}>
+			<div className='quickpick-menu flex-col gap-2 hidden group-hover:flex absolute top-full left-0 border' style={{ padding: '0px 10px 10px 10px' }}>
 				{menuItems.map((item, index) => (
 					<div key={item.id}
 						onClick={(event) => handleClick(item, event)}
-						// style={{ pointerEvents: quickpickServicesMutation.isPending ? 'none' : 'auto' }}
+					// style={{ pointerEvents: quickpickServicesMutation.isPending ? 'none' : 'auto' }}
 					>
 						<span
 							className={`quickpick-menu-item text-color-white ${quickpickServicesMutation.isPending ? 'opacity-90 cursor-not-allowed' : 'cursor-pointer'}`}
