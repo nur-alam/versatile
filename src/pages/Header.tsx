@@ -4,14 +4,28 @@ import { ServiceItem, ServiceListType } from '@/utils/versatile-declaration';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 
-const Header: React.FC = () => {
+const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const queryClient = useQueryClient();
+    const location = useLocation();
 
     const { data: serviceListResponse } = useGetServiceList();
     const services = serviceListResponse?.data as ServiceListType;
+
+    // Get current service based on the route
+    const getCurrentService = () => {
+        if (!services || location.pathname === '/') return null;
+
+        const currentPath = location.pathname.replace('/', '');
+        const serviceEntry = Object.entries(services).find(([key, service]) => service.path === currentPath);
+        console.log('serviceEntry', serviceEntry);
+        return serviceEntry ? serviceEntry[1] : null;
+    };
+
+    const currentService = getCurrentService();
 
     const updateServiceMutation = useUpdateServiceStatus();
 
@@ -45,42 +59,54 @@ const Header: React.FC = () => {
         <>
             <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
-                <div className="flex items-center">
-                    {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.67188 16.373L7.44737 12.5388" stroke="#6374BB" stroke-width="1.5" />
-                        <path d="M16.5191 3.93774L12.4375 7.46106" stroke="#6374BB" stroke-width="1.5" />
-                        <path d="M16.5191 16.373L12.4375 12.5388" stroke="#6374BB" stroke-width="1.5" />
-                        <path d="M3.67188 3.93774L7.44737 7.46106" stroke="#6374BB" stroke-width="1.5" />
-                        <path d="M2.50003 5C3.88075 5 5.00005 3.88071 5.00005 2.5C5.00005 1.11929 3.88075 0 2.50003 0C1.1193 0 0 1.11929 0 2.5C0 3.88071 1.1193 5 2.50003 5Z" fill="#9CA3AF" />
-                        <path d="M17.5 5C18.8808 5 20.0001 3.88071 20.0001 2.5C20.0001 1.11929 18.8808 0 17.5 0C16.1193 0 15 1.11929 15 2.5C15 3.88071 16.1193 5 17.5 5Z" fill="#9CA3AF" />
-                        <path d="M2.50003 20C3.88075 20 5.00005 18.8807 5.00005 17.5C5.00005 16.1193 3.88075 15 2.50003 15C1.1193 15 0 16.1193 0 17.5C0 18.8807 1.1193 20 2.50003 20Z" fill="#9CA3AF" />
-                        <path d="M17.5 20C18.8808 20 20.0001 18.8807 20.0001 17.5C20.0001 16.1193 18.8808 15 17.5 15C16.1193 15 15 16.1193 15 17.5C15 18.8807 16.1193 20 17.5 20Z" fill="#9CA3AF" />
-                        <path d="M9.75004 13.5C11.8211 13.5 13.5001 11.8211 13.5001 9.75C13.5001 7.67893 11.8211 6 9.75004 6C7.67895 6 6 7.67893 6 9.75C6 11.8211 7.67895 13.5 9.75004 13.5Z" fill="#374151" />
-                        <path d="M11.222 8.27273L10.2135 11H9.78738L8.77885 8.27273H9.2334L9.98624 10.446H10.0146L10.7675 8.27273H11.222Z" fill="white" />
-                    </svg> */}
+                <Link to="/" className="flex items-center">
                     <h2 className="text-xl font-semibold text-gray-800">{__('Versatile Toolkit', 'versatile-toolkit')}</h2>
-                </div>
+                </Link>
 
-                {/* Right side - Toggle Menu Button */}
-                <button
-                    onClick={toggleMenu}
-                    className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
-                    aria-label="Toggle menu"
-                >
-                    <svg
-                        className="w-6 h-6 text-gray-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                {/* Right side - Current Service and Toggle Menu Button */}
+                <div className="flex items-center gap-3">
+                    {/* Current Service Display */}
+                    {currentService && (
+                        // <div className="flex items-center bg-blue-50 border border-blue-200 rounded-md px-3 py-1">
+                            <>
+                                {Object.keys(currentService?.menus || {}).map((menuKey) => (
+                                    <Link 
+                                        key={menuKey} 
+                                        to={`/${currentService.path}/${currentService?.menus?.[menuKey]?.slug}`} 
+                                        className={`text-sm font-medium rounded-md px-3 py-1 transition-colors duration-200 ${
+                                            location.pathname === `/${currentService.path}/${currentService?.menus?.[menuKey]?.slug}` 
+                                            ? 'bg-blue-600 text-white border border-blue-700' 
+                                            : 'text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100'
+                                        }`}
+                                    >
+                                        {currentService?.menus?.[menuKey]?.label}
+                                    </Link>
+                                ))}
+                            </>
+                        // </div>
+                    )}
+
+                    {/* Toggle Menu Button */}
+                    <button
+                        onClick={toggleMenu}
+                        className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
+                        aria-label="Toggle menu"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16M4 18h16"
-                        />
-                    </svg>
-                </button>
+                        <svg
+                            className="w-6 h-6 text-gray-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </header>
 
             {/* Overlay */}

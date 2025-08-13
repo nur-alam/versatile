@@ -32,9 +32,6 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 		}
 	}, [themeListData])
 
-	console.log('theme list', themeList);
-
-
 	const handleSelect = (value: string) => {
 		onChange(value)
 		setOpen(false)

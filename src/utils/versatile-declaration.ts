@@ -15,6 +15,10 @@ export type ServiceItem = {
 	enable: boolean;
 	path: string;
 	description: string;
+	menus: Record<string, {
+		slug: string;
+		label: string;
+	}>;
 };
 
 export type ServiceListType = {

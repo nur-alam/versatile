@@ -81,6 +81,16 @@ define(
 			'enable'      => true,
 			'path'        => 'troubleshoot',
 			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
+			'menus'       => array(
+				'debug' => array(
+					'slug'  => 'debug',
+					'label' => 'Debug',
+				),
+				'logs'  => array(
+					'slug'  => 'logs',
+					'label' => 'Logs',
+				),
+			),
 		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
