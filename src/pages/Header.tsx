@@ -3,7 +3,7 @@ import { useGetServiceList, useUpdateServiceStatus } from '@/services/mood-servi
 import { ServiceItem, ServiceListType } from '@/utils/versatile-declaration';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 
@@ -19,9 +19,12 @@ const Header = () => {
     const getCurrentService = () => {
         if (!services || location.pathname === '/') return null;
 
-        const currentPath = location.pathname.replace('/', '');
-        const serviceEntry = Object.entries(services).find(([key, service]) => service.path === currentPath);
-        console.log('serviceEntry', serviceEntry);
+        // For HashRouter, we need to handle the path differently
+        // Extract the base path (first segment after /)
+        const pathSegments = location.pathname.split('/').filter(Boolean);
+        const basePath = pathSegments[0];
+
+        const serviceEntry = Object.entries(services).find(([key, service]) => service.path === basePath);
         return serviceEntry ? serviceEntry[1] : null;
     };
 
@@ -30,7 +33,6 @@ const Header = () => {
     const updateServiceMutation = useUpdateServiceStatus();
 
     const toggleService = async (serviceKey: string, service: ServiceItem) => {
-        console.log('serviceKey', serviceKey, 'service', service);
         updateServiceMutation.mutateAsync(
             {
                 service_key: serviceKey,
@@ -59,31 +61,47 @@ const Header = () => {
         <>
             <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
-                <Link to="/" className="flex items-center">
-                    <h2 className="text-xl font-semibold text-gray-800">{__('Versatile Toolkit', 'versatile-toolkit')}</h2>
+                <Link to="/" className="flex items-center text-blue-600 text-lg font-semibold">
+                    {__('Versatile Toolkit', 'versatile-toolkit')}
                 </Link>
 
                 {/* Right side - Current Service and Toggle Menu Button */}
                 <div className="flex items-center gap-3">
                     {/* Current Service Display */}
                     {currentService && (
-                        // <div className="flex items-center bg-blue-50 border border-blue-200 rounded-md px-3 py-1">
-                            <>
-                                {Object.keys(currentService?.menus || {}).map((menuKey) => (
-                                    <Link 
-                                        key={menuKey} 
-                                        to={`/${currentService.path}/${currentService?.menus?.[menuKey]?.slug}`} 
-                                        className={`text-sm font-medium rounded-md px-3 py-1 transition-colors duration-200 ${
-                                            location.pathname === `/${currentService.path}/${currentService?.menus?.[menuKey]?.slug}` 
-                                            ? 'bg-blue-600 text-white border border-blue-700' 
-                                            : 'text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100'
-                                        }`}
-                                    >
-                                        {currentService?.menus?.[menuKey]?.label}
-                                    </Link>
-                                ))}
-                            </>
-                        // </div>
+                        <>
+                            {
+                                Object.keys(currentService?.menus || {}).map((menuKey) => {
+                                    let linkPath = `/${currentService?.path}/${currentService?.menus?.[menuKey]?.slug}`;
+
+                                    if (linkPath.endsWith("/")) {
+                                        linkPath = linkPath.slice(0, -1);
+                                    }
+
+                                    return (
+                                        <Link
+                                            key={menuKey}
+                                            to={linkPath}
+                                            onClick={() => {
+                                                console.log('Link clicked, navigating to:', linkPath);
+                                            }}
+                                            className={`text-sm font-medium rounded-md px-3 py-1 transition-colors duration-200 ${location.pathname === linkPath
+                                                ? 'bg-blue-600 text-white border border-blue-700 hover:text-white focus:!text-white'
+                                                : ' bg-blue-50 border border-blue-200'
+                                                }`}
+                                        >
+                                            {currentService?.menus?.[menuKey]?.label}
+                                        </Link>
+                                    );
+                                })
+                            }
+                        </>
+                    )}
+
+                    {!currentService && (
+                        <Link to="/troubleshoot/debug" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
+                            Debug Log
+                        </Link>
                     )}
 
                     {/* Toggle Menu Button */}

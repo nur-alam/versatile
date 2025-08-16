@@ -202,7 +202,7 @@ const MaintenanceSettings = () => {
 											<FormItem className='mt-6'>
 												<div className='flex items-center gap-2'>
 													<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
-														{__('Show Only for Subscribers', 'versatile-toolkit')}
+														{__('Show Only for Users', 'versatile-toolkit')}
 													</FormLabel>
 													<FormControl>
 														<Switch id='show_subscribers_only'

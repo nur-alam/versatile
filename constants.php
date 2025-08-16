@@ -82,13 +82,23 @@ define(
 			'path'        => 'troubleshoot',
 			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
 			'menus'       => array(
-				'debug' => array(
-					'slug'  => 'debug',
-					'label' => 'Debug',
+				'troubleshoot' => array(
+					'slug'   => '',
+					'label'  => 'Troubleshoot',
+					'parent' => 'troubleshoot',
+					'icon'   => 'dashicons-admin-tools',
 				),
-				'logs'  => array(
-					'slug'  => 'logs',
-					'label' => 'Logs',
+				'debug'        => array(
+					'slug'   => 'debug',
+					'label'  => 'Debug',
+					'parent' => 'troubleshoot',
+					'icon'   => 'dashicons-admin-tools',
+				),
+				'logs'         => array(
+					'slug'   => 'logs',
+					'label'  => 'Logs',
+					'parent' => 'troubleshoot',
+					'icon'   => 'dashicons-admin-tools',
 				),
 			),
 		),

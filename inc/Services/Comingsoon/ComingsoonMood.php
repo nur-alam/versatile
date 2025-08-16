@@ -285,12 +285,6 @@ class ComingsoonMood {
 			add_action( 'wp_print_styles', 'wp_enqueue_emoji_styles' );
 		}
 
-		if ( empty( $current_user->roles ) ) {
-			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/Templates/' . $template . '.php';
-			include_once VERSATILE_PLUGIN_DIR . 'inc/Services/Comingsoon/ComingsoonTemplate.php';
-			die();
-		}
-
 		// If show_subscribers_only is enabled, only show coming soon mode to subscribers
 		if ( $show_subscribers_only ) {
 			if ( in_array( 'subscriber', (array) $current_user->roles, true ) ) {

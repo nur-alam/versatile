@@ -14,7 +14,9 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const location = useLocation();
 
     // Get current path from React Router location (works with HashRouter)
-    const currentPath = location.pathname.replace('/', ''); // Remove leading slash
+    // Extract the base path (first segment after /)
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const basePath = pathSegments[0];
 
     if (isLoading) {
         return <SkeletonLoader />; // Todo adjust this loader
@@ -27,7 +29,7 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
 
     // Check if current service is enabled
     const currentService = Object.values(serviceList).find(
-        service => service.path === currentPath
+        service => service.path === basePath
     );
 
     if (!currentService) {

@@ -50,8 +50,6 @@ class ServiceInit {
 			new ComingsoonMood();
 		}
 
-		new QuickPick();
-
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
 		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
