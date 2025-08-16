@@ -99,7 +99,7 @@ const Header = () => {
                     )}
 
                     {!currentService && (
-                        <Link to="/troubleshoot/debug" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
+                        <Link to="/troubleshoot/debug-log" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
                             Debug Log
                         </Link>
                     )}

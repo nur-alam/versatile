@@ -10,8 +10,7 @@ import Comingsoon from '@/pages/comingsoon';
 import Header from '@/pages/Header';
 import { RouteGuard } from '@/components/RouteGuard';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import Debug from '@/pages/troubleshoot/debug';
-import Logs from '@/pages/troubleshoot/log';
+import DebugLog from '@/pages/troubleshoot/debug-log';
 
 const root = ReactDOM.createRoot(document.getElementById('versatile-root') as HTMLElement);
 
@@ -72,17 +71,10 @@ root.render(
 									</ErrorBoundary>
 								</RouteGuard>
 							} />
-							<Route path="/troubleshoot/debug" element={
+							<Route path="/troubleshoot/debug-log" element={
 								<RouteGuard>
 									<ErrorBoundary>
-										<Debug />
-									</ErrorBoundary>
-								</RouteGuard>
-							} />
-							<Route path="/troubleshoot/logs" element={
-								<RouteGuard>
-									<ErrorBoundary>
-										<Logs />
+										<DebugLog />
 									</ErrorBoundary>
 								</RouteGuard>
 							} />

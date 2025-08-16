@@ -10,6 +10,7 @@
 
 namespace Versatile\Services\Troubleshoot;
 
+use Versatile\Services\Troubleshoot\DebugLog;
 use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,6 +28,9 @@ class TroubleshootInit {
 	 * Troubleshoot constructor.
 	 */
 	public function __construct() {
+		// Add the debug log file.
+		$debug_log = new DebugLog();
+
 		add_action( 'wp_ajax_versatile_plugin_list', array( $this, 'get_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
