@@ -89,30 +89,27 @@ define(
 					'icon'   => 'dashicons-admin-tools',
 				),
 				'debug'        => array(
-					'slug'   => 'debug',
-					'label'  => 'Debug',
-					'parent' => 'troubleshoot',
-					'icon'   => 'dashicons-admin-tools',
-				),
-				'logs'         => array(
-					'slug'   => 'logs',
-					'label'  => 'Logs',
+					'slug'   => 'debug-log',
+					'label'  => 'Debug Log',
 					'parent' => 'troubleshoot',
 					'icon'   => 'dashicons-admin-tools',
 				),
 			),
+			'icon'        => 'dashicons-admin-tools',
 		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
 			'enable'      => true,
 			'path'        => 'maintenance',
 			'description' => 'Display a custom maintenance page to visitors while you update your site.',
+			'icon'        => 'dashicons-admin-tools',
 		),
 		'comingsoon'   => array(
 			'label'       => 'Coming Soon',
 			'enable'      => true,
 			'path'        => 'comingsoon',
 			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
+			'icon'        => 'dashicons-admin-tools',
 		),
 	)
 );
