@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
-import { Button, Card, CardBody, CardHeader, Flex, FlexItem, Notice, Spinner, TextControl, SelectControl } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
+import { Button, Card, CardBody, CardHeader, Flex, FlexItem, Notice, Spinner, SelectControl } from '@wordpress/components';
 import config from '@/config';
 
 interface DebugLogStatus {
@@ -12,8 +11,20 @@ interface DebugLogStatus {
 	last_modified: number | null;
 }
 
+interface LogEntry {
+	id: number;
+	timestamp: string;
+	type: string;
+	severity: 'error' | 'warning' | 'notice' | 'info';
+	message: string;
+	file: string;
+	line: string;
+	stack_trace: string;
+	raw_line: string;
+}
+
 interface DebugLogContent {
-	content: string;
+	entries: LogEntry[];
 	total_lines: number;
 	current_page: number;
 	total_pages: number;
@@ -30,6 +41,8 @@ const DebugLog = () => {
 	const [perPage, setPerPage] = useState(50);
 	const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 	const [autoRefresh, setAutoRefresh] = useState(false);
+	const [selectedEntry, setSelectedEntry] = useState<LogEntry | null>(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const nonce = config?.nonce_value || '';
 
@@ -191,6 +204,53 @@ const DebugLog = () => {
 
 	const formatDate = (timestamp: number) => {
 		return new Date(timestamp * 1000).toLocaleString();
+	};
+
+	const formatLogTimestamp = (timestamp: string) => {
+		if (!timestamp) return '';
+		try {
+			// Parse WordPress log timestamp format: "16-Aug-2025 10:30:15 UTC"
+			const date = new Date(timestamp);
+			return date.toLocaleString();
+		} catch {
+			return timestamp;
+		}
+	};
+
+	const getSeverityColor = (severity: string) => {
+		switch (severity) {
+			case 'error':
+				return '#d63638';
+			case 'warning':
+				return '#f56e28';
+			case 'notice':
+				return '#f0b849';
+			default:
+				return '#2271b1';
+		}
+	};
+
+	const getSeverityIcon = (severity: string) => {
+		switch (severity) {
+			case 'error':
+				return '❌';
+			case 'warning':
+				return '⚠️';
+			case 'notice':
+				return '📝';
+			default:
+				return 'ℹ️';
+		}
+	};
+
+	const openDetailModal = (entry: LogEntry) => {
+		setSelectedEntry(entry);
+		setIsModalOpen(true);
+	};
+
+	const closeDetailModal = () => {
+		setSelectedEntry(null);
+		setIsModalOpen(false);
 	};
 
 	const renderPagination = () => {
@@ -364,13 +424,13 @@ const DebugLog = () => {
 							<FlexItem>
 								<SelectControl
 									label={__('Entries per page:', 'versatile-toolkit')}
-									value={perPage.toString()}
+									value={perPage.toString() as "25" | "50" | "100"}
 									options={[
 										{ label: '25', value: '25' },
 										{ label: '50', value: '50' },
 										{ label: '100', value: '100' }
 									]}
-									onChange={handlePerPageChange}
+									onChange={(value) => handlePerPageChange(value || '50')}
 									disabled={loading}
 								/>
 							</FlexItem>
@@ -384,25 +444,156 @@ const DebugLog = () => {
 							</div>
 						) : logContent ? (
 							<>
-								{logContent.total_lines > 0 ? (
+								{logContent.entries && logContent.entries.length > 0 ? (
 									<>
 										<div style={{ marginBottom: '15px', fontSize: '14px', color: '#666' }}>
 											{__('Showing entries', 'versatile-toolkit')} {((logContent.current_page - 1) * logContent.per_page) + 1} - {Math.min(logContent.current_page * logContent.per_page, logContent.total_lines)} {__('of', 'versatile-toolkit')} {logContent.total_lines}
 										</div>
-										<pre style={{
-											background: '#f6f7f7',
-											border: '1px solid #ddd',
-											borderRadius: '4px',
-											padding: '15px',
-											fontSize: '12px',
-											lineHeight: '1.4',
-											maxHeight: '500px',
-											overflow: 'auto',
-											whiteSpace: 'pre-wrap',
-											wordBreak: 'break-word'
-										}}>
-											{logContent.content}
-										</pre>
+
+										<div style={{ overflowX: 'auto' }}>
+											<table style={{
+												width: '100%',
+												borderCollapse: 'collapse',
+												fontSize: '14px'
+											}}>
+												<thead>
+													<tr style={{ backgroundColor: '#f6f7f7' }}>
+														<th style={{
+															padding: '12px 8px',
+															textAlign: 'left',
+															borderBottom: '2px solid #ddd',
+															fontWeight: '600'
+														}}>
+															{__('Type', 'versatile-toolkit')}
+														</th>
+														<th style={{
+															padding: '12px 8px',
+															textAlign: 'left',
+															borderBottom: '2px solid #ddd',
+															fontWeight: '600'
+														}}>
+															{__('Message', 'versatile-toolkit')}
+														</th>
+														<th style={{
+															padding: '12px 8px',
+															textAlign: 'left',
+															borderBottom: '2px solid #ddd',
+															fontWeight: '600'
+														}}>
+															{__('File', 'versatile-toolkit')}
+														</th>
+														<th style={{
+															padding: '12px 8px',
+															textAlign: 'left',
+															borderBottom: '2px solid #ddd',
+															fontWeight: '600'
+														}}>
+															{__('Time', 'versatile-toolkit')}
+														</th>
+														<th style={{
+															padding: '12px 8px',
+															textAlign: 'center',
+															borderBottom: '2px solid #ddd',
+															fontWeight: '600',
+															width: '60px'
+														}}>
+															{__('Details', 'versatile-toolkit')}
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{logContent.entries.map((entry, index) => (
+														<tr
+															key={entry.id}
+															style={{
+																borderBottom: '1px solid #eee',
+																backgroundColor: index % 2 === 0 ? '#fff' : '#fafafa'
+															}}
+														>
+															<td style={{
+																padding: '12px 8px',
+																verticalAlign: 'top'
+															}}>
+																<div style={{
+																	display: 'flex',
+																	alignItems: 'center',
+																	gap: '6px'
+																}}>
+																	<span>{getSeverityIcon(entry.severity)}</span>
+																	<span style={{
+																		color: getSeverityColor(entry.severity),
+																		fontWeight: '500',
+																		fontSize: '12px'
+																	}}>
+																		{entry.type}
+																	</span>
+																</div>
+															</td>
+															<td style={{
+																padding: '12px 8px',
+																verticalAlign: 'top',
+																maxWidth: '400px'
+															}}>
+																<div style={{
+																	overflow: 'hidden',
+																	textOverflow: 'ellipsis',
+																	whiteSpace: 'nowrap'
+																}}>
+																	{entry.message}
+																</div>
+															</td>
+															<td style={{
+																padding: '12px 8px',
+																verticalAlign: 'top',
+																fontSize: '12px',
+																color: '#666',
+																maxWidth: '200px'
+															}}>
+																{entry.file && (
+																	<div style={{
+																		overflow: 'hidden',
+																		textOverflow: 'ellipsis',
+																		whiteSpace: 'nowrap'
+																	}}>
+																		{entry.file.split('/').pop()}
+																		{entry.line && `:${entry.line}`}
+																	</div>
+																)}
+															</td>
+															<td style={{
+																padding: '12px 8px',
+																verticalAlign: 'top',
+																fontSize: '12px',
+																color: '#666',
+																whiteSpace: 'nowrap'
+															}}>
+																{formatLogTimestamp(entry.timestamp)}
+															</td>
+															<td style={{
+																padding: '12px 8px',
+																textAlign: 'center',
+																verticalAlign: 'top'
+															}}>
+																<Button
+																	variant="secondary"
+																	size="small"
+																	onClick={() => openDetailModal(entry)}
+																	aria-label={__('View details for log entry', 'versatile-toolkit')}
+																	title={__('View details', 'versatile-toolkit')}
+																	style={{
+																		minWidth: 'auto',
+																		padding: '4px 8px',
+																		fontSize: '12px'
+																	}}
+																>
+																	👁️
+																</Button>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
 										{renderPagination()}
 									</>
 								) : (
@@ -425,6 +616,202 @@ const DebugLog = () => {
 						</Notice>
 					</CardBody>
 				</Card>
+			)}
+
+			{/* Detail Modal */}
+			{isModalOpen && selectedEntry && (
+				<div
+					style={{
+						position: 'fixed',
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						backgroundColor: 'rgba(0, 0, 0, 0.5)',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						zIndex: 999999,
+						padding: '20px'
+					}}
+					onClick={closeDetailModal}
+				>
+					<div
+						style={{
+							backgroundColor: '#fff',
+							borderRadius: '8px',
+							boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+							width: '100%',
+							maxWidth: '600px',
+							maxHeight: '80vh',
+							overflow: 'hidden',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={(e) => e.stopPropagation()}
+					>
+						{/* Header */}
+						<div style={{
+							padding: '20px 20px 0 20px',
+							borderBottom: '1px solid #ddd'
+						}}>
+							<div style={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								marginBottom: '16px'
+							}}>
+								<div style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: '8px'
+								}}>
+									{getSeverityIcon(selectedEntry.severity)}
+									<span style={{
+										color: getSeverityColor(selectedEntry.severity),
+										fontWeight: '600',
+										fontSize: '16px'
+									}}>
+										{selectedEntry.type}
+									</span>
+								</div>
+								<Button
+									variant="tertiary"
+									size="small"
+									onClick={closeDetailModal}
+									style={{ 
+										padding: '8px',
+										minWidth: 'auto',
+										fontSize: '16px'
+									}}
+								>
+									✕
+								</Button>
+							</div>
+						</div>
+
+						{/* Content */}
+						<div style={{
+							padding: '20px',
+							overflow: 'auto',
+							flex: 1
+						}}>
+							<div style={{ marginBottom: '20px' }}>
+								<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600', color: '#1e1e1e' }}>
+									{__('Message:', 'versatile-toolkit')}
+								</h4>
+								<div style={{
+									background: '#f6f7f7',
+									border: '1px solid #ddd',
+									borderRadius: '4px',
+									padding: '12px',
+									fontSize: '14px',
+									lineHeight: '1.5',
+									wordBreak: 'break-word'
+								}}>
+									{selectedEntry.message}
+								</div>
+							</div>
+
+							<div style={{ marginBottom: '20px' }}>
+								<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600', color: '#1e1e1e' }}>
+									{__('Raw Log Entry:', 'versatile-toolkit')}
+								</h4>
+								<div style={{
+									background: '#f6f7f7',
+									border: '1px solid #ddd',
+									borderRadius: '4px',
+									padding: '12px',
+									fontSize: '12px',
+									fontFamily: 'monospace',
+									lineHeight: '1.4',
+									maxHeight: '150px',
+									overflow: 'auto',
+									whiteSpace: 'pre-wrap',
+									wordBreak: 'break-word'
+								}}>
+									{selectedEntry.raw_line}
+								</div>
+							</div>
+
+							{selectedEntry.file && (
+								<div style={{ marginBottom: '20px' }}>
+									<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600', color: '#1e1e1e' }}>
+										{__('File Location:', 'versatile-toolkit')}
+									</h4>
+									<div style={{
+										background: '#f6f7f7',
+										border: '1px solid #ddd',
+										borderRadius: '4px',
+										padding: '12px',
+										fontSize: '13px',
+										fontFamily: 'monospace',
+										wordBreak: 'break-all'
+									}}>
+										{selectedEntry.file}
+										{selectedEntry.line && (
+											<span style={{ color: '#666' }}> (Line: {selectedEntry.line})</span>
+										)}
+									</div>
+								</div>
+							)}
+
+							{selectedEntry.timestamp && (
+								<div style={{ marginBottom: '20px' }}>
+									<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600', color: '#1e1e1e' }}>
+										{__('Timestamp:', 'versatile-toolkit')}
+									</h4>
+									<div style={{
+										background: '#f6f7f7',
+										border: '1px solid #ddd',
+										borderRadius: '4px',
+										padding: '12px',
+										fontSize: '13px'
+									}}>
+										{formatLogTimestamp(selectedEntry.timestamp)}
+									</div>
+								</div>
+							)}
+
+							{selectedEntry.stack_trace && (
+								<div style={{ marginBottom: '20px' }}>
+									<h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600', color: '#1e1e1e' }}>
+										{__('Stack Trace:', 'versatile-toolkit')}
+									</h4>
+									<div style={{
+										background: '#f6f7f7',
+										border: '1px solid #ddd',
+										borderRadius: '4px',
+										padding: '12px',
+										fontSize: '12px',
+										fontFamily: 'monospace',
+										lineHeight: '1.4',
+										maxHeight: '200px',
+										overflow: 'auto',
+										whiteSpace: 'pre-wrap',
+										wordBreak: 'break-word'
+									}}>
+										{selectedEntry.stack_trace}
+									</div>
+								</div>
+							)}
+						</div>
+
+						{/* Footer */}
+						<div style={{
+							padding: '16px 20px',
+							borderTop: '1px solid #ddd',
+							textAlign: 'right'
+						}}>
+							<Button
+								variant="primary"
+								onClick={closeDetailModal}
+							>
+								{__('Close', 'versatile-toolkit')}
+							</Button>
+						</div>
+					</div>
+				</div>
 			)}
 		</div>
 	);

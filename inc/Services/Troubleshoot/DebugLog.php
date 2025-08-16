@@ -145,13 +145,13 @@ class DebugLog {
 				array(
 					array(
 						'name'     => 'page',
-						'value'    => $_POST['page'] ?? '1',
+						'value'    => wp_unslash( $_POST['page'] ?? '1' ),
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => '',
 					),
 					array(
 						'name'     => 'per_page',
-						'value'    => $_POST['per_page'] ?? '50',
+						'value'    => wp_unslash( $_POST['per_page'] ?? '50' ),
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => '',
 					),
@@ -174,7 +174,7 @@ class DebugLog {
 			if ( ! file_exists( $log_path ) ) {
 				wp_send_json_success(
 					array(
-						'content'      => '',
+						'entries'      => array(),
 						'total_lines'  => 0,
 						'current_page' => 1,
 						'total_pages'  => 0,
@@ -195,9 +195,18 @@ class DebugLog {
 			$start      = ( $page - 1 ) * $per_page;
 			$page_lines = array_slice( $lines, $start, $per_page );
 
+			// Parse log entries
+			$parsed_entries = array();
+			foreach ( $page_lines as $index => $line ) {
+				$parsed_entry = $this->parse_log_entry( $line, $start + $index + 1 );
+				if ( $parsed_entry ) {
+					$parsed_entries[] = $parsed_entry;
+				}
+			}
+
 			wp_send_json_success(
 				array(
-					'content'      => implode( "\n", $page_lines ),
+					'entries'      => $parsed_entries,
 					'total_lines'  => $total_lines,
 					'current_page' => $page,
 					'total_pages'  => $total_pages,
@@ -206,6 +215,84 @@ class DebugLog {
 			);
 		} catch ( \Throwable $th ) {
 			wp_send_json_error( array( 'message' => __( 'Error getting debug log content', 'versatile-toolkit' ) ) );
+		}
+	}
+
+	/**
+	 * Parse a single log entry.
+	 *
+	 * @param string $line The log line to parse.
+	 * @param int    $line_number The line number.
+	 * @return array|null Parsed log entry or null if parsing fails.
+	 */
+	private function parse_log_entry( $line, $line_number ) {
+		// Pattern to match WordPress debug log format: [timestamp] Type: Message in /path/file.php on line 123
+		$pattern = '/^\[([^\]]+)\]\s+(PHP\s+)?(Notice|Warning|Error|Fatal\s+error|Parse\s+error|Deprecated|Strict\s+Standards|WordPress\s+database\s+error):\s+(.+?)(?:\s+in\s+(.+?)\s+on\s+line\s+(\d+))?$/i';
+		
+		if ( preg_match( $pattern, $line, $matches ) ) {
+			$timestamp = $matches[1];
+			$type      = trim( ( $matches[2] ?? '' ) . $matches[3] );
+			$message   = $matches[4];
+			$file      = $matches[5] ?? '';
+			$line_num  = $matches[6] ?? '';
+
+			// Determine severity level
+			$severity = $this->get_log_severity( $type );
+
+			// Extract stack trace if present (usually in the message for fatal errors)
+			$stack_trace = '';
+			if ( strpos( $message, 'Stack trace:' ) !== false ) {
+				$parts       = explode( 'Stack trace:', $message, 2 );
+				$message     = trim( $parts[0] );
+				$stack_trace = isset( $parts[1] ) ? trim( $parts[1] ) : '';
+			}
+
+			return array(
+				'id'          => $line_number,
+				'timestamp'   => $timestamp,
+				'type'        => $type,
+				'severity'    => $severity,
+				'message'     => $message,
+				'file'        => $file,
+				'line'        => $line_num,
+				'stack_trace' => $stack_trace,
+				'raw_line'    => $line,
+			);
+		}
+
+		// If it doesn't match the standard format, treat as generic log entry
+		return array(
+			'id'          => $line_number,
+			'timestamp'   => '',
+			'type'        => 'Unknown',
+			'severity'    => 'info',
+			'message'     => $line,
+			'file'        => '',
+			'line'        => '',
+			'stack_trace' => '',
+			'raw_line'    => $line,
+		);
+	}
+
+	/**
+	 * Get severity level for log type.
+	 *
+	 * @param string $type Log type.
+	 * @return string Severity level.
+	 */
+	private function get_log_severity( $type ) {
+		$type_lower = strtolower( $type );
+		
+		if ( strpos( $type_lower, 'fatal' ) !== false || strpos( $type_lower, 'parse' ) !== false ) {
+			return 'error';
+		} elseif ( strpos( $type_lower, 'error' ) !== false ) {
+			return 'error';
+		} elseif ( strpos( $type_lower, 'warning' ) !== false ) {
+			return 'warning';
+		} elseif ( strpos( $type_lower, 'notice' ) !== false || strpos( $type_lower, 'deprecated' ) !== false ) {
+			return 'notice';
+		} else {
+			return 'info';
 		}
 	}
 
