@@ -669,6 +669,9 @@ video {
 .z-\[99999\] {
   z-index: 99999;
 }
+.m-4 {
+  margin: 1rem;
+}
 .-mx-1 {
   margin-left: -0.25rem;
   margin-right: -0.25rem;
@@ -676,6 +679,10 @@ video {
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 .\!ml-2 {
   margin-left: 0.5rem !important;
@@ -1414,6 +1421,9 @@ video {
 .text-center {
   text-align: center;
 }
+.text-right {
+  text-align: right;
+}
 .align-middle {
   vertical-align: middle;
 }
@@ -1452,6 +1462,9 @@ video {
 }
 .font-semibold {
   font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
 }
 .leading-none {
   line-height: 1;

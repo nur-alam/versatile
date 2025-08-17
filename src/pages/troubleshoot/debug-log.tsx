@@ -38,7 +38,7 @@ const DebugLog = () => {
 	const [toggleLoading, setToggleLoading] = useState(false);
 	const [clearLoading, setClearLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [perPage, setPerPage] = useState(50);
+	const [perPage, setPerPage] = useState(10);
 	const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 	const [autoRefresh, setAutoRefresh] = useState(false);
 	const [selectedEntry, setSelectedEntry] = useState<LogEntry | null>(null);
@@ -424,8 +424,9 @@ const DebugLog = () => {
 							<FlexItem>
 								<SelectControl
 									label={__('Entries per page:', 'versatile-toolkit')}
-									value={perPage.toString() as "25" | "50" | "100"}
+									value={perPage.toString() as "10" | "25" | "50" | "100"}
 									options={[
+										{ label: '10', value: '10' },
 										{ label: '25', value: '25' },
 										{ label: '50', value: '50' },
 										{ label: '100', value: '100' }
