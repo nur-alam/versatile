@@ -74,7 +74,7 @@ const debugLog = () => {
 
 	return (
 		<div className="mx-auto max-w-6xl p-6">
-			<h1 className="mb-4 text-2xl font-bold tracking-tight">Users</h1>
+			<h1 className="mb-4 text-2xl font-bold tracking-tight">Debug Log</h1>
 			<p className="mb-6 text-slate-600">Server-side pagination, search, and sorting with Tailwind + React.</p>
 			<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
 				columns={columns}
