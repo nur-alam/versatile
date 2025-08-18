@@ -1,7 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { ServerDataTable, Column, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
-import { Button } from '@/components/ui/button';
-import { Eye, Edit, Trash2, Download, ExternalLink, Settings, Share, Copy } from 'lucide-react';
+import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
 
 export type DebugRow = {
 	key?: React.Key;
@@ -25,48 +24,19 @@ const debugLog = () => {
 	const [searchParams] = useSearchParams();
 
 	const columns = [
-		{ key: "id", header: "ID", sortable: true },
+		{ key: "id", header: "ID" },
 		{ key: "name", header: "Name", sortable: true },
 		{ key: "email", header: "Email", sortable: true },
 		{
 			key: "role", header: "Role", sortable: true,
 			render: (row, key) => {
-				console.log('role', row);
-				console.log('role', key);
 				return row['key'] === 'Admin' ? 'Administrator' : 'Subscriber';
 			}
 		},
 		{ key: "createdAt", header: "Created", sortable: true, render: (row, value?: string) => new Date(value || '').toLocaleDateString() || '' },
 		{
 			key: 'actions', header: 'Actions',
-			render: (row, key) => {
-				return <div className="flex gap-1">
-					<Button
-						size="sm"
-						variant="ghost"
-						onClick={() => {
-							console.log('View:', row);
-							alert(`Viewing user: ${row.name}`);
-						}}
-						aria-label={`View ${row.name}`}
-						className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
-					>
-						<Eye className="h-4 w-4" />
-					</Button>
-					<Button
-						size="sm"
-						variant="ghost"
-						onClick={() => {
-							console.log('Download:', row);
-							alert(`Downloading data for: ${row.name}`);
-						}}
-						aria-label={`Download ${row.name} data`}
-						className="h-8 w-8 p-0 text-purple-600 hover:bg-purple-50"
-					>
-						<Download className="h-4 w-4" />
-					</Button>
-				</div>
-			}
+			render: (row, key) => <ViewLog row={row} key={key} />
 		}
 	] as Column<DebugRow>[];
 
