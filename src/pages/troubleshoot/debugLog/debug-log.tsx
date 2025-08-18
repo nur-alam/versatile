@@ -1,19 +1,19 @@
 import { useSearchParams } from 'react-router-dom';
 import { ServerDataTable, Column, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
 import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
+import config from '@/config';
 
 export type DebugRow = {
-	key?: React.Key;
 	id: number;
-	name: string;
-	email: string;
-	role: string;
-	createdAt: string;
+	type: string;
+	message: string;
+	severity: string;
+	timestamp: string;
 };
 
 export type DebugLogSearchParams = {
 	page?: number;
-	pageSize?: number;
+	perPage?: number;
 	search?: string;
 	sortKey?: string;
 	order?: string;
@@ -22,65 +22,42 @@ export type DebugLogSearchParams = {
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
 	const [searchParams] = useSearchParams();
+	const loadLogContent = async ({ page, perPage, search, sortKey, order }: DebugLogSearchParams): Promise<{ data: DebugRow[], total: number, totalPages: number }> => {
+		try {
+			const params = new URLSearchParams({
+				action: 'versatile_get_debug_log_content',
+				versatile_nonce: config.nonce_value,
+				page: String(page),
+				per_page: String(perPage),
+				search: String(search).trim(),
+				sortKey: String(sortKey).trim(),
+				order: String(order?.trim()?.toLowerCase()),
+			});
+
+			const response = await fetch(`${config.ajax_url}?${params}`);
+			const responseData = await response.json();
+			const data = responseData?.data;
+			return { data: data?.entries as DebugRow[], total: data?.total_lines, totalPages: data?.total_pages };
+		} catch (error) {
+			console.error('Error fetching debug log content:', error);
+			return { data: [], total: 0, totalPages: 0 };
+		}
+	};
 
 	const columns = [
 		{ key: "id", header: "ID" },
-		{ key: "name", header: "Name", sortable: true },
-		{ key: "email", header: "Email", sortable: true },
+		{ key: "type", header: "Type", sortable: true },
+		{ key: "message", header: "Message" },
+		{ key: "severity", header: "Severity" },
 		{
-			key: "role", header: "Role", sortable: true,
-			render: (row, key) => {
-				return row['key'] === 'Admin' ? 'Administrator' : 'Subscriber';
-			}
+			key: "timestamp", header: "Timestamp",
+			render: (row, value?: string) => new Date(value || '').toLocaleString() || ''
 		},
-		{ key: "createdAt", header: "Created", sortable: true, render: (row, value?: string) => new Date(value || '').toLocaleDateString() || '' },
 		{
 			key: 'actions', header: 'Actions',
 			render: (row, key) => <ViewLog row={row} key={key} />
 		}
 	] as Column<DebugRow>[];
-
-	// Dummy API simulation
-	function fetchData({ page, pageSize, search, sortKey, order }: DebugLogSearchParams): Promise<{ data: DebugRow[], total: number, totalPages: number }> {
-		console.log('fetchData', { page, pageSize, search, sortKey, order });
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				let all = Array.from({ length: 30 }).map((_, i) => ({
-					id: i + 1,
-					name: `User ${i + 1}`,
-					email: `user${i + 1}@example.com`,
-					role: ["Admin", "Editor", "Viewer"][i % 3],
-					createdAt: new Date(2025, i % 12, (i % 28) + 1).toISOString() || '',
-				}));
-
-				// search
-				if (search) {
-					all = all.filter((u) =>
-						u.name.toLowerCase().includes(search.toLowerCase()) ||
-						u.email.toLowerCase().includes(search.toLowerCase())
-					);
-				}
-
-				// sort
-				if (sortKey && order) {
-					all.sort((a, b) => {
-						const av = a[sortKey as keyof typeof a] || '';
-						const bv = b[sortKey as keyof typeof b] || '';
-						const cmp = String(av).localeCompare(String(bv));
-						return order === "asc" ? cmp : -cmp;
-					});
-				}
-
-				// pagination
-				const total = all.length;
-				const start = ((page || 1) - 1) * (pageSize || 10);
-				const data = all.slice(start, start + (pageSize || 10));
-				const totalPages = Math.ceil(total / (pageSize || 10));
-
-				resolve({ data: data as DebugRow[], total, totalPages });
-			}, 500);
-		});
-	}
 
 	return (
 		<div className="mx-auto max-w-6xl p-6">
@@ -92,7 +69,7 @@ const debugLog = () => {
 				<p className="mb-4 text-sm text-gray-600">Just add actions column - view, edit, delete buttons appear automatically with built-in handlers</p>
 				<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
 					columns={columns}
-					fetchData={fetchData}
+					fetchData={loadLogContent}
 					searchParams={searchParams}
 				/>
 			</div>

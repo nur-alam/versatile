@@ -33,12 +33,8 @@ const buildNavigationParams = (page: number, perPage: number, search: string, so
 
 const buildQueryParams = (page: number, perPage: number, search: string, sortKey: string, order: string) => {
   const params = new URLSearchParams();
-  if (page > 1) {
-    params.append('paged', page.toString());
-  }
-  if (perPage && perPage !== 10) {
-    params.append('per_page', perPage.toString());
-  }
+  params.append('paged', page.toString());
+  params.append('per_page', perPage?.toString());
   if (search) {
     params.append('search', search);
   }
@@ -66,7 +62,7 @@ function SortIcon({ order }: { order: string }) {
 const parseUrlParams = (urlParams: URLSearchParams) => {
   return {
     page: parseInt(urlParams.get('paged') || '1'),
-    pageSize: parseInt(urlParams.get('per_page') || '10'),
+    perPage: parseInt(urlParams.get('per_page') || '10'),
     search: urlParams.get('search') || '',
     sortKey: urlParams.get('sort_key') || '',
     order: urlParams.get('order') || ''
@@ -99,7 +95,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
 
   const [query, setSearch] = useState(initialParams.search);
   const [page, setPage] = useState(initialParams.page);
-  const [pageSize, setPageSize] = useState(initialParams.pageSize);
+  const [perPage, setPerPage] = useState(initialParams.perPage || 10);
   const [sort, setSort] = useState({ key: initialParams.sortKey, order: initialParams.order });
   const [totalPages, setTotalPages] = useState(0);
 
@@ -108,7 +104,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
     const newParams = parseUrlParams(urlParams);
 
     setPage(newParams.page);
-    setPageSize(newParams.pageSize);
+    setPerPage(newParams.perPage || 10);
     setSearch(newParams.search);
     setSort({ key: newParams.sortKey, order: newParams.order });
   }, [searchParams]);
@@ -119,7 +115,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
 
   useEffect(() => {
     setLoading(true);
-    fetchData({ page, pageSize, search: query, sortKey: sort.key, order: sort.order })
+    fetchData({ page, perPage, search: query, sortKey: sort.key, order: sort.order })
       .then((res: { data: TData[], total: number, totalPages: number }) => {
         // expect { data: [], total: number, totalPages: number }
         setRows(res.data);
@@ -127,7 +123,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
         setTotalPages(res.totalPages || 0);
       })
       .finally(() => setLoading(false));
-  }, [page, pageSize, query, sort]);
+  }, [page, perPage, query, sort]);
 
   function toggleSort(key: string) {
     setSort((prev) => {
@@ -148,7 +144,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
             value={query}
             onChange={(e) => {
               setSearch(e.target.value);
-              navigate(buildNavigationParams(page, pageSize, e.target.value, sort.key, sort.order));
+              navigate(buildNavigationParams(page, perPage, e.target.value, sort.key, sort.order));
             }}
             placeholder="Search..."
             className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 pr-9 text-sm shadow-sm outline-none focus:border-slate-300"
@@ -161,9 +157,9 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
         <div className="flex items-center gap-2">
           <label className="text-sm text-slate-600">Rows per page</label>
           <select
-            value={pageSize}
+            value={perPage}
             onChange={(e) => {
-              setPageSize(Number(e.target.value));
+              setPerPage(Number(e.target.value));
               navigate(buildNavigationParams(page, Number(e.target.value), query, sort.key, sort.order));
             }}
             className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-sm shadow-sm"
@@ -240,8 +236,8 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
         {/* Footer */}
         <div className="flex flex-col gap-3 border-t border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-xs text-slate-600">
-            Showing <span className="font-semibold">{rows.length ? (page - 1) * pageSize + 1 : 0}</span>–
-            <span className="font-semibold">{(page - 1) * pageSize + rows.length}</span> of
+            Showing <span className="font-semibold">{rows.length ? (page - 1) * perPage + 1 : 0}</span>–
+            <span className="font-semibold">{(page - 1) * perPage + rows.length}</span> of
             <span className="font-semibold"> {total}</span>
           </div>
           <div className="flex items-center gap-1">
@@ -249,7 +245,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               className="rounded-xl px-3 py-1.5 text-sm shadow-sm border border-slate-200 disabled:opacity-40"
               onClick={() => {
                 setPage(1);
-                navigate(buildNavigationParams(1, pageSize, query, sort.key, sort.order));
+                navigate(buildNavigationParams(1, perPage, query, sort.key, sort.order));
               }}
               disabled={page === 1}
             >
@@ -260,7 +256,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               onClick={() => {
                 const prevPage = Math.max(1, page - 1);
                 setPage(prevPage);
-                navigate(buildNavigationParams(prevPage, pageSize, query, sort.key, sort.order));
+                navigate(buildNavigationParams(prevPage, perPage, query, sort.key, sort.order));
               }}
               disabled={page === 1}
             >
@@ -272,7 +268,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               onClick={() => {
                 const nextPage = Math.min(totalPages, page + 1);
                 setPage(nextPage);
-                navigate(buildNavigationParams(nextPage, pageSize, query, sort.key, sort.order));
+                navigate(buildNavigationParams(nextPage, perPage, query, sort.key, sort.order));
               }}
               aria-label="Next page"
               disabled={page === totalPages}
@@ -283,7 +279,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               className="rounded-xl px-3 py-1.5 text-sm shadow-sm border border-slate-200 disabled:opacity-40"
               onClick={() => {
                 setPage(totalPages);
-                navigate(buildNavigationParams(totalPages, pageSize, query, sort.key, sort.order));
+                navigate(buildNavigationParams(totalPages, perPage, query, sort.key, sort.order));
               }}
               disabled={page === totalPages}
             >

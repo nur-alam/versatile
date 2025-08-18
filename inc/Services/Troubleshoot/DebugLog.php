@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Debug Log Service
  *
@@ -21,6 +22,7 @@ use Versatile\Traits\JsonResponse;
  * @since 1.0.0
  */
 class DebugLog {
+
 
 	use JsonResponse;
 
@@ -74,7 +76,7 @@ class DebugLog {
 				array(
 					array(
 						'name'     => 'enable',
-						'value'    => $_POST['enable'] ?? 'false',
+						'value'    => $_POST['enable'] ?? 'false', // phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
 						'rules'    => 'required',
 					),
@@ -92,7 +94,7 @@ class DebugLog {
 			}
 
 			$verified_data = (object) $request_verify['data'];
-			$enable        = $verified_data->enable === 'true';
+			$enable        = 'true' === $verified_data->enable;
 
 			$result = $this->update_wp_config_debug_settings( $enable );
 
@@ -141,21 +143,55 @@ class DebugLog {
 	 */
 	public function get_debug_log_content() {
 		try {
+			$build_array_for_validation = array();
+
+			if (! empty($_GET['search'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'search',
+					'value'    => wp_unslash($_GET['search']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
+			if (! empty($_GET['sortKey'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'sortKey',
+					'value'    => wp_unslash($_GET['sortKey']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
+			if (! empty($_GET['order'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'order',
+					'value'    => wp_unslash($_GET['order']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
+			if (! empty($_GET['page'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'page',
+					'value'    => wp_unslash($_GET['page']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
+			if (! empty($_GET['per_page'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'per_page',
+					'value'    => wp_unslash($_GET['per_page']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
 			$sanitized_data = versatile_sanitization_validation(
-				array(
-					array(
-						'name'     => 'page',
-						'value'    => wp_unslash( $_POST['page'] ?? '1' ),
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => '',
-					),
-					array(
-						'name'     => 'per_page',
-						'value'    => wp_unslash( $_POST['per_page'] ?? '50' ),
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => '',
-					),
-				)
+				$build_array_for_validation
 			);
 
 			if ( ! $sanitized_data['success'] ) {
@@ -182,8 +218,8 @@ class DebugLog {
 				);
 			}
 
-			$page     = max( 1, intval( $verified_data->page ) );
-			$per_page = max( 10, min( 100, intval( $verified_data->per_page ) ) );
+			$page     = (int) $verified_data->page;
+			$per_page = (int) $verified_data->per_page;
 
 			$lines       = file( $log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 			$total_lines = count( $lines );
@@ -204,17 +240,27 @@ class DebugLog {
 				}
 			}
 
-			wp_send_json_success(
-				array(
-					'entries'      => $parsed_entries,
-					'total_lines'  => $total_lines,
-					'current_page' => $page,
-					'total_pages'  => $total_pages,
-					'per_page'     => $per_page,
-				)
+			$data = array(
+				'entries'      => $parsed_entries,
+				'total_lines'  => $total_lines,
+				'current_page' => $page,
+				'total_pages'  => $total_pages,
+				'per_page'     => $per_page,
 			);
+
+			$this->json_response( 'success', $data, 200 );
+
+			// wp_send_json_success(
+			// array(
+			// 'entries'      => $parsed_entries,
+			// 'total_lines'  => $total_lines,
+			// 'current_page' => $page,
+			// 'total_pages'  => $total_pages,
+			// 'per_page'     => $per_page,
+			// )
+			// );
 		} catch ( \Throwable $th ) {
-			wp_send_json_error( array( 'message' => __( 'Error getting debug log content', 'versatile-toolkit' ) ) );
+			$this->json_response( __( 'Error getting debug log content', 'versatile-toolkit' ), 400 );
 		}
 	}
 
@@ -228,7 +274,7 @@ class DebugLog {
 	private function parse_log_entry( $line, $line_number ) {
 		// Pattern to match WordPress debug log format: [timestamp] Type: Message in /path/file.php on line 123
 		$pattern = '/^\[([^\]]+)\]\s+(PHP\s+)?(Notice|Warning|Error|Fatal\s+error|Parse\s+error|Deprecated|Strict\s+Standards|WordPress\s+database\s+error):\s+(.+?)(?:\s+in\s+(.+?)\s+on\s+line\s+(\d+))?$/i';
-		
+
 		if ( preg_match( $pattern, $line, $matches ) ) {
 			$timestamp = $matches[1];
 			$type      = trim( ( $matches[2] ?? '' ) . $matches[3] );
@@ -282,7 +328,7 @@ class DebugLog {
 	 */
 	private function get_log_severity( $type ) {
 		$type_lower = strtolower( $type );
-		
+
 		if ( strpos( $type_lower, 'fatal' ) !== false || strpos( $type_lower, 'parse' ) !== false ) {
 			return 'error';
 		} elseif ( strpos( $type_lower, 'error' ) !== false ) {

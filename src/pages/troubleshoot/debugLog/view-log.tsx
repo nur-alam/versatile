@@ -21,7 +21,7 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 				<Button
 					size="sm"
 					variant="ghost"
-					aria-label={`View ${row.name}'s log`}
+					aria-label={`View ${row.type}'s log`}
 					className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
 				>
 					<Eye className="h-4 w-4" />
@@ -29,17 +29,17 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>Details {row.name}</DialogTitle>
+					<DialogTitle>Warning Type: {row.severity}</DialogTitle>
 					<DialogDescription className='mt-2 hidden'>
-						{row.email}
+						{row.timestamp}
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col gap-2">
 					<div>
-						<strong>Email</strong>: <span>{row.email}</span>
+						<strong>Description</strong>: <span>{row.message}</span>
 					</div>
 					<div>
-						<strong>Role</strong>: <span>{row.role}</span>
+						<strong>Role</strong>: <span>{row.type}</span>
 					</div>
 				</div>
 				<DialogFooter className="sm:justify-end">
