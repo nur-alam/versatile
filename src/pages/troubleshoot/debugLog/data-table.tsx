@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Eye, Edit, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 /**
  * Server-side DataTable
@@ -73,10 +74,10 @@ const parseUrlParams = (urlParams: URLSearchParams) => {
 };
 
 export type Column<T> = {
-  key: keyof T;
+  key: keyof T | 'actions';
   header: string;
   sortable?: boolean;
-  render?: (value: T[keyof T]) => React.ReactNode;
+  render?: (row: T, key: keyof T) => React.ReactNode;
   sortKey?: string;
 };
 
@@ -222,7 +223,11 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
                   <tr key={row.id} className="border-t border-slate-100 hover:bg-slate-50/60">
                     {columns.map((col) => (
                       <td key={String(col.key)} className="px-4 py-3 text-slate-700">
-                        {col.render ? col.render(row[col.key]) : String(row[col.key] ?? '')}
+                        {col.render ? (
+                          col.render(row, col.key as keyof TData)
+                        ) : (
+                          String(row[col.key as keyof TData] ?? '')
+                        )}
                       </td>
                     ))}
                   </tr>

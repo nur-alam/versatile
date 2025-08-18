@@ -1,148 +1,244 @@
-import { Eye, Edit, Trash2, Download, Share, Settings, Copy, ExternalLink } from 'lucide-react';
-import { ActionButton } from './data-table';
+import { Eye, Edit, Trash2, Download, Share, Settings, Copy, ExternalLink, Users, FileText } from 'lucide-react';
+import { DefaultActionConfigs, DefaultActionHandlers } from './data-table';
 
-// Example: Basic CRUD actions
-export const basicCrudActions = <T,>(): ActionButton<T>[] => [
-  {
-    key: 'view',
+// Example 1: Simple handlers (only specific actions)
+export const viewOnlyActions = <T,>(): DefaultActionHandlers<T> => ({
+  onView: (row) => console.log('View:', row)
+});
+
+export const viewAndDeleteActions = <T,>(): DefaultActionHandlers<T> => ({
+  onView: (row) => console.log('View:', row),
+  onDelete: (row) => console.log('Delete:', row)
+});
+
+export const viewAndEditActions = <T,>(): DefaultActionHandlers<T> => ({
+  onView: (row) => console.log('View:', row),
+  onEdit: (row) => console.log('Edit:', row)
+});
+
+// Example 2: Advanced configurations with custom styling
+export const customStyledActions = <T extends { id: React.Key; name?: string }>(): DefaultActionConfigs<T> => ({
+  view: {
     icon: Eye,
+    text: 'View',
+    size: 'sm',
+    variant: 'outline',
+    className: 'h-7 px-2 text-xs border-blue-200 text-blue-700 hover:bg-blue-50',
     onClick: (row) => console.log('View:', row),
-    title: 'View',
-    ariaLabel: 'View item',
-    colorScheme: 'blue'
+    ariaLabel: 'View details'
   },
-  {
-    key: 'edit',
-    icon: Edit,
-    onClick: (row) => console.log('Edit:', row),
-    title: 'Edit',
-    ariaLabel: 'Edit item',
-    colorScheme: 'green'
-  },
-  {
-    key: 'delete',
-    icon: Trash2,
-    onClick: (row) => console.log('Delete:', row),
-    title: 'Delete',
-    ariaLabel: 'Delete item',
-    colorScheme: 'red'
-  }
-];
-
-// Example: File management actions
-export const fileManagementActions = <T,>(): ActionButton<T>[] => [
-  {
-    key: 'download',
-    icon: Download,
-    onClick: (row) => console.log('Download:', row),
-    title: 'Download',
-    ariaLabel: 'Download file',
-    colorScheme: 'blue'
-  },
-  {
-    key: 'share',
-    icon: Share,
-    onClick: (row) => console.log('Share:', row),
-    title: 'Share',
-    ariaLabel: 'Share file',
-    colorScheme: 'purple'
-  },
-  {
-    key: 'copy',
-    icon: Copy,
-    onClick: (row) => console.log('Copy:', row),
-    title: 'Copy Link',
-    ariaLabel: 'Copy file link',
-    colorScheme: 'gray'
-  }
-];
-
-// Example: Custom styled actions
-export const customStyledActions = <T,>(): ActionButton<T>[] => [
-  {
-    key: 'settings',
+  edit: {
     icon: Settings,
-    onClick: (row) => console.log('Settings:', row),
-    title: 'Settings',
-    ariaLabel: 'Open settings',
-    className: 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-300 border border-indigo-200'
+    text: 'Edit',
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-7 px-2 text-xs text-green-600 hover:bg-green-50',
+    onClick: (row) => console.log('Edit:', row),
+    ariaLabel: 'Edit item'
   },
-  {
-    key: 'external',
+  delete: {
+    icon: Trash2,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-red-500 hover:bg-red-50',
+    onClick: (row) => console.log('Delete:', row),
+    ariaLabel: (row) => `Delete ${row.name || row.id}`
+  }
+});
+
+// Example 3: Actions as links
+export const linkActions = <T extends { id: React.Key; slug?: string }>(): DefaultActionConfigs<T> => ({
+  view: {
+    asLink: true,
+    href: (row) => `/items/${row.slug || row.id}`,
+    target: '_blank',
+    rel: 'noopener noreferrer',
     icon: ExternalLink,
-    onClick: (row) => console.log('External:', row),
-    title: 'Open External',
-    ariaLabel: 'Open in new tab',
-    className: 'inline-flex items-center justify-center w-8 h-8 rounded-lg text-orange-600 hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-300 shadow-sm'
+    text: 'View',
+    className: 'inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200',
+    ariaLabel: 'View in new tab'
+  },
+  edit: {
+    asLink: true,
+    href: (row) => `/items/${row.slug || row.id}/edit`,
+    icon: Edit,
+    text: 'Edit',
+    className: 'inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200',
+    ariaLabel: 'Edit item'
   }
-];
+});
 
-// Example: Conditional actions based on row data
-export const conditionalActions = <T extends { status?: string }>(row: T): ActionButton<T>[] => {
-  const baseActions: ActionButton<T>[] = [
-    {
-      key: 'view',
-      icon: Eye,
-      onClick: (row) => console.log('View:', row),
-      title: 'View',
-      ariaLabel: 'View item',
-      colorScheme: 'blue'
-    }
-  ];
-
-  // Add edit action only if status is not 'locked'
-  if (row.status !== 'locked') {
-    baseActions.push({
-      key: 'edit',
-      icon: Edit,
-      onClick: (row) => console.log('Edit:', row),
-      title: 'Edit',
-      ariaLabel: 'Edit item',
-      colorScheme: 'green'
-    });
+// Example 4: Mixed buttons and links
+export const mixedActions = <T extends { id: React.Key; name?: string; status?: string }>(): DefaultActionConfigs<T> => ({
+  view: {
+    // Link to view page
+    asLink: true,
+    href: (row) => `/view/${row.id}`,
+    target: '_blank',
+    icon: ExternalLink,
+    className: 'h-8 w-8 p-0 text-blue-600 hover:bg-blue-50 rounded-lg inline-flex items-center justify-center',
+    ariaLabel: 'View in new tab'
+  },
+  edit: {
+    // Button for inline editing
+    icon: Edit,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-green-600 hover:bg-green-50',
+    onClick: (row) => console.log('Inline edit:', row),
+    ariaLabel: 'Edit inline',
+    disabled: (row) => row.status === 'locked'
+  },
+  delete: {
+    // Button with confirmation
+    icon: Trash2,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-red-600 hover:bg-red-50',
+    onClick: (row) => {
+      if (confirm(`Delete ${row.name || row.id}?`)) {
+        console.log('Delete confirmed:', row);
+      }
+    },
+    ariaLabel: (row) => `Delete ${row.name || row.id}`,
+    disabled: (row) => row.status === 'protected'
   }
+});
 
-  // Add delete action only if status is 'draft'
-  if (row.status === 'draft') {
-    baseActions.push({
-      key: 'delete',
-      icon: Trash2,
-      onClick: (row) => console.log('Delete:', row),
-      title: 'Delete',
-      ariaLabel: 'Delete item',
-      colorScheme: 'red'
-    });
+// Example 5: Icon-only vs text-only vs icon+text
+export const variousFormats = <T,>(): DefaultActionConfigs<T> => ({
+  view: {
+    // Icon only
+    icon: Eye,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-blue-600 hover:bg-blue-50',
+    onClick: (row) => console.log('View:', row),
+    ariaLabel: 'View item'
+  },
+  edit: {
+    // Text only
+    text: 'Edit',
+    size: 'sm',
+    variant: 'outline',
+    className: 'h-7 px-2 text-xs',
+    onClick: (row) => console.log('Edit:', row),
+    ariaLabel: 'Edit item'
+  },
+  delete: {
+    // Icon + text
+    icon: Trash2,
+    text: 'Delete',
+    size: 'sm',
+    variant: 'destructive',
+    className: 'h-7 px-2 text-xs',
+    onClick: (row) => console.log('Delete:', row),
+    ariaLabel: 'Delete item'
   }
+});
 
-  return baseActions;
-};
+// Example 6: Conditional actions based on row data
+export const conditionalActions = <T extends { role?: string; status?: string }>(): DefaultActionConfigs<T> => ({
+  view: {
+    icon: Eye,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-blue-600 hover:bg-blue-50',
+    onClick: (row) => console.log('View:', row),
+    ariaLabel: 'View item'
+  },
+  edit: {
+    icon: Edit,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-green-600 hover:bg-green-50',
+    onClick: (row) => console.log('Edit:', row),
+    ariaLabel: 'Edit item',
+    disabled: (row) => row.role === 'viewer' // Disable edit for viewers
+  },
+  delete: {
+    icon: Trash2,
+    size: 'sm',
+    variant: 'ghost',
+    className: 'h-8 w-8 p-0 text-red-600 hover:bg-red-50',
+    onClick: (row) => console.log('Delete:', row),
+    ariaLabel: 'Delete item',
+    disabled: (row) => row.status === 'published' || row.role === 'admin' // Disable delete for published items or admins
+  }
+});
 
 // Usage examples:
+
 /*
-// Basic usage with predefined actions
+// Example 1: Simple handlers (only show specific actions)
 <ServerDataTable
-  columns={columns}
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
   fetchData={fetchData}
   searchParams={searchParams}
-  actionButtons={basicCrudActions()}
+  defaultActionHandlers={viewOnlyActions()}
 />
 
-// File management table
+// Example 2: View and delete only
 <ServerDataTable
-  columns={columns}
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
   fetchData={fetchData}
   searchParams={searchParams}
-  actionButtons={fileManagementActions()}
+  defaultActionHandlers={viewAndDeleteActions()}
 />
 
-// Custom styled actions
+// Example 3: Custom styled actions
 <ServerDataTable
-  columns={columns}
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
   fetchData={fetchData}
   searchParams={searchParams}
-  actionButtons={customStyledActions()}
+  defaultActionConfigs={customStyledActions()}
 />
 
-// Conditional actions (you'd need to modify the table to pass row data to action generator)
-// This would require updating the table component to support dynamic actions per row
+// Example 4: Actions as links
+<ServerDataTable
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
+  fetchData={fetchData}
+  searchParams={searchParams}
+  defaultActionConfigs={linkActions()}
+/>
+
+// Example 5: Mixed buttons and links
+<ServerDataTable
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
+  fetchData={fetchData}
+  searchParams={searchParams}
+  defaultActionConfigs={mixedActions()}
+/>
+
+// Example 6: Various formats (icon-only, text-only, icon+text)
+<ServerDataTable
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
+  fetchData={fetchData}
+  searchParams={searchParams}
+  defaultActionConfigs={variousFormats()}
+/>
+
+// Example 7: Conditional actions
+<ServerDataTable
+  columns={[...columns, { key: 'actions', header: 'Actions' }]}
+  fetchData={fetchData}
+  searchParams={searchParams}
+  defaultActionConfigs={conditionalActions()}
+/>
+
+// Example 8: Fully custom render (override everything)
+const customColumns = [
+  ...columns,
+  {
+    key: 'actions',
+    header: 'Actions',
+    render: (row) => (
+      <div className="flex gap-1">
+        <Button onClick={() => handleCustomAction(row)}>
+          Custom Action
+        </Button>
+      </div>
+    )
+  }
+];
 */

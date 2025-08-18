@@ -1,5 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { ServerDataTable, Column, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
+import { Button } from '@/components/ui/button';
+import { Eye, Edit, Trash2, Download, ExternalLink, Settings, Share, Copy } from 'lucide-react';
 
 export type DebugRow = {
 	key?: React.Key;
@@ -26,8 +28,46 @@ const debugLog = () => {
 		{ key: "id", header: "ID", sortable: true },
 		{ key: "name", header: "Name", sortable: true },
 		{ key: "email", header: "Email", sortable: true },
-		{ key: "role", header: "Role", sortable: true },
-		{ key: "createdAt", header: "Created", sortable: true, render: (v?: string) => new Date(v || '').toLocaleDateString() || '' },
+		{
+			key: "role", header: "Role", sortable: true,
+			render: (row, key) => {
+				console.log('role', row);
+				console.log('role', key);
+				return row['key'] === 'Admin' ? 'Administrator' : 'Subscriber';
+			}
+		},
+		{ key: "createdAt", header: "Created", sortable: true, render: (row, value?: string) => new Date(value || '').toLocaleDateString() || '' },
+		{
+			key: 'actions', header: 'Actions',
+			render: (row, key) => {
+				return <div className="flex gap-1">
+					<Button
+						size="sm"
+						variant="ghost"
+						onClick={() => {
+							console.log('View:', row);
+							alert(`Viewing user: ${row.name}`);
+						}}
+						aria-label={`View ${row.name}`}
+						className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
+					>
+						<Eye className="h-4 w-4" />
+					</Button>
+					<Button
+						size="sm"
+						variant="ghost"
+						onClick={() => {
+							console.log('Download:', row);
+							alert(`Downloading data for: ${row.name}`);
+						}}
+						aria-label={`Download ${row.name} data`}
+						className="h-8 w-8 p-0 text-purple-600 hover:bg-purple-50"
+					>
+						<Download className="h-4 w-4" />
+					</Button>
+				</div>
+			}
+		}
 	] as Column<DebugRow>[];
 
 	// Dummy API simulation
@@ -76,11 +116,16 @@ const debugLog = () => {
 		<div className="mx-auto max-w-6xl p-6">
 			<h1 className="mb-4 text-2xl font-bold tracking-tight">Debug Log</h1>
 			<p className="mb-6 text-slate-600">Server-side pagination, search, and sorting with Tailwind + React.</p>
-			<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
-				columns={columns}
-				fetchData={fetchData}
-				searchParams={searchParams}
-			/>
+			{/* Example 1: Automatic default actions (no configuration needed) */}
+			<div className="mb-8">
+				<h2 className="mb-4 text-lg font-semibold">Example 1: Automatic Default Actions</h2>
+				<p className="mb-4 text-sm text-gray-600">Just add actions column - view, edit, delete buttons appear automatically with built-in handlers</p>
+				<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
+					columns={columns}
+					fetchData={fetchData}
+					searchParams={searchParams}
+				/>
+			</div>
 		</div>
 	);
 }
