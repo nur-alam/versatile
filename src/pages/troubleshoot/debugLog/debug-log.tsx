@@ -4,6 +4,7 @@ import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
 import config from '@/config';
 import { VersatileResponseType } from '@/utils/versatile-declaration';
 import toast from 'react-hot-toast';
+import { __ } from '@wordpress/i18n';
 
 export type DebugRow = {
 	id: number;
@@ -75,12 +76,14 @@ const debugLog = () => {
 
 	return (
 		<div className="mx-auto max-w-6xl p-6">
-			<h1 className="mb-4 text-2xl font-bold tracking-tight">Debug Log</h1>
-			<p className="mb-6 text-slate-600">Server-side pagination, search, and sorting with Tailwind + React.</p>
+			<div className='bg-white p-6 rounded-lg border border-slate-200 mt-3'>
+				<h2 className="mb-4 text-2xl font-bold tracking-tight">{__('Debug Log', 'versatile-toolkit')}</h2>
+				<p className="mb-6 text-slate-600">{__('Server-side pagination, search, and sorting with Tailwind + React.', 'versatile-toolkit')}</p>
+			</div>
 			{/* Example 1: Automatic default actions (no configuration needed) */}
-			<div className="mb-8">
-				<h2 className="mb-4 text-lg font-semibold">Example 1: Automatic Default Actions</h2>
-				<p className="mb-4 text-sm text-gray-600">Just add actions column - view, edit, delete buttons appear automatically with built-in handlers</p>
+			<div className="my-8">
+				{/* <h2 className="mb-4 text-lg font-semibold">{__('Example 1: Automatic Default Actions', 'versatile-toolkit')}</h2>
+				<p className="mb-4 text-sm text-gray-600">{__('Just add actions column - view, edit, delete buttons appear automatically with built-in handlers', 'versatile-toolkit')}</p> */}
 				<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
 					columns={columns}
 					fetchData={loadLogContent}
