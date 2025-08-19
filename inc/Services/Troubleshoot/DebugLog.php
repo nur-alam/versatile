@@ -46,6 +46,7 @@ class DebugLog {
 		add_action( 'wp_ajax_versatile_get_debug_log_content', array( $this, 'get_debug_log_content' ) );
 		add_action( 'wp_ajax_versatile_clear_debug_log', array( $this, 'clear_debug_log' ) );
 		add_action( 'wp_ajax_versatile_download_debug_log', array( $this, 'download_debug_log' ) );
+		add_action( 'wp_ajax_versatile_refresh_debug_log', array( $this, 'refresh_debug_log' ) );
 	}
 
 	/**
@@ -125,6 +126,7 @@ class DebugLog {
 					'file_exists'         => $file_exists,
 					'file_size'           => $file_size,
 					'file_size_formatted' => $file_exists ? size_format( $file_size ) : '0 B',
+					'last_modified'       => $file_exists ? filemtime( $log_path ) : 0,
 				),
 				200
 			);
@@ -441,5 +443,12 @@ class DebugLog {
 		}
 
 		return file_put_contents( $wp_config_path, $wp_config_content ) !== false;
+	}
+
+	/**
+	 * Refresh debug log status (same as get_debug_log_status but for explicit refresh calls).
+	 */
+	public function refresh_debug_log() {
+		$this->get_debug_log_status();
 	}
 }

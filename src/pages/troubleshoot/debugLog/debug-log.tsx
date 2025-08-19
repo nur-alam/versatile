@@ -6,69 +6,97 @@ import { VersatileResponseType } from '@/utils/versatile-declaration';
 import toast from 'react-hot-toast';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
+import { 
+	useDebugLogStatus, 
+	useToggleDebugLog, 
+	useClearDebugLog, 
+	useDownloadDebugLog,
+	formatFileInfo,
+	debugLogApi,
+	DebugRow,
+	DebugLogSearchParams,
+	DebugLogData
+} from '@/services/debug-log-services';
 
-export type DebugRow = {
-	id: number;
-	type: string;
-	message: string;
-	severity: string;
-	timestamp: string;
-};
 
-export type DebugLogSearchParams = {
-	page?: number;
-	perPage?: number;
-	search?: string;
-	sortKey?: string;
-	order?: string;
-};
-
-export type DebugLogData = {
-	current_page: number;
-	entries: DebugRow[];
-	per_page: number;
-	total_lines: number;
-	total_pages: number;
-}
 
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
 	const [searchParams] = useSearchParams();
 
-	// Debug log settings state
-	const [debugStatus, setDebugStatus] = useState(false);
-	const [logFileInfo, setLogFileInfo] = useState({
+	// Auto refresh state
+	const [isAutoRefresh, setIsAutoRefresh] = useState(false);
+	const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+	// React Query hooks
+	const { data: statusData, isLoading: statusLoading, refetch: refetchStatus } = useDebugLogStatus();
+	const toggleMutation = useToggleDebugLog();
+	const clearMutation = useClearDebugLog();
+	const downloadMutation = useDownloadDebugLog();
+
+	// Derived state
+	const debugStatus = statusData?.enabled || false;
+	const logFileInfo = statusData ? formatFileInfo(statusData) : {
 		size: '0 KB',
 		lastModified: 'Never',
 		exists: false
-	});
-	const [isAutoRefresh, setIsAutoRefresh] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const loadLogContent = async ({ page, perPage, search, sortKey, order }: DebugLogSearchParams): Promise<{ data: DebugRow[], total: number, totalPages: number }> => {
-		try {
-			const params = new URLSearchParams({
-				action: 'versatile_get_debug_log_content',
-				versatile_nonce: config.nonce_value,
-				page: String(page),
-				per_page: String(perPage),
-				search: String(search).trim(),
-				sortKey: String(sortKey).trim(),
-				order: String(order?.trim()?.toLowerCase()),
-			});
-			const response = await fetch(`${config.ajax_url}?${params}`);
-			const responseData = await response.json() as VersatileResponseType<DebugLogData>;
-			if (responseData.status_code === 200) {
-				const data = responseData.data as DebugLogData;
-				return { data: data.entries, total: data?.total_lines, totalPages: data?.total_pages };
-			} else {
-				toast.error(responseData.message || 'Error fetching debug log content');
-				return { data: [], total: 0, totalPages: 0 };
+	};
+	const isLoading = statusLoading || toggleMutation.isPending || clearMutation.isPending;
+
+	// Auto refresh effect
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		
+		if (isAutoRefresh) {
+			interval = setInterval(() => {
+				// Refresh both status and log content
+				refetchStatus();
+				setRefreshTrigger(prev => prev + 1); // Trigger log content refresh
+			}, 5000); // Refresh every 5 seconds
+		}
+
+		return () => {
+			if (interval) {
+				clearInterval(interval);
 			}
-		} catch (error: any) {
-			toast.error('Error fetching debug log content: ', error?.message || 'Unknown error');
-			return { data: [], total: 0, totalPages: 0 };
+		};
+	}, [isAutoRefresh, refetchStatus]);
+
+	// Handler functions
+	const handleToggleDebugLog = (enable: boolean) => {
+		toggleMutation.mutate(enable);
+	};
+
+	const handleRefreshLog = () => {
+		refetchStatus();
+		setRefreshTrigger(prev => prev + 1); // Trigger log content refresh
+		toast.success(__('Debug log status and content refreshed', 'versatile-toolkit'));
+	};
+
+	const handleDownloadLog = () => {
+		if (!logFileInfo.exists) {
+			toast.error(__('No log file to download', 'versatile-toolkit'));
+			return;
+		}
+		debugLogApi.downloadLog();
+	};
+
+	const handleClearLog = () => {
+		if (!logFileInfo.exists) {
+			toast.error(__('No log file to clear', 'versatile-toolkit'));
+			return;
+		}
+		
+		if (window.confirm(__('Are you sure you want to clear the debug log? This action cannot be undone.', 'versatile-toolkit'))) {
+			clearMutation.mutate();
 		}
 	};
+
+	const handleStopAutoRefresh = () => {
+		setIsAutoRefresh(false);
+		toast.success(__('Auto refresh stopped', 'versatile-toolkit'));
+	};
+
 
 	const columns = [
 		{ key: "id", header: "No" },
@@ -91,8 +119,21 @@ const debugLog = () => {
 				<div className="space-y-6">
 					{/* Header */}
 					<div className="border-b border-slate-200 pb-4">
-						<h2 className="text-xl font-semibold text-slate-800">{__('Debug Log Settings', 'versatile-toolkit')}</h2>
-						<p className="text-sm text-slate-600 mt-1">{__('Manage WordPress debug logging configuration and log file operations', 'versatile-toolkit')}</p>
+						<div className="flex items-center justify-between">
+							<div>
+								<h2 className="text-xl font-semibold text-slate-800">{__('Debug Log Settings', 'versatile-toolkit')}</h2>
+								<p className="text-sm text-slate-600 mt-1">{__('Manage WordPress debug logging configuration and log file operations', 'versatile-toolkit')}</p>
+							</div>
+							{statusLoading && (
+								<div className="flex items-center space-x-2 text-blue-600">
+									<svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+										<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+									</svg>
+									<span className="text-sm">{__('Loading...', 'versatile-toolkit')}</span>
+								</div>
+							)}
+						</div>
 					</div>
 
 					{/* Debug Logging Status */}
@@ -117,7 +158,7 @@ const debugLog = () => {
 							{/* Control Buttons */}
 							<div className="flex space-x-3">
 								<button
-									onClick={() => setDebugStatus(true)}
+									onClick={() => handleToggleDebugLog(true)}
 									disabled={debugStatus || isLoading}
 									className={`flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${debugStatus || isLoading
 											? 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -127,7 +168,7 @@ const debugLog = () => {
 									{isLoading ? __('Processing...', 'versatile-toolkit') : __('Enable Debug Log', 'versatile-toolkit')}
 								</button>
 								<button
-									onClick={() => setDebugStatus(false)}
+									onClick={() => handleToggleDebugLog(false)}
 									disabled={!debugStatus || isLoading}
 									className={`flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${!debugStatus || isLoading
 											? 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -164,10 +205,13 @@ const debugLog = () => {
 							{/* Auto Refresh Toggle */}
 							<div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
 								<div className="flex items-center space-x-2">
-									<svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg className={`w-4 h-4 text-blue-600 ${isAutoRefresh ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
 									</svg>
-									<span className="text-sm font-medium text-blue-800">{__('Auto Refresh', 'versatile-toolkit')}</span>
+									<span className="text-sm font-medium text-blue-800">
+										{__('Auto Refresh', 'versatile-toolkit')}
+										{isAutoRefresh && <span className="ml-1 text-xs">({__('Active', 'versatile-toolkit')})</span>}
+									</span>
 								</div>
 								<label className="relative inline-flex items-center cursor-pointer">
 									<input
@@ -186,7 +230,7 @@ const debugLog = () => {
 					<div className="border-t border-slate-200 pt-4">
 						<div className="grid grid-cols-2 md:grid-cols-4 gap-3">
 							<button
-								onClick={() => {/* Refresh log logic */ }}
+								onClick={handleRefreshLog}
 								disabled={isLoading}
 								className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
 							>
@@ -197,7 +241,7 @@ const debugLog = () => {
 							</button>
 
 							<button
-								onClick={() => {/* Download log logic */ }}
+								onClick={handleDownloadLog}
 								disabled={!logFileInfo.exists || isLoading}
 								className="flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
 							>
@@ -208,7 +252,7 @@ const debugLog = () => {
 							</button>
 
 							<button
-								onClick={() => {/* Clear log logic */ }}
+								onClick={handleClearLog}
 								disabled={!logFileInfo.exists || isLoading}
 								className="flex items-center justify-center space-x-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
 							>
@@ -219,7 +263,7 @@ const debugLog = () => {
 							</button>
 
 							<button
-								onClick={() => setIsAutoRefresh(false)}
+								onClick={handleStopAutoRefresh}
 								disabled={!isAutoRefresh || isLoading}
 								className="flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
 							>
@@ -251,8 +295,9 @@ const debugLog = () => {
 				{/* <h2 className="mb-4 text-lg font-semibold">{__('Example 1: Automatic Default Actions', 'versatile-toolkit')}</h2>
 				<p className="mb-4 text-sm text-gray-600">{__('Just add actions column - view, edit, delete buttons appear automatically with built-in handlers', 'versatile-toolkit')}</p> */}
 				<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
+					key={refreshTrigger} // Force re-render when refreshTrigger changes
 					columns={columns}
-					fetchData={loadLogContent}
+					fetchData={debugLogApi.loadLogContent}
 					searchParams={searchParams}
 				/>
 			</div>
