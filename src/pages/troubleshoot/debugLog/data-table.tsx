@@ -136,38 +136,11 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
 
   return (
     <div className="w-full">
-      {/* Controls */}
+      {/* Table Controls */}
       <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-md">
-          {/* <input
-            type="text"
-            value={query}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              navigate(buildNavigationParams(page, perPage, e.target.value, sort.key, sort.order));
-            }}
-            placeholder="Search..."
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 pr-9 text-sm shadow-sm outline-none focus:border-slate-300"
-            aria-label="Search table"
-          />
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.25-4.25A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" /></svg>
-          </span> */}
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Rows per page</label>
-          <select
-            value={perPage}
-            onChange={(e) => {
-              setPerPage(Number(e.target.value));
-              navigate(buildNavigationParams(page, Number(e.target.value), query, sort.key, sort.order));
-            }}
-            className="rounded-xl border border-slate-200 bg-white px-2 py-1.5 text-sm shadow-sm"
-          >
-            {[5, 10, 20, 50, 100].map((n) => (
-              <option key={n} value={n}>{n}</option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -235,10 +208,27 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
 
         {/* Footer */}
         <div className="flex flex-col gap-3 border-t border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs text-slate-600">
-            Showing <span className="font-semibold">{rows.length ? (page - 1) * perPage + 1 : 0}</span>–
-            <span className="font-semibold">{(page - 1) * perPage + rows.length}</span> of
-            <span className="font-semibold"> {total}</span>
+          <div className="flex items-center gap-2">
+            <div className="text-xs text-slate-600">
+              Showing <span className="font-semibold">{rows.length ? (page - 1) * perPage + 1 : 0}</span>–
+              <span className="font-semibold">{(page - 1) * perPage + rows.length}</span> of
+              <span className="font-semibold"> {total}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-600">Rows per page</label>
+              <select
+                value={perPage}
+                onChange={(e) => {
+                  setPerPage(Number(e.target.value));
+                  navigate(buildNavigationParams(page, Number(e.target.value), query, sort.key, sort.order));
+                }}
+                className="rounded-xl border !border-slate-200 bg-white px-2 py-1.5 text-sm shadow-sm"
+              >
+                {[5, 10, 20, 50, 100].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex items-center gap-1">
             <button
