@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Debug Log Service
  *
@@ -98,14 +97,9 @@ class DebugLog {
 
 			$result = $this->update_wp_config_debug_settings( $enable );
 
-			wp_send_json_success(
-				array(
-					'enabled' => $result,
-					'message' => $result ? __( 'Debug logging enabled successfully', 'versatile-toolkit' ) : __( 'Debug logging disabled successfully', 'versatile-toolkit' ),
-				)
-			);
+			$this->json_response( 'Debug logging ' . ( $result ? 'enabled' : 'disabled' ) . ' successfully', $result, 200 );
 		} catch ( \Throwable $th ) {
-			wp_send_json_error( array( 'message' => __( 'Error toggling debug log', 'versatile-toolkit' ) ) );
+			$this->json_response( __( 'Error toggling debug log', 'versatile-toolkit' ), 400 );
 		}
 	}
 
@@ -114,7 +108,7 @@ class DebugLog {
 	 */
 	public function get_debug_log_status() {
 		try {
-			$request_verify = versatile_verify_request( $_POST );
+			$request_verify = versatile_verify_request( $_POST ); // phpcs:ignore
 
 			if ( ! $request_verify['success'] ) {
 				wp_send_json_error( array( 'message' => $request_verify['message'] ) );
@@ -124,17 +118,18 @@ class DebugLog {
 			$file_exists = file_exists( $log_path );
 			$file_size   = $file_exists ? filesize( $log_path ) : 0;
 
-			wp_send_json_success(
+			$this->json_response(
+				'Debug log status retrieved successfully',
 				array(
 					'enabled'             => $this->is_debug_enabled(),
 					'file_exists'         => $file_exists,
 					'file_size'           => $file_size,
 					'file_size_formatted' => $file_exists ? size_format( $file_size ) : '0 B',
-					'last_modified'       => $file_exists ? filemtime( $log_path ) : null,
-				)
+				),
+				200
 			);
 		} catch ( \Throwable $th ) {
-			wp_send_json_error( array( 'message' => __( 'Error getting debug log status', 'versatile-toolkit' ) ) );
+			$this->json_response( __( 'Error getting debug log status', 'versatile-toolkit' ), 400 );
 		}
 	}
 
@@ -337,38 +332,26 @@ class DebugLog {
 	 */
 	public function clear_debug_log() {
 		try {
-			$request_verify = versatile_verify_request( $_POST );
+			$request_verify = versatile_verify_request( $_POST ); // phpcs:ignore
 
 			if ( ! $request_verify['success'] ) {
-				wp_send_json_error( array( 'message' => $request_verify['message'] ) );
+				$this->json_response( $request_verify['message'], 400 );
 			}
 
 			$log_path = $this->get_debug_log_path();
 
 			if ( file_exists( $log_path ) ) {
 				$result = file_put_contents( $log_path, '' );
-				if ( $result !== false ) {
-					wp_send_json_success(
-						array(
-							'message' => __( 'Debug log cleared successfully', 'versatile-toolkit' ),
-						)
-					);
+				if ( false !== $result ) {
+					$this->json_response( __( 'Debug log cleared successfully', 'versatile-toolkit' ), 200 );
 				} else {
-					wp_send_json_error(
-						array(
-							'message' => __( 'Failed to clear debug log', 'versatile-toolkit' ),
-						)
-					);
+					$this->json_response( __( 'Failed to clear debug log', 'versatile-toolkit' ), 400 );
 				}
 			} else {
-				wp_send_json_success(
-					array(
-						'message' => __( 'Debug log file does not exist', 'versatile-toolkit' ),
-					)
-				);
+				$this->json_response( __( 'Debug log file does not exist', 'versatile-toolkit' ), 200 );
 			}
 		} catch ( \Throwable $th ) {
-			wp_send_json_error( array( 'message' => __( 'Error clearing debug log', 'versatile-toolkit' ) ) );
+			$this->json_response( __( 'Error clearing debug log', 'versatile-toolkit' ), 400 );
 		}
 	}
 
@@ -382,22 +365,22 @@ class DebugLog {
 			$nonce_action = $plugin_info['nonce_action'];
 
 			// Verify nonce for GET request
-			if ( ! wp_verify_nonce( $_GET[ $nonce_key ] ?? '', $nonce_action ) ) {
-				wp_die( 'Security check failed' );
+			if ( ! isset( $_GET[ $nonce_key ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET[ $nonce_key ] ) ), $nonce_action ) ) {
+				$this->json_response( 'Security check failed', 400 );
 			}
 
 			// Check user permissions
 			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( 'Insufficient permissions' );
+				$this->json_response( 'Insufficient permissions', 400 );
 			}
 
 			$log_path = $this->get_debug_log_path();
 
 			if ( ! file_exists( $log_path ) ) {
-				wp_die( 'Debug log file not found' );
+				$this->json_response( 'Debug log file not found', 400 );
 			}
 
-			$filename = 'debug-log-' . date( 'Y-m-d-H-i-s' ) . '.log';
+			$filename = 'debug-log-' . gmdate( 'Y-m-d-H-i-s' ) . '.log';
 
 			header( 'Content-Type: application/octet-stream' );
 			header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -406,7 +389,7 @@ class DebugLog {
 			readfile( $log_path );
 			exit;
 		} catch ( \Throwable $th ) {
-			wp_die( 'Error downloading debug log' );
+			$this->json_response( 'Error downloading debug log', 400 );
 		}
 	}
 
