@@ -139,7 +139,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
       {/* Controls */}
       <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-md">
-          <input
+          {/* <input
             type="text"
             value={query}
             onChange={(e) => {
@@ -152,7 +152,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M10 4a6 6 0 104.472 10.03l4.249 4.249 1.414-1.414-4.25-4.25A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" /></svg>
-          </span>
+          </span> */}
         </div>
         <div className="flex items-center gap-2">
           <label className="text-sm text-slate-600">Rows per page</label>

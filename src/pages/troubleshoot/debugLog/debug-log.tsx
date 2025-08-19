@@ -2,6 +2,8 @@ import { useSearchParams } from 'react-router-dom';
 import { ServerDataTable, Column, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
 import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
 import config from '@/config';
+import { VersatileResponseType } from '@/utils/versatile-declaration';
+import toast from 'react-hot-toast';
 
 export type DebugRow = {
 	id: number;
@@ -19,6 +21,14 @@ export type DebugLogSearchParams = {
 	order?: string;
 };
 
+export type DebugLogData = {
+	current_page: number;
+	entries: DebugRow[];
+	per_page: number;
+	total_lines: number;
+	total_pages: number;
+}
+
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
 	const [searchParams] = useSearchParams();
@@ -33,20 +43,24 @@ const debugLog = () => {
 				sortKey: String(sortKey).trim(),
 				order: String(order?.trim()?.toLowerCase()),
 			});
-
 			const response = await fetch(`${config.ajax_url}?${params}`);
-			const responseData = await response.json();
-			const data = responseData?.data;
-			return { data: data?.entries as DebugRow[], total: data?.total_lines, totalPages: data?.total_pages };
-		} catch (error) {
-			console.error('Error fetching debug log content:', error);
+			const responseData = await response.json() as VersatileResponseType<DebugLogData>;
+			if (responseData.status_code === 200) {
+				const data = responseData.data as DebugLogData;
+				return { data: data.entries, total: data?.total_lines, totalPages: data?.total_pages };
+			} else {
+				toast.error(responseData.message || 'Error fetching debug log content');
+				return { data: [], total: 0, totalPages: 0 };
+			}
+		} catch (error: any) {
+			toast.error('Error fetching debug log content: ', error?.message || 'Unknown error');
 			return { data: [], total: 0, totalPages: 0 };
 		}
 	};
 
 	const columns = [
-		{ key: "id", header: "ID" },
-		{ key: "type", header: "Type", sortable: true },
+		{ key: "id", header: "No" },
+		{ key: "type", header: "Type" },
 		{ key: "message", header: "Message" },
 		{ key: "severity", header: "Severity" },
 		{

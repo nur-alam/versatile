@@ -249,16 +249,6 @@ class DebugLog {
 			);
 
 			$this->json_response( 'success', $data, 200 );
-
-			// wp_send_json_success(
-			// array(
-			// 'entries'      => $parsed_entries,
-			// 'total_lines'  => $total_lines,
-			// 'current_page' => $page,
-			// 'total_pages'  => $total_pages,
-			// 'per_page'     => $per_page,
-			// )
-			// );
 		} catch ( \Throwable $th ) {
 			$this->json_response( __( 'Error getting debug log content', 'versatile-toolkit' ), 400 );
 		}
