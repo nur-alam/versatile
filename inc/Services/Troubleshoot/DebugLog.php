@@ -84,13 +84,13 @@ class DebugLog {
 			);
 
 			if ( ! $sanitized_data['success'] ) {
-				wp_send_json_error( array( 'message' => 'Invalid input data' ) );
+				$this->json_response( 'Invalid input data', 'error', 400 );
 			}
 
 			$request_verify = versatile_verify_request( $sanitized_data );
 
 			if ( ! $request_verify['success'] ) {
-				wp_send_json_error( array( 'message' => $request_verify['message'] ) );
+				$this->json_response( $request_verify['message'], 'error', 400 );
 			}
 
 			$verified_data = (object) $request_verify['data'];
@@ -98,9 +98,9 @@ class DebugLog {
 
 			$result = $this->update_wp_config_debug_settings( $enable );
 
-			$this->json_response( 'Debug logging ' . ( $result ? 'enabled' : 'disabled' ) . ' successfully', $result, 200 );
+			$this->json_response( 'Debug logging ' . ( $result ? 'enabled' : 'disabled' ) . ' successfully', 'success', 200 );
 		} catch ( \Throwable $th ) {
-			$this->json_response( __( 'Error toggling debug log', 'versatile-toolkit' ), 400 );
+			$this->json_response( __( 'Error toggling debug log', 'versatile-toolkit' ), 'error', 400 );
 		}
 	}
 
@@ -119,20 +119,62 @@ class DebugLog {
 			$file_exists = file_exists( $log_path );
 			$file_size   = $file_exists ? filesize( $log_path ) : 0;
 
-			$this->json_response(
-				'Debug log status retrieved successfully',
-				array(
-					'enabled'             => $this->is_debug_enabled(),
-					'file_exists'         => $file_exists,
-					'file_size'           => $file_size,
-					'file_size_formatted' => $file_exists ? size_format( $file_size ) : '0 B',
-					'last_modified'       => $file_exists ? filemtime( $log_path ) : 0,
-				),
-				200
+			$data = array(
+				'enabled'             => $this->is_debug_enabled_from_config(),
+				'file_exists'         => $file_exists,
+				'file_size'           => $file_size,
+				'file_size_formatted' => $file_exists ? size_format( $file_size ) : '0 B',
+				'last_modified'       => $file_exists ? filemtime( $log_path ) : 0,
 			);
+			return $this->json_response( 'Debug log status retrieved successfully', $data, 200 );
 		} catch ( \Throwable $th ) {
-			$this->json_response( __( 'Error getting debug log status', 'versatile-toolkit' ), 400 );
+			return $this->json_response( __( 'Error getting debug log status', 'versatile-toolkit' ), 400 );
 		}
+	}
+
+	/**
+	 * Check if debug logging is enabled by reading wp-config.php file directly.
+	 * This method reads the actual file content instead of relying on constants.
+	 *
+	 * @return bool
+	 */
+	public function is_debug_enabled_from_config() {
+		$wp_config_path = ABSPATH . 'wp-config.php';
+
+		if ( ! file_exists( $wp_config_path ) || ! is_readable( $wp_config_path ) ) {
+			// Fallback to constants if wp-config.php is not readable
+			return $this->is_debug_enabled();
+		}
+
+		$wp_config_content = file_get_contents( $wp_config_path );
+
+		if ( false === $wp_config_content ) {
+			// Fallback to constants if file reading fails
+			return $this->is_debug_enabled();
+		}
+
+		// Remove comments and whitespace for more accurate parsing
+		$lines        = explode( "\n", $wp_config_content );
+		$active_lines = array();
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			// Skip empty lines and comments
+			if ( ! empty( $line ) && ! str_starts_with( $line, '//' ) && ! str_starts_with( $line, '#' ) ) {
+				$active_lines[] = $line;
+			}
+		}
+
+		$clean_content = implode( "\n", $active_lines );
+
+		// Check for WP_DEBUG = true (handle various formats and spacing)
+		$wp_debug_enabled = preg_match( "/define\s*\(\s*['\"]WP_DEBUG['\"]\s*,\s*true\s*\)/i", $clean_content );
+
+		// Check for WP_DEBUG_LOG = true (handle various formats and spacing)
+		$wp_debug_log_enabled = preg_match( "/define\s*\(\s*['\"]WP_DEBUG_LOG['\"]\s*,\s*true\s*\)/i", $clean_content );
+
+		// Both must be true for debug logging to be enabled
+		return $wp_debug_enabled && $wp_debug_log_enabled;
 	}
 
 	/**

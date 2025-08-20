@@ -50,7 +50,7 @@ const debugLog = () => {
 		if (isAutoRefresh) {
 			interval = setInterval(() => {
 				// Refresh both status and log content
-				refetchStatus();
+				// refetchStatus();
 				setRefreshTrigger(prev => prev + 1); // Trigger log content refresh
 			}, 5000); // Refresh every 5 seconds
 		}
@@ -60,7 +60,7 @@ const debugLog = () => {
 				clearInterval(interval);
 			}
 		};
-	}, [isAutoRefresh, refetchStatus]);
+	}, [isAutoRefresh]);
 
 	// Handler functions
 	const handleToggleDebugLog = (enable: boolean) => {
@@ -96,7 +96,6 @@ const debugLog = () => {
 		setIsAutoRefresh(false);
 		toast.success(__('Auto refresh stopped', 'versatile-toolkit'));
 	};
-
 
 	const columns = [
 		{ key: "id", header: "No" },
