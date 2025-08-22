@@ -84,7 +84,7 @@ define(
 			'menus'       => array(
 				'troubleshoot' => array(
 					'slug'   => '',
-					'label'  => 'Troubleshoot',
+					'label'  => 'Deactivate Plugins',
 					'parent' => 'troubleshoot',
 					'icon'   => 'dashicons-admin-tools',
 				),

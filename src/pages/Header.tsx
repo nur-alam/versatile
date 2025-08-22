@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 
 const Header = () => {
@@ -12,8 +13,10 @@ const Header = () => {
     const queryClient = useQueryClient();
     const location = useLocation();
 
-    const { data: serviceListResponse } = useGetServiceList();
+    const { data: serviceListResponse, isLoading: servicesIsLoading } = useGetServiceList();
     const services = serviceListResponse?.data as ServiceListType;
+
+    console.log('services', services?.troubleshoot.enable);
 
     // Get current service based on the route
     const getCurrentService = () => {
@@ -98,59 +101,28 @@ const Header = () => {
                         </>
                     )}
 
-                    {!currentService && (
-                        <Link to="/troubleshoot/debug-log" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
-                            Debug Log
-                        </Link>
+                    {!servicesIsLoading && services?.troubleshoot.enable && !currentService && (
+                        <>
+                            <Link to="/troubleshoot" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
+                                Deactivate Plugins
+                            </Link>
+                            <Link to="/troubleshoot/debug-log" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
+                                Debug Log
+                            </Link>
+                        </>
                     )}
 
-                    {/* Toggle Menu Button */}
-                    <button
-                        onClick={toggleMenu}
-                        className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
-                        aria-label="Toggle menu"
-                    >
-                        <svg
-                            className="w-6 h-6 text-gray-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 6h16M4 12h16M4 18h16"
-                            />
-                        </svg>
-                    </button>
-                </div>
-            </header>
 
-            {/* Overlay */}
-            {isMenuOpen && (
-                <div
-                    className="fixed z-[99999] inset-0 bg-black bg-opacity-50 z-40"
-                    onClick={toggleMenu}
-                />
-            )}
-
-            {/* Services Menu Popup */}
-            {isMenuOpen && (
-                <div className="fixed w-[500px] top-0 z-[99999] rounded-none right-0 h-screen bg-white shadow-lg border border-gray-200"
-                    onClick={handleBackdropClick}
-                >
-                    <div className="p-4">
-                        {/* Header with title and close button */}
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-medium text-gray-800">{__('Services', 'versatile-toolkit')}</h3>
+                    <Sheet>
+                        {/* Toggle Menu Button */}
+                        <SheetTrigger asChild>
                             <button
-                                onClick={toggleMenu}
-                                className="p-1 rounded-md hover:bg-gray-100 transition-colors duration-200"
-                                aria-label="Close menu"
+                                // onClick={toggleMenu}
+                                className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
+                                aria-label="Toggle menu"
                             >
                                 <svg
-                                    className="w-5 h-5 text-gray-600"
+                                    className="w-6 h-6 text-gray-600"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -159,34 +131,40 @@ const Header = () => {
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                         strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
+                                        d="M4 6h16M4 12h16M4 18h16"
                                     />
                                 </svg>
                             </button>
-                        </div>
-                        <div className="space-y-3">
-                            {Object.entries(services || {}).map(([key, service]) => (
-                                <div
-                                    key={service.label}
-                                    onClick={() => toggleService(key, service)}
-                                    className="flex items-center justify-between p-3 rounded-md border border-gray-200 bg-gray-50 hover:bg-blue-100 hover:border-blue-300 hover:shadow-md transition-all duration-300 cursor-pointer"
-                                >
-                                    <span className="text-blue-500 font-medium hover:text-blue-800 transition-colors duration-300">{service.label}</span>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={service.enable}
-                                            onChange={() => { }} // Empty handler since parent div handles the click
-                                            className="sr-only peer"
-                                        />
-                                        <div className="relative w-11 h-6 bg-[#c7c6c6] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>{__('Services', 'versatile-toolkit')}</SheetTitle>
+                            </SheetHeader>
+                            <div className="space-y-3 mt-6">
+                                {Object.entries(services || {}).map(([key, service]) => (
+                                    <div
+                                        key={service.label}
+                                        onClick={() => toggleService(key, service)}
+                                        className="flex items-center justify-between p-3 rounded-md border border-gray-200 bg-gray-50 hover:bg-blue-100 hover:border-blue-300 hover:shadow-md transition-all duration-300 cursor-pointer"
+                                    >
+                                        <span className="text-blue-500 font-medium hover:text-blue-800 transition-colors duration-300">{service.label}</span>
+                                        <div className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={service.enable}
+                                                onChange={() => { }} // Empty handler since parent div handles the click
+                                                className="sr-only peer"
+                                            />
+                                            <div className="relative w-11 h-6 bg-[#c7c6c6] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+
                 </div>
-            )}
+            </header>
         </>
     );
 };
