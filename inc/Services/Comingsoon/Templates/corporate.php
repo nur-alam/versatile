@@ -196,7 +196,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </head>
 <body style="background-image: url('<?php echo esc_url( $background_image ); ?>');">
 	<div class="container">
-		<div class="professional-badge">Professional Service</div>
+		<!-- <div class="professional-badge">Professional Service</div> -->
 		
 		<?php if ( $logo ) : ?>
 		<div class="logo">
@@ -218,9 +218,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="divider"></div>
 		<p class="description"><?php echo esc_html( $description ); ?></p>
 		
-		<div class="contact-info">
+		<!-- <div class="contact-info">
 			<p class="contact-text">We appreciate your patience during this maintenance period.</p>
-		</div>
+		</div> -->
 	</div>
 </body>
 </html>

@@ -284,7 +284,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		
 		<div class="status-indicator">
 			<div class="status-dot"></div>
-			<span class="status-text">Working on something amazing...</span>
+			<!-- <span class="status-text">Working on something amazing...</span> -->
 		</div>
 	</div>
 </body>

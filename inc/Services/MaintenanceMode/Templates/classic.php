@@ -115,7 +115,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</svg>
 		</div>
 		<?php endif; ?>
-		<h2><?php echo esc_html( $template_title ); ?></h2>
+		<h1><?php echo esc_html( $template_title ); ?></h1>
 		<p><?php echo esc_html( $subtitle ); ?></p>
 		<p><small><?php echo esc_html( $description ); ?></small></p>
 	</div>

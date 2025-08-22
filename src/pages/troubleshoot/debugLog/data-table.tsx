@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Eye, Edit, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Eye, Edit, Trash2, ArrowUpAZ, ArrowDownAZ } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -47,13 +47,14 @@ const buildQueryParams = (page: number, perPage: number, search: string, sortKey
   return params.toString();
   // return `paged=${page}&per_page=${perPage}${query ? `&search=${query}` : ''}${sortKey ? `&sort_key=${sortKey}` : ''}${order ? `&sort_dir=${order}` : ''}`
 };
-
+{/* <ArrowDownAZ />
+<ArrowUpAZ /> */}
 function SortIcon({ order }: { order: string }) {
   return (
     <span aria-hidden className="inline-flex flex-col leading-none ml-1">
-      {order === '' && <ArrowDown className="h-3 w-3" />}
-      {order === 'asc' && <ArrowUp className="h-3 w-3" />}
-      {order === 'desc' && <ArrowDown className="h-3 w-3" />}
+      {order === '' && <ArrowUpAZ className="h-3 w-3" />}
+      {order === 'asc' && <ArrowUpAZ className="h-3 w-3" />}
+      {order === 'desc' && <ArrowDownAZ className="h-3 w-3" />}
     </span>
   );
 }
@@ -404,3 +405,4 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
     </div>
   );
 }
+

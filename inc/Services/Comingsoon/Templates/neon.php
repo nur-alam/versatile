@@ -284,7 +284,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p class="description"><?php echo esc_html( $description ); ?></p>
 		
 		<div class="status-bar">
-			<div class="status-text">SYSTEM STATUS: MAINTENANCE MODE ACTIVE</div>
+			<!-- <div class="status-text">SYSTEM STATUS: COMINGSOON MODE ACTIVE</div> -->
 			<div class="loading-bar">
 				<div class="loading-progress"></div>
 			</div>

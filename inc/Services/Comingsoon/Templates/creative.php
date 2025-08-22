@@ -280,11 +280,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		
 		<h1><?php echo esc_html( $template_title ); ?></h1>
 		<p class="subtitle"><?php echo esc_html( $subtitle ); ?></p>
-		<p class="description"><?php echo esc_html( $description ); ?></p>
+		<!-- <p class="description"><?php echo esc_html( $description ); ?></p> -->
 		
 		<div class="status-indicator">
 			<div class="status-dot"></div>
-			<span class="status-text">Working on something amazing...</span>
+			<span class="status-text">
+				<?php echo esc_html( $description ); ?>
+			</span>
 		</div>
 	</div>
 </body>
