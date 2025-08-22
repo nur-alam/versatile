@@ -196,7 +196,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </head>
 <body>
 	<div class="container">
-		<div class="professional-badge">Professional Service</div>
+		<!-- <div class="professional-badge">Professional Service</div> -->
 		
 		<?php if ( $logo ) : ?>
 		<div class="logo">
