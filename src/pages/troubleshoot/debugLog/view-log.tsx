@@ -34,10 +34,8 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 						{row.timestamp}
 					</DialogDescription>
 				</DialogHeader>
-				<div className="flex flex-col gap-2">
-					<div>
-						<strong>Description</strong>: <span>{row.message}</span>
-					</div>
+				<div className="flex flex-col gap-2 max-h-[70vh] overflow-auto">
+					<strong>Description</strong>: <span>{row.message}</span>
 				</div>
 				<DialogFooter className="sm:justify-end">
 					<DialogClose asChild>

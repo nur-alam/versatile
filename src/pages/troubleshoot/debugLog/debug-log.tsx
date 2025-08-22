@@ -185,6 +185,7 @@ const debugLog = () => {
 					<h3 className="font-medium text-slate-800 text-lg">{__('Debug Log', 'versatile-toolkit')}</h3>
 					<div className="flex flex-wrap items-center gap-3">
 						<button
+							title={__('Refresh Log', 'versatile-toolkit')}
 							onClick={handleRefreshLog}
 							disabled={isLoading}
 							className="flex items-center justify-center space-x-3 px-2 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
@@ -196,6 +197,7 @@ const debugLog = () => {
 						</button>
 
 						<button
+							title={__('Download Log', 'versatile-toolkit')}
 							onClick={handleDownloadLog}
 							disabled={!logFileInfo.exists || isLoading}
 							className="flex items-center justify-center space-x-2 px-2 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
@@ -207,6 +209,7 @@ const debugLog = () => {
 						</button>
 
 						<button
+							title={__('Clear Log', 'versatile-toolkit')}
 							onClick={handleClearLog}
 							disabled={!logFileInfo.exists || isLoading}
 							className="flex items-center justify-center space-x-2 px-2 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
