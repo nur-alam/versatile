@@ -24,6 +24,7 @@ export interface DebugRow {
     id: number;
     type: string;
     message: string;
+    raw_line: string;
     severity: string;
     timestamp: string;
 }

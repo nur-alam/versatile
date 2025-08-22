@@ -248,36 +248,36 @@ class DebugLog {
 
 			if ( ! file_exists( $log_path ) ) {
 				$data = array(
-					'entries'      => array(),
+					'entries'       => array(),
 					'total_entries' => 0,
-					'current_page' => 1,
-					'total_pages'  => 0,
+					'current_page'  => 1,
+					'total_pages'   => 0,
 				);
 				$this->json_response( __( 'Debug log file not found', 'versatile-toolkit' ), $data, 400 );
 			}
 
-			$page     = isset($verified_data->page) ? (int) $verified_data->page : 1;
-			$per_page = isset($verified_data->per_page) ? (int) $verified_data->per_page : 20;
+			$page     = isset( $verified_data->page ) ? (int) $verified_data->page : 1;
+			$per_page = isset( $verified_data->per_page ) ? (int) $verified_data->per_page : 20;
 
 			$lines = file( $log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-			
+
 			// Parse complete error entries (multi-line support)
 			$error_entries = $this->parse_complete_error_entries( $lines );
 			$total_entries = count( $error_entries );
-			$total_pages = ceil( $total_entries / $per_page );
+			$total_pages   = ceil( $total_entries / $per_page );
 
 			// Reverse entries to show newest first
 			$error_entries = array_reverse( $error_entries );
 
-			$start      = ( $page - 1 ) * $per_page;
+			$start          = ( $page - 1 ) * $per_page;
 			$parsed_entries = array_slice( $error_entries, $start, $per_page );
 
 			$data = array(
-				'entries'      => $parsed_entries,
+				'entries'       => $parsed_entries,
 				'total_entries' => $total_entries,
-				'current_page' => $page,
-				'total_pages'  => $total_pages,
-				'per_page'     => $per_page,
+				'current_page'  => $page,
+				'total_pages'   => $total_pages,
+				'per_page'      => $per_page,
 			);
 
 			$this->json_response( 'success', $data, 200 );
@@ -295,30 +295,30 @@ class DebugLog {
 	private function parse_complete_error_entries( $lines ) {
 		$error_entries = array();
 		$current_error = null;
-		$entry_id = 1;
+		$entry_id      = 1;
 
 		foreach ( $lines as $line_number => $line ) {
 			// Check if this line starts a new error entry
 			if ( preg_match( '/^\[([^\]]+)\]\s+(PHP\s+)?(Notice|Warning|Error|Fatal\s+error|Parse\s+error|Deprecated|Strict\s+Standards|WordPress\s+database\s+error):/i', $line, $matches ) ) {
 				// Save previous error if exists
-				if ( $current_error !== null ) {
+				if ( null !== $current_error ) {
 					$error_entries[] = $current_error;
 				}
 
 				// Start new error entry
 				$current_error = $this->parse_log_entry( $line, $entry_id++ );
-			} elseif ( $current_error !== null ) {
+			} elseif ( null !== $current_error ) {
 				// This line is part of the current error (stack trace, continuation, etc.)
 				// Skip automatic update messages and other non-error lines
-				if ( !preg_match( '/^\[([^\]]+)\]\s+(Automatic\s+updates|WordPress\s+database\s+error)/i', $line ) ) {
-					$current_error['message'] .= "\n" . trim( $line );
+				if ( ! preg_match( '/^\[([^\]]+)\]\s+(Automatic\s+updates|WordPress\s+database\s+error)/i', $line ) ) {
+					$current_error['message']  .= "\n" . trim( $line );
 					$current_error['raw_line'] .= "\n" . $line;
 				}
 			}
 		}
 
 		// Don't forget the last error
-		if ( $current_error !== null ) {
+		if ( null !== $current_error ) {
 			$error_entries[] = $current_error;
 		}
 
@@ -484,39 +484,107 @@ class DebugLog {
 
 		$wp_config_content = file_get_contents( $wp_config_path );
 
-		if ( $enable ) {
-			// Enable debug settings
-			$patterns = array(
-				"/define\s*\(\s*['\"]WP_DEBUG['\"]\s*,\s*false\s*\)\s*;/i" => "define( 'WP_DEBUG', true );",
-				"/define\s*\(\s*['\"]WP_DEBUG_LOG['\"]\s*,\s*false\s*\)\s*;/i" => "define( 'WP_DEBUG_LOG', true );",
-				"/define\s*\(\s*['\"]WP_DEBUG_DISPLAY['\"]\s*,\s*true\s*\)\s*;/i" => "define( 'WP_DEBUG_DISPLAY', false );",
-			);
+		// Define the debug constants and their values based on enable/disable
+		$debug_constants = array(
+			'WP_DEBUG'         => $enable,
+			'WP_DEBUG_LOG'     => $enable,
+			'WP_DEBUG_DISPLAY' => ! $enable, // Opposite of enable - we don't want to display errors on frontend
+		);
 
-			foreach ( $patterns as $pattern => $replacement ) {
-				$wp_config_content = preg_replace( $pattern, $replacement, $wp_config_content );
-			}
+		// First, remove all duplicate entries for each debug constant
+		// foreach ( $debug_constants as $constant => $value ) {
+		// $wp_config_content = $this->remove_duplicate_constants( $wp_config_content, $constant );
+		// }
 
-			// Add debug settings if they don't exist
-			if ( ! preg_match( "/define\s*\(\s*['\"]WP_DEBUG['\"]/i", $wp_config_content ) ) {
-				$wp_config_content = str_replace(
-					"/* That's all, stop editing! Happy publishing. */",
-					"define( 'WP_DEBUG', true );\ndefine( 'WP_DEBUG_LOG', true );\ndefine( 'WP_DEBUG_DISPLAY', false );\n\n/* That's all, stop editing! Happy publishing. */",
-					$wp_config_content
-				);
-			}
-		} else {
-			// Disable debug settings
-			$patterns = array(
-				"/define\s*\(\s*['\"]WP_DEBUG['\"]\s*,\s*true\s*\)\s*;/i" => "define( 'WP_DEBUG', false );",
-				"/define\s*\(\s*['\"]WP_DEBUG_LOG['\"]\s*,\s*true\s*\)\s*;/i" => "define( 'WP_DEBUG_LOG', false );",
-			);
-
-			foreach ( $patterns as $pattern => $replacement ) {
-				$wp_config_content = preg_replace( $pattern, $replacement, $wp_config_content );
-			}
+		// Then, add/update each debug constant with the new value
+		foreach ( $debug_constants as $constant => $value ) {
+			$wp_config_content = $this->update_debug_constant( $wp_config_content, $constant, $value );
 		}
 
 		return file_put_contents( $wp_config_path, $wp_config_content ) !== false;
+	}
+
+	/**
+	 * Remove all duplicate instances of a WordPress constant from wp-config.php content.
+	 *
+	 * @param string $content The wp-config.php content.
+	 * @param string $constant The constant name (e.g., 'WP_DEBUG').
+	 * @return string Updated content with duplicates removed.
+	 */
+	private function remove_duplicate_constants( $content, $constant ) {
+		// Pattern to match all instances of the constant (both conditional and direct definitions)
+		$patterns = array(
+			// Pattern 1: Conditional definitions like if ( ! defined( 'WP_DEBUG' ) ) { define( 'WP_DEBUG', true ); }
+			"/if\s*\(\s*!\s*defined\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*\)\s*\)\s*\{\s*define\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*,\s*(true|false)\s*\)\s*;\s*\}/i",
+			// Pattern 2: Direct definitions like define( 'WP_DEBUG', false );
+			"/define\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*,\s*(true|false)\s*\)\s*;/i",
+		);
+
+		$matches_found = array();
+		$total_matches = 0;
+
+		// Count all matches for each pattern
+		foreach ( $patterns as $pattern ) {
+			preg_match_all( $pattern, $content, $matches, PREG_OFFSET_CAPTURE );
+			$total_matches  += count( $matches[0] );
+			$matches_found[] = $matches[0];
+		}
+
+		// If we have more than one match, remove all instances
+		if ( $total_matches > 1 ) {
+			foreach ( $patterns as $pattern ) {
+				$content = preg_replace( $pattern, '', $content );
+			}
+
+			// Clean up any extra blank lines left behind
+			$content = preg_replace( "/\n\s*\n\s*\n/", "\n\n", $content );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Update a specific debug constant in wp-config.php content.
+	 *
+	 * @param string $content The wp-config.php content.
+	 * @param string $constant The constant name (e.g., 'WP_DEBUG').
+	 * @param bool   $value The value to set (true or false).
+	 * @return string Updated content.
+	 */
+	private function update_debug_constant( $content, $constant, $value ) {
+		$value_str = $value ? 'true' : 'false';
+
+		// Pattern 1: Handle conditional definitions like if ( ! defined( 'WP_DEBUG' ) ) { define( 'WP_DEBUG', true ); }
+		$conditional_pattern = "/if\s*\(\s*!\s*defined\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*\)\s*\)\s*\{\s*define\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*,\s*(true|false)\s*\)\s*;\s*\}/i";
+
+		if ( preg_match( $conditional_pattern, $content ) ) {
+			// Replace the conditional definition
+			$replacement = "if ( ! defined( '{$constant}' ) ) { define( '{$constant}', {$value_str} ); }";
+			$content     = preg_replace( $conditional_pattern, $replacement, $content );
+			return $content;
+		}
+
+		// Pattern 2: Handle direct definitions like define( 'WP_DEBUG', false );
+		$direct_pattern = "/define\s*\(\s*['\"]" . preg_quote( $constant, '/' ) . "['\"]\s*,\s*(true|false)\s*\)\s*;/i";
+
+		if ( preg_match( $direct_pattern, $content ) ) {
+			// Replace existing direct definition
+			$replacement = "define( '{$constant}', {$value_str} );";
+			$content     = preg_replace( $direct_pattern, $replacement, $content );
+			return $content;
+		}
+
+		// Pattern 3: If no existing definition found, add it before "/* That's all, stop editing! Happy publishing. */"
+		$stop_editing_comment = "/* That's all, stop editing! Happy publishing. */";
+		if ( false !== strpos( $content, $stop_editing_comment ) ) {
+			$new_define = "define( '{$constant}', {$value_str} );\n";
+			$content    = str_replace( $stop_editing_comment, $new_define . $stop_editing_comment, $content );
+		} else {
+			// Fallback: add at the end of the file if the comment is not found
+			$content .= "\ndefine( '{$constant}', {$value_str} );\n";
+		}
+
+		return $content;
 	}
 
 	/**

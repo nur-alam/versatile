@@ -15,6 +15,7 @@ import {
 import { DebugRow } from '@/services/debug-log-services';
 
 export const ViewLog = ({ row }: { row: DebugRow }) => {
+	const { type, message, raw_line, severity, timestamp } = row;
 	return <div className="flex gap-1">
 		<Dialog>
 			<DialogTrigger asChild>
@@ -35,7 +36,7 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col gap-2 max-h-[70vh] overflow-auto">
-					<strong>Description</strong>: <span>{row.message}</span>
+					<strong>Description:</strong> <span>{raw_line}</span>
 				</div>
 				<DialogFooter className="sm:justify-end">
 					<DialogClose asChild>
