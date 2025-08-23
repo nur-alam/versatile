@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import MoodSkeleton from '@/components/loader/MoodSkeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import RouteBack from '@/components/atom/route-back';
 
 const MaintenanceSettings = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -100,9 +101,7 @@ const MaintenanceSettings = () => {
 						})}>
 							<div className='flex justify-between pb-5'>
 								<h2 className='flex items-center gap-2 text-2xl'>
-									<Link to={'/'}>
-										<ArrowLeft />
-									</Link>
+									<RouteBack />
 									{__('Maintenance Mood', 'versatile-toolkit')}
 								</h2>
 								<div className='flex gap-5'>

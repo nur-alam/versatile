@@ -103,10 +103,32 @@ const debugLog = () => {
 
 	const columns = [
 		{ key: "id", header: "No" },
-		{ key: "type", header: "Type" },
+		{
+			key: "type", header: "Type",
+			render: (row, key?: string) => {
+				const getTypeDisplay = (type: string) => {
+					switch (type) {
+						case 'PHP Fatal error':
+						case 'PHP Error':
+						case 'PHP Parse error':
+							return <span className='text-red-500'>Error</span>;
+						case 'PHP Warning':
+							return <span className='text-yellow-500'>Warning</span>;
+						case 'PHP Notice':
+							return <span className='text-blue-500'>Info</span>;
+						case 'debug':
+							return <span className='text-gray-500'>Debug</span>;
+						default:
+							return <span className='text-gray-500'>{type}</span>;
+					}
+				};
+
+				return getTypeDisplay(row['type']);
+			}
+		},
 		{
 			key: "message", header: "Message",
-			render: (row, value?: string) => {
+			render: (row, key?: string) => {
 				return <>{row['raw_line'].substring(0, 200)}...</>;
 			}
 		},

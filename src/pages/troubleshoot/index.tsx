@@ -9,8 +9,7 @@ import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, Them
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
-import { Link } from 'react-router-dom';
-import { MoveLeft } from 'lucide-react';
+import RouteBack from '@/components/atom/route-back';
 
 const TroubleShoot = () => {
 
@@ -71,9 +70,7 @@ const TroubleShoot = () => {
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
 			<h2 className='flex items-center gap-2 text-2xl'>
-				<Link to={'/'} className='flex items-center justify-center text-gray-300 bg-slate-200 hover:bg-slate-400 px-2 rounded-sm transition-colors'>
-					<MoveLeft className='h4 w-4' />
-				</Link>
+				<RouteBack link={'/'} />
 				{__('Deactivate Plugins Settings', 'versatile-toolkit')}
 			</h2>
 

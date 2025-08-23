@@ -17,6 +17,7 @@ import { ArrowLeft } from 'lucide-react';
 import { PageLoader, ButtonLoader, ComingSoonSettingsSkeleton } from '@/components/loader';
 import MoodSkeleton from '@/components/loader/MoodSkeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import RouteBack from '@/components/atom/route-back';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -84,10 +85,8 @@ const ComingsoonMode = () => {
 					})}>
 						<div className='flex justify-between pb-5'>
 							<h2 className='flex items-center gap-2 text-2xl'>
-								<Link to={'/'}>
-									<ArrowLeft />
-								</Link>
-								{__('Coming Soon Mode', 'versatile-toolkit')}
+								<RouteBack />
+								{__('Maintenance Mood', 'versatile-toolkit')}
 							</h2>
 							<div className='flex gap-5'>
 								<Button
@@ -96,7 +95,7 @@ const ComingsoonMode = () => {
 								>
 									<ButtonLoader
 										isLoading={updateComingsoonMoodMutation.isPending}
-										loadingText={__('Saving', 'versatile-toolkit')} 
+										loadingText={__('Saving', 'versatile-toolkit')}
 									>
 										{__('Save Settings', 'versatile-toolkit')}
 									</ButtonLoader>

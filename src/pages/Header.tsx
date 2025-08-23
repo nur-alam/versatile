@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { AlignRight } from 'lucide-react';
 
 
 const Header = () => {
@@ -62,7 +63,7 @@ const Header = () => {
 
     return (
         <>
-            <header className="bg-white border-b border-gray-200 px-1 py-4 flex items-center justify-between relative">
+            <header className="bg-white border-b border-gray-200 py-4 pr-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
                 <Link to="/" className="flex items-center text-blue-600 text-lg font-semibold">
                     {__('Versatile Toolkit', 'versatile-toolkit')}
@@ -117,12 +118,13 @@ const Header = () => {
                         {/* Toggle Menu Button */}
                         <SheetTrigger asChild>
                             <button
-                                // onClick={toggleMenu}
-                                className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
+                                // className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200"
+                                className="p-1 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-200"
                                 aria-label="Toggle menu"
                             >
+                                {/* <AlignRight className='w-6 h-6 text-gray-600' /> */}
                                 <svg
-                                    className="w-6 h-6 text-gray-600"
+                                    className="w-5 h-5 text-gray-600"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"

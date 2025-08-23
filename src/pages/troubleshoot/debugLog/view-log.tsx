@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { DebugRow } from '@/services/debug-log-services';
+import { __ } from '@wordpress/i18n';
 
 export const ViewLog = ({ row }: { row: DebugRow }) => {
 	const { type, message, raw_line, severity, timestamp } = row;
@@ -35,13 +36,13 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 						{row.timestamp}
 					</DialogDescription>
 				</DialogHeader>
-				<div className="flex flex-col gap-2 max-h-[70vh] overflow-auto">
-					<strong>Description:</strong> <span>{raw_line}</span>
+				<div className="max-h-[70vh] overflow-auto bg-[#e5e5e5] p-3 my-2">
+					<span>{raw_line}</span>
 				</div>
 				<DialogFooter className="sm:justify-end">
 					<DialogClose asChild>
 						<Button type="button" variant="secondary">
-							Close
+							{__('Close', 'versatile-toolkit')}
 						</Button>
 					</DialogClose>
 				</DialogFooter>

@@ -2,6 +2,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Eye, Edit, Trash2, ArrowUpAZ
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { __ } from "@wordpress/i18n";
 
 /**
  * Server-side DataTable
@@ -126,6 +127,8 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
       .finally(() => setLoading(false));
   }, [page, perPage, query, sort]);
 
+  console.log(rows);
+
   function toggleSort(key: string) {
     setSort((prev) => {
       if (prev.key !== key) return { key, order: "asc" };
@@ -179,24 +182,29 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               {loading ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-500">
-                    Loading...
+                    {__('Loading...', 'versatile-toolkit')}
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-500">
-                    No results found.
+                    {__('No results found.', 'versatile-toolkit')}
                   </td>
                 </tr>
               ) : (
-                rows.map((row: TData) => (
+
+                rows.map((row: TData, index: number) => (
                   <tr key={row.id} className="border-t border-slate-100 hover:bg-slate-50/60">
                     {columns.map((col) => (
                       <td key={String(col.key)} className="px-4 py-3 text-slate-700">
                         {col.render ? (
                           col.render(row, col.key as keyof TData)
                         ) : (
-                          String(row[col.key as keyof TData] ?? '')
+                          row[col.key as keyof TData] === row.id ? (
+                            index + 1
+                          ) : (
+                            String(row[col.key as keyof TData] ?? '')
+                          )
                         )}
                       </td>
                     ))}
@@ -217,7 +225,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               <span className="font-semibold"> {total}</span>
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-600">Rows per page</label>
+              <label className="text-sm text-slate-600">{__('Per page', 'versatile-toolkit')}</label>
               <select
                 value={perPage}
                 onChange={(e) => {
