@@ -12,8 +12,6 @@ import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
 import PreviewModal from '@/components/PreviewModal';
 import TemplateSelector from '@/components/TemplateSelector';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import MoodSkeleton from '@/components/loader/MoodSkeleton';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import RouteBack from '@/components/atom/route-back';

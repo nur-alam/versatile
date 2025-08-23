@@ -29,7 +29,7 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 					<Eye className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Warning Type: {row.type}</DialogTitle>
 					<DialogDescription className='mt-2 hidden'>

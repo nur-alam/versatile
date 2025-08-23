@@ -127,7 +127,7 @@ const debugLog = () => {
 			}
 		},
 		{
-			key: "message", header: "Message",
+			key: "message", header: "Description",
 			render: (row, key?: string) => {
 				return <>{row['raw_line'].substring(0, 200)}...</>;
 			}

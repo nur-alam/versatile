@@ -19,7 +19,7 @@ const Dashboard = () => {
 						Object.entries(serviceList)
 							.filter(([key, addon]) => addon.enable) // Only show enabled services
 							.map(([key, addon]) => (
-								<Card key={key} className='w-[300px] hover:bg-gray-100'>
+								<Card key={key} className='w-[300px] hover:bg-gray-100 rounded-sm'>
 									<Link to={`/${addon.path}`} className='block p-3'>
 										<CardHeader className='p-0'>
 											<CardTitle className='text-xl'>{addon.label}</CardTitle>

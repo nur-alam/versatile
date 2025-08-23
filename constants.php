@@ -80,7 +80,7 @@ define(
 			'label'       => 'Troubleshoot',
 			'enable'      => true,
 			'path'        => 'troubleshoot',
-			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
+			'description' => 'Disable plugin byIP specific, plugin conflicts, and view debug logs.',
 			'menus'       => array(
 				'troubleshoot' => array(
 					'slug'   => '',
