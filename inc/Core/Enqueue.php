@@ -27,7 +27,7 @@ class Enqueue {
 	 */
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_admin_scripts' ) );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_front_end_scripts' ) );
+		// add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_front_end_scripts' ) );
 	}
 
 	/**

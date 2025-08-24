@@ -9,5 +9,5 @@ mix.webpackConfig({
 mix.setPublicPath('./assets/dist');
 
 mix.sass('assets/src/scss/index.scss', 'assets/dist/css/style.min.css').tailwind();
-mix.sass('assets/src/scss/comingsoon-style.scss', 'assets/dist/css/comingsoon-style.min.css');
-mix.sass('assets/src/scss/maintenance-style.scss', 'assets/dist/css/maintenance-style.min.css');
+// mix.sass('assets/src/scss/comingsoon-style.scss', 'assets/dist/css/comingsoon-style.min.css');
+// mix.sass('assets/src/scss/maintenance-style.scss', 'assets/dist/css/maintenance-style.min.css');
