@@ -162,7 +162,6 @@ const TroubleShoot = () => {
 					</Button>
 				</form>
 			</div>
-			
 		</div>
 	);
 };

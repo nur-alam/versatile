@@ -224,7 +224,14 @@ export const useClearDebugLog = () => {
         onSuccess: () => {
             // Invalidate and refetch debug log status and content
             queryClient.invalidateQueries({ queryKey: ['debugLogStatus'] });
-            queryClient.invalidateQueries({ queryKey: ['debugLogContent'] });
+            // queryClient.invalidateQueries({ queryKey: ['debugLogContent'] });
+            // debugLogApi.loadLogContent({
+            //     page: 1,
+            //     perPage: 10,
+            //     search: '',
+            //     sortKey: '',
+            //     order: '',
+            // });
 
             toast.success(__('Debug log cleared successfully', 'versatile-toolkit'));
         },

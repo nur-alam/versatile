@@ -19,7 +19,9 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const basePath = pathSegments[0];
 
     if (isLoading) {
-        return <SkeletonLoader />; // Todo adjust this loader
+        <div className="flex items-center justify-between bg-slate-50 border animate-pulse w-full h-[1500px]">
+            <div className="w-full h-full bg-slate-200 animate-pulse"></div>
+        </div>
     }
 
     // If no service list data, allow access (fallback)
