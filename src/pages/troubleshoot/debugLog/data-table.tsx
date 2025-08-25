@@ -48,8 +48,7 @@ const buildQueryParams = (page: number, perPage: number, search: string, sortKey
   return params.toString();
   // return `paged=${page}&per_page=${perPage}${query ? `&search=${query}` : ''}${sortKey ? `&sort_key=${sortKey}` : ''}${order ? `&sort_dir=${order}` : ''}`
 };
-{/* <ArrowDownAZ />
-<ArrowUpAZ /> */}
+
 function SortIcon({ order }: { order: string }) {
   return (
     <span aria-hidden className="inline-flex flex-col leading-none ml-1">
@@ -201,7 +200,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
                           col.render(row, col.key as keyof TData)
                         ) : (
                           row[col.key as keyof TData] === row.id ? (
-                            index + 1
+                            (page - 1) * perPage + index + 1
                           ) : (
                             String(row[col.key as keyof TData] ?? '')
                           )
