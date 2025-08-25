@@ -86,7 +86,7 @@ const ComingsoonMode = () => {
 						<div className='flex justify-between pb-5'>
 							<h2 className='flex items-center gap-2 text-2xl'>
 								<RouteBack />
-								{__('Maintenance Mood', 'versatile-toolkit')}
+								{__('Comingsoon Mood', 'versatile-toolkit')}
 							</h2>
 							<div className='flex gap-5'>
 								<Button
