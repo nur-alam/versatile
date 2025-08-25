@@ -71,7 +71,7 @@ const TroubleShoot = () => {
 		<div className="p-4 space-y-6 max-w-[800px]">
 			<h2 className='flex items-center gap-2 text-2xl'>
 				<RouteBack link={'/'} />
-				{__('Deactivate Plugins Settings', 'versatile-toolkit')}
+				{__('Deactivate Plugins', 'versatile-toolkit')}
 			</h2>
 
 			{/* Plugin Disable Section */}
