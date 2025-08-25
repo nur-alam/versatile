@@ -86,6 +86,7 @@ module.exports = (env, options) => {
 			dest_path: './assets/dist/js',
 			src_files: {
 				'versatile-js.min': './src/index.tsx',
+				// 'versatile-quickpick.min': './src/entries/quickpick/index.tsx',
 			},
 		},
 	];
@@ -118,6 +119,7 @@ module.exports = (env, options) => {
 						'@utils': path.resolve(__dirname, './src/utils'),
 						'@hooks': path.resolve(__dirname, './src/hooks'),
 						'@pages': path.resolve(__dirname, './src/pages'),
+						"@entries": path.resolve(__dirname, './src/entries'),
 					},
 				},
 			})

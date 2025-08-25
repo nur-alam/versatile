@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
-import { ExternalLink, X } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
+import TemplateLoader from '@components/loader/TemplateLoader';
+import config from '@/config';
+import { useModalInteractions } from '../hooks/useModalInteractions';
 
 interface PreviewModalProps {
   type: 'maintenance' | 'comingsoon';
   disabled?: boolean;
+  getFormData?: any;
 }
 
-const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
+const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps) => {
+
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,20 +27,19 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
     setIsLoading(false);
   };
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only close if clicking on the backdrop itself, not on the modal content
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
-
   const getPreviewUrl = () => {
-    const ajaxUrl = window._versatileObject?.ajax_url;
-    const nonce = window._versatileObject?.nonce_value;
+    const ajaxUrl = config?.ajax_url;
+    const nonce = config?.nonce_value;
     const action = type === 'maintenance' ? 'versatile_preview_maintenance' : 'versatile_preview_comingsoon';
 
-    return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}`;
+    const preview_data = JSON.stringify(getFormData());
+    return `${ajaxUrl}?action=${action}&versatile_nonce=${nonce}&type=${type}&preview_data=${encodeURIComponent(preview_data)}`;
   };
+
+  const { handleBackdropClick } = useModalInteractions({
+    isOpen,
+    onClose: handleClose
+  });
 
   return (
     <>
@@ -44,18 +48,18 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
         variant="outline"
         onClick={handlePreview}
         disabled={disabled}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 border-gray-400"
       >
-        <ExternalLink size={16} />
+        <Eye size={16} />
         {type === 'maintenance'
-          ? __('Preview Maintenance Page', 'versatile-toolkit') 
-          : __('Preview Coming Soon Page', 'versatile-toolkit')
+          ? __('Preview', 'versatile-toolkit')
+          : __('Preview', 'versatile-toolkit')
         }
       </Button>
 
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        <div
+          className="fixed inset-x-0 bottom-0 -top-[15px] z-[999999] flex items-center justify-center bg-black bg-opacity-85"
           onClick={handleBackdropClick}
         >
           <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
@@ -63,7 +67,7 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
             <div className="flex items-center justify-between p-4 border-b">
               <h3 className="text-lg font-semibold">
                 {type === 'maintenance'
-                  ? __('Maintenance Page Preview', 'versatile-toolkit') 
+                  ? __('Maintenance Page Preview', 'versatile-toolkit')
                   : __('Coming Soon Page Preview', 'versatile-toolkit')
                 }
               </h3>
@@ -81,12 +85,7 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
             <div className="flex-1 p-4">
               <div className="w-full h-full border rounded-lg overflow-hidden bg-gray-50">
                 {isLoading && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                      <p className="text-gray-600">{__('Loading preview...', 'versatile-toolkit')}</p>
-                    </div>
-                  </div>
+                  <TemplateLoader />
                 )}
                 <iframe
                   src={getPreviewUrl()}
@@ -102,7 +101,7 @@ const PreviewModal = ({ type, disabled = false }: PreviewModalProps) => {
             <div className="p-4 border-t bg-gray-50 rounded-b-lg">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">
-                  {__('This is how your page will look to visitors.', 'versatile-toolkit')} 
+                  {__('This is how your page will look to visitors.', 'versatile-toolkit')}
                 </p>
                 <Button onClick={handleClose} variant="outline">
                   {__('Close Preview', 'versatile-toolkit')}

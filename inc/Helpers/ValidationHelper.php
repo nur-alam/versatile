@@ -35,7 +35,7 @@ class ValidationHelper {
 	 *
 	 * @return object validation response
 	 */
-	public static function validate( array $validation_rules, array $data ): object {
+	public static function validate( array $validation_rules, array $data ): array {
 		$validation_pass   = true;
 		$validation_errors = array();
 
@@ -173,7 +173,7 @@ class ValidationHelper {
 			'errors'  => $validation_errors,
 		);
 
-		return (object) $response;
+		return $response;
 	}
 
 	/**

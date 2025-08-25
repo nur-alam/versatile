@@ -45,7 +45,7 @@ function versatile_get_plugin_data() {
 function versatile_verify_request( $inputs, $permissions = 'manage_options' ) {
 	// Check user permissions
 	if ( ! current_user_can( $permissions ) ) {
-		return (object) array(
+		return array(
 			'success' => false,
 			'message' => __( 'You do not have permission to access this feature.', 'versatile-toolkit' ),
 			'code'    => 403,
@@ -58,18 +58,22 @@ function versatile_verify_request( $inputs, $permissions = 'manage_options' ) {
 
 	// Verify nonce
 	if ( ! wp_verify_nonce( $inputs[ $nonce_key ], $nonce_action ) ) {
-		return (object) array(
+		return array(
 			'success' => false,
 			'message' => __( 'Invalid security token!', 'versatile-toolkit' ),
 			'code'    => 400,
 		);
 	}
 
+	unset( $inputs[ $nonce_key ] );
+	unset( $inputs['action'] );
+
 	// Return success with sanitized POST data
-	return (object) array(
+	return array(
 		'success' => true,
 		'message' => __( 'Verification successful.', 'versatile-toolkit' ),
 		'code'    => 200,
+		'data'    => $inputs,
 	);
 }
 
@@ -119,18 +123,18 @@ function versatile_sanitization_validation( $inputs = array() ) {
 
 	$validation = ValidationHelper::validate( $rules, $mapped_sanitized_data );
 
-	if ( ! $validation->success ) {
-		return (object) array(
+	if ( ! $validation['success'] ) {
+		return array(
 			'success' => false,
 			'message' => __( 'Error: Required fields missing!', 'versatile-toolkit' ),
 			'code'    => 400,
-			'errors'  => $validation->errors,
+			'errors'  => $validation['errors'],
 		);
 	}
 
 	$mapped_sanitized_data['success'] = true;
 
-	return (object) $mapped_sanitized_data;
+	return $mapped_sanitized_data;
 }
 /**
  * Get client IP address

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, type KeyboardEvent, type FocusEvent, ReactElement, ReactNode } from "react"
 import { X } from "lucide-react"
 import { Input } from "@/components/ui/input"

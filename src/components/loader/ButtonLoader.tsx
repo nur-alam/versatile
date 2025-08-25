@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { cn } from '@/lib/utils';
-import { ButtonLoaderProps } from '@/components/loader/types';
+import { ButtonLoaderProps } from './types';
 
 const sizeClasses = {
 	xs: 'w-3 h-3',

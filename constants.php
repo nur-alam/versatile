@@ -38,28 +38,32 @@ define(
 		'enable_maintenance'  => false,
 		'enable_comingsoon'   => false,
 		'maintenance'         => array(
-			'title'               => '',
-			'subtitle'            => '',
-			'description'         => '',
-			'background_image'    => '',
-			'background_image_id' => 0,
-			'logo'                => '',
-			'logo_id'             => 0,
-			'style'               => array(
+			'title'                 => 'We&rsquo;ll be back soon!',
+			'subtitle'              => 'Our site is currently undergoing scheduled maintenance.',
+			'description'           => 'Thank you for your patience. We&rsquo;re working hard to bring everything back online better than ever.',
+			'template'              => 'default',
+			'background_image'      => '',
+			'background_image_id'   => 0,
+			'logo'                  => '',
+			'logo_id'               => 0,
+			'show_subscribers_only' => false,
+			'style'                 => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
 			),
 		),
 		'comingsoon'          => array(
-			'title'               => '',
-			'subtitle'            => '',
-			'description'         => '',
-			'background_image'    => '',
-			'background_image_id' => 0,
-			'logo'                => '',
-			'logo_id'             => 0,
-			'style'               => array(
+			'title'                 => 'Coming Soon!',
+			'subtitle'              => 'We&rsquo;re working on something amazing.',
+			'description'           => 'Stay tuned for our exciting launch. Something great is coming your way!',
+			'template'              => 'default',
+			'background_image'      => '',
+			'background_image_id'   => 0,
+			'logo'                  => '',
+			'logo_id'               => 0,
+			'show_subscribers_only' => false,
+			'style'                 => array(
 				'bg_image' => '',
 				'bg_color' => '#ffffff',
 				'opacity'  => 1,
@@ -76,19 +80,39 @@ define(
 			'label'       => 'Troubleshoot',
 			'enable'      => true,
 			'path'        => 'troubleshoot',
-			'description' => 'Diagnose and fix common WordPress issues, plugin conflicts, and performance problems.',
+			'description' => 'Disable plugin byIP specific, plugin conflicts, and view debug logs.',
+			'menus'       => array(
+				'troubleshoot' => array(
+					'slug'   => '',
+					'label'  => 'Deactivate Plugins',
+					'parent' => 'troubleshoot',
+					'icon'   => 'dashicons-admin-tools',
+				),
+				'debug'        => array(
+					'slug'   => 'debug-log',
+					'label'  => 'Debug Log',
+					'parent' => 'troubleshoot',
+					'icon'   => 'dashicons-admin-tools',
+				),
+			),
+			'icon'        => 'dashicons-admin-tools',
 		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
 			'enable'      => true,
 			'path'        => 'maintenance',
 			'description' => 'Display a custom maintenance page to visitors while you update your site.',
+			'icon'        => 'dashicons-admin-tools',
 		),
 		'comingsoon'   => array(
 			'label'       => 'Coming Soon',
 			'enable'      => true,
 			'path'        => 'comingsoon',
 			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
+			'icon'        => 'dashicons-admin-tools',
 		),
 	)
 );
+
+define( 'VERSATILE_DEFAULT_COMINGSOON_TEMPLATE', 'classic' );
+define( 'VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE', 'classic' );

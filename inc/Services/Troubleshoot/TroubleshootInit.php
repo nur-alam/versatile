@@ -10,7 +10,7 @@
 
 namespace Versatile\Services\Troubleshoot;
 
-use Versatile\Helpers\VersatileInput;
+use Versatile\Services\Troubleshoot\DebugLog;
 use Versatile\Traits\JsonResponse;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,21 +18,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * DisablePlugin init
+ * Troubleshoot init
  */
 class TroubleshootInit {
 
 	use JsonResponse;
 
 	/**
-	 * DisablePlugin constructor.
+	 * Troubleshoot constructor.
 	 */
 	public function __construct() {
+		// Add the debug log file.
+		$debug_log = new DebugLog();
+
 		add_action( 'wp_ajax_versatile_plugin_list', array( $this, 'get_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_get_disable_plugin_list', array( $this, 'get_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_save_disable_plugin_list', array( $this, 'save_disable_plugin_list' ) );
 		add_action( 'wp_ajax_versatile_add_my_ip', array( $this, 'add_my_ip' ) );
-		add_action( 'wp_ajax_versatile_theme_list', array( $this, 'get_theme_list' ) );
+		add_action( 'wp_ajax_versatile_get_theme_list', array( $this, 'get_theme_list' ) );
 		add_action( 'wp_ajax_versatile_get_active_theme', array( $this, 'get_active_theme' ) );
 		add_action( 'wp_ajax_versatile_save_active_theme', array( $this, 'save_active_theme' ) );
 	}
@@ -63,20 +66,22 @@ class TroubleshootInit {
 			);
 
 			// Check if sanitization was successful
-			if ( ! $sanitized_data->success ) {
-				return $this->json_response( $sanitized_data->message, array(), $sanitized_data->code );
+			if ( ! $sanitized_data['success'] ) {
+				return $this->json_response( $sanitized_data['message'], array(), $sanitized_data['code'] );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$request_verify = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message, array(), $request_verify->code );
+			if ( ! $request_verify['success'] ) {
+				return $this->json_response( $request_verify['message'], array(), $request_verify['code'] );
 			}
+
+			$verified_data = (object) $request_verify['data'];
 
 			// Convert object to array for easier handling
 			$params = array(
-				'chosen_plugins' => $sanitized_data->chosen_plugins,
-				'ip_tags'        => $sanitized_data->ip_tags,
+				'chosen_plugins' => $verified_data->chosen_plugins,
+				'ip_tags'        => $verified_data->ip_tags,
 			);
 
 			if ( ! empty( $params['chosen_plugins'] ) && in_array( 'versatile-toolkit/versatile-toolkit.php', $params['chosen_plugins'], true ) ) {
@@ -104,7 +109,7 @@ class TroubleshootInit {
 	 */
 	public function get_disable_plugin_list() {
 		$disable_plugin_list = get_option( VERSATILE_DISABLE_PLUGIN_LIST );
-		return $this->json_response( 'Disable plugin list saved', $disable_plugin_list, 200 );
+		return $this->json_response( 'Disable plugin list retrieved', $disable_plugin_list, 200 );
 	}
 
 	/**
@@ -237,29 +242,31 @@ class TroubleshootInit {
 				)
 			);
 
-			if ( ! $sanitized_data->success ) {
-				$error_message = versatile_grab_error_message( $sanitized_data->errors );
+			if ( ! $sanitized_data['success'] ) {
+				$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
 				return $this->json_response( $error_message, array(), 400 );
 			}
 
-			$request_verify = versatile_verify_request( (array) $sanitized_data );
+			$request_verify = versatile_verify_request( $sanitized_data );
 
-			if ( ! $request_verify->success ) {
-				return $this->json_response( $request_verify->message ?? 'Error: while updating active theme', array(), $request_verify->code );
+			if ( ! $request_verify['success'] ) {
+				return $this->json_response( $request_verify['message'] ?? 'Error: while updating active theme', array(), $request_verify['code'] );
 			}
 
-			// Remove keys that should not be saved
-			unset( $sanitized_data->action, $sanitized_data->versatile_nonce );
+			$verified_data = (object) $request_verify['data'];
 
-			if ( ! empty( $sanitized_data->activeTheme ) ) { // phpcs:ignore
+			// Remove keys that should not be saved
+			unset( $verified_data->action, $verified_data->versatile_nonce );
+
+			if ( ! empty( $verified_data->activeTheme ) ) { // phpcs:ignore
 				// Verify theme exists
-				$theme = wp_get_theme( $sanitized_data->activeTheme ); // phpcs:ignore
+				$theme = wp_get_theme( $verified_data->activeTheme ); // phpcs:ignore
 				if ( ! $theme->exists() ) {
 					return $this->json_response( 'Error: Theme does not exist', array(), 400 );
 				}
 
 				// Switch theme
-				switch_theme( $sanitized_data->activeTheme ); // phpcs:ignore
+				switch_theme( $verified_data->activeTheme ); // phpcs:ignore
 
 				return $this->json_response( 'Theme activated successfully', array(), 200 );
 			}

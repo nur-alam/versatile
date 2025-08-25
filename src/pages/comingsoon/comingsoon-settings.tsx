@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { __ } from '@wordpress/i18n'
 import { comingsoonMoodFormSchema, ComingsoonMoodFormValues } from '@/utils/schema-validation';
 import { useForm } from 'react-hook-form';
@@ -11,16 +11,27 @@ import { useGetMoodInfo, useUpdateComingsoonMood } from '@/services/mood-service
 import { Switch } from '@/components/ui/switch';
 import MediaUploader from '@/components/MediaUploader';
 import PreviewModal from '@/components/PreviewModal';
+import TemplateSelector from '@/components/TemplateSelector';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { PageLoader, ButtonLoader, ComingSoonSettingsSkeleton } from '@/components/loader';
+import MoodSkeleton from '@/components/loader/MoodSkeleton';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import RouteBack from '@/components/atom/route-back';
 
 const ComingsoonMode = () => {
 	const [isFormInitialized, setIsFormInitialized] = useState(false);
+	const [formValues, setFormValues] = useState<ComingsoonMoodFormValues | undefined>(undefined);
+
 	const comingsoonMoodFrom = useForm<ComingsoonMoodFormValues>({
 		resolver: zodResolver(comingsoonMoodFormSchema),
 		defaultValues: {
 			enable_comingsoon: true,
+			show_subscribers_only: false,
 			title: '',
 			description: '',
 			subtitle: '',
+			template: 'classic',
 			background_image: '',
 			background_image_id: 0,
 			logo: '',
@@ -28,7 +39,10 @@ const ComingsoonMode = () => {
 		}
 	});
 
-	const { handleSubmit, control, formState: { errors } } = comingsoonMoodFrom;
+	const { handleSubmit } = comingsoonMoodFrom;
+
+	// Function to get latest form data when needed (no re-renders)
+	const getLatestFormData = () => comingsoonMoodFrom.getValues();
 
 	const updateComingsoonMoodMutation = useUpdateComingsoonMood();
 
@@ -41,16 +55,18 @@ const ComingsoonMode = () => {
 	}
 
 	// Fetching saved form data
-	const { data: moodInfo, isLoading, isSuccess } = useGetMoodInfo();
+	const { data: moodInfo, isLoading } = useGetMoodInfo();
 	const comingsoonMoodInfo: ComingsoonMoodFormValues = moodInfo?.data['comingsoon'];
 
 	useEffect(() => {
 		if (comingsoonMoodInfo) {
 			comingsoonMoodFrom.reset({
 				enable_comingsoon: moodInfo?.data['enable_comingsoon'],
-				title: comingsoonMoodInfo.title,
-				description: comingsoonMoodInfo.description,
-				subtitle: comingsoonMoodInfo.subtitle,
+				show_subscribers_only: comingsoonMoodInfo.show_subscribers_only || false,
+				title: comingsoonMoodInfo.title || '',
+				description: comingsoonMoodInfo.description || '',
+				subtitle: comingsoonMoodInfo.subtitle || '',
+				template: comingsoonMoodInfo.template || 'classic',
 				background_image: comingsoonMoodInfo.background_image || '',
 				background_image_id: comingsoonMoodInfo.background_image_id || 0,
 				logo: comingsoonMoodInfo.logo || '',
@@ -61,11 +77,66 @@ const ComingsoonMode = () => {
 	}, [comingsoonMoodInfo]);
 
 	return (
-		<div className="p-4 space-y-6">
-			{(isLoading || !isFormInitialized) ? <span className="text-2xl">Loading...</span> :
+		<div className="">
+			{(isLoading || !isFormInitialized) ? <MoodSkeleton /> :
 				<Form {...comingsoonMoodFrom}>
-					<form onSubmit={handleSubmit(onSubmit)}>
-						<div className='flex gap-10'>
+					<form onSubmit={handleSubmit(onSubmit, (errors) => {
+						console.error('Form validation errors:', errors);
+					})}>
+						<div className='flex justify-between pb-5'>
+							<h2 className='flex items-center gap-2 text-2xl'>
+								<RouteBack />
+								{__('Comingsoon Mood', 'versatile-toolkit')}
+							</h2>
+							<div className='flex gap-5'>
+								<Button
+									type="submit"
+									disabled={updateComingsoonMoodMutation.isPending}
+								>
+									<ButtonLoader
+										isLoading={updateComingsoonMoodMutation.isPending}
+										loadingText={__('Saving', 'versatile-toolkit')}
+									>
+										{__('Save Settings', 'versatile-toolkit')}
+									</ButtonLoader>
+								</Button>
+
+								<PreviewModal
+									type="comingsoon"
+									disabled={updateComingsoonMoodMutation.isPending}
+									getFormData={getLatestFormData}
+								/>
+							</div>
+						</div>
+						<div>
+							<FormField
+								control={comingsoonMoodFrom.control}
+								name="template"
+								render={({ field, fieldState }) => (
+									<FormItem className='mt-6'>
+										<FormLabel className="text-foreground">
+											{__('Choose Template', 'versatile-toolkit')}
+										</FormLabel>
+										<FormControl>
+											<TemplateSelector
+												selectedTemplate={field.value || 'classic'}
+												onTemplateSelect={field.onChange}
+												type="comingsoon"
+												formData={formValues}
+												getFormData={getLatestFormData}
+											/>
+										</FormControl>
+										{!fieldState.error &&
+											<FormDescription>
+												{__('Select a design template for your coming soon page.', 'versatile-toolkit')}
+											</FormDescription>
+										}
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className='flex gap-10 mt-5'>
 							<div className='w-1/2'>
 								<FormField
 									control={comingsoonMoodFrom.control}
@@ -86,12 +157,40 @@ const ComingsoonMode = () => {
 											{!fieldState.error &&
 												<FormDescription>
 													{__('This will be displayed as the main heading.', 'versatile-toolkit')}
+													{__('Enable the coming soon page for your website.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
+
+								<FormField
+									control={comingsoonMoodFrom.control}
+									name="show_subscribers_only"
+									render={({ field, fieldState }) => (
+										<FormItem className='mt-6'>
+											<div className='flex items-center gap-2'>
+												<FormLabel className="text-foreground" htmlFor='show_subscribers_only'>
+													{__('Show Only for Users', 'versatile-toolkit')}
+												</FormLabel>
+												<FormControl>
+													<Switch id='show_subscribers_only'
+														checked={field.value}
+														onCheckedChange={field.onChange}
+													/>
+												</FormControl>
+											</div>
+											{!fieldState.error &&
+												<FormDescription>
+													{__('When enabled, coming soon mode will only be shown to subscribers. Other users will see the normal site.', 'versatile-toolkit')}
+												</FormDescription>
+											}
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
 								<FormField
 									control={comingsoonMoodFrom.control}
 									name="title"
@@ -101,7 +200,7 @@ const ComingsoonMode = () => {
 												{__('Title', 'versatile-toolkit')}
 											</FormLabel>
 											<FormControl>
-												<Input placeholder={__('Enter comingsoon title', 'versatile-toolkit')} {...field} />
+												<Input placeholder={__('Enter coming soon title', 'versatile-toolkit')} {...field} />
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
@@ -141,7 +240,7 @@ const ComingsoonMode = () => {
 											</FormControl>
 											{!fieldState.error &&
 												<FormDescription>
-													{__('Provide more details about the comingsoon.', 'versatile-toolkit')}
+													{__('Provide more details about the coming soon.', 'versatile-toolkit')}
 												</FormDescription>
 											}
 											<FormMessage />
@@ -161,7 +260,7 @@ const ComingsoonMode = () => {
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														comingsoonMoodFrom.setValue('background_image_id', id);
+														setFormValues(comingsoonMoodFrom.getValues());
 													}}
 													buttonText={__('Upload Background Image', 'versatile-toolkit')}
 													allowedTypes={['image']}
@@ -188,7 +287,7 @@ const ComingsoonMode = () => {
 													value={field.value || ''}
 													onChange={(url, id) => {
 														field.onChange(url);
-														comingsoonMoodFrom.setValue('logo_id', id);
+														setFormValues(comingsoonMoodFrom.getValues());
 													}}
 													buttonText={__('Upload Logo', 'versatile-toolkit')}
 													allowedTypes={['image']}
@@ -204,22 +303,6 @@ const ComingsoonMode = () => {
 									)}
 								/>
 							</div>
-						</div>
-						<div className="flex gap-4 mt-6">
-							<Button 
-								type="submit" 
-								disabled={updateComingsoonMoodMutation.isPending}
-							>
-								{updateComingsoonMoodMutation.isPending 
-									? __('Saving...', 'versatile-toolkit') 
-									: __('Save Settings', 'versatile-toolkit')
-								}
-							</Button>
-							
-							<PreviewModal 
-								type="comingsoon"
-								disabled={updateComingsoonMoodMutation.isPending}
-							/>
 						</div>
 					</form>
 				</Form>

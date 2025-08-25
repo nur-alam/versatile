@@ -4,17 +4,15 @@ import { Button } from '@/components/ui/button'
 import MultipleSelector from '@pages/troubleshoot/multi-selector';
 import TaggedInput from '@pages/troubleshoot/tag-input';
 import ThemeSelector from '@pages/troubleshoot/theme-selector';
-
+import { InlineLoader, ButtonLoader } from '@/components/loader';
 import { disablePluginFormSchema, DisablePluginFormValues, themeFormSchema, ThemeFormValues, ipv4Regex } from '@/utils/schema-validation'
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useDisablePlugin, useGetDisablePluginList, useGetActiveTheme, useSaveActiveTheme } from '@/services/versatile-services';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import ButtonLoader from '@/components/loader/ButtonLoader';
-import InlineLoader from '@/components/loader/InlineLoader';
+import RouteBack from '@/components/atom/route-back';
 
 const TroubleShoot = () => {
+
 	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
 		resolver: zodResolver(disablePluginFormSchema),
 		defaultValues: {
@@ -72,10 +70,8 @@ const TroubleShoot = () => {
 	return (
 		<div className="p-4 space-y-6 max-w-[800px]">
 			<h2 className='flex items-center gap-2 text-2xl'>
-				<Link to={'/'}>
-					<ArrowLeft />
-				</Link>
-				{__('Troubleshoot Settings', 'versatile-toolkit')}
+				<RouteBack link={'/'} />
+				{__('Deactivate Plugins Settings', 'versatile-toolkit')}
 			</h2>
 
 			{/* Plugin Disable Section */}
@@ -85,16 +81,17 @@ const TroubleShoot = () => {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className='min-h-[42px]'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> : <Controller
-								name='chosen_plugins'
-								control={control}
-								render={({ field }) => (
-									<MultipleSelector
-										selectedPlugin={field.value}
-										onChange={field.onChange}
-									/>
-								)}
-							/>
+							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> :
+								<Controller
+									name='chosen_plugins'
+									control={control}
+									render={({ field }) => (
+										<MultipleSelector
+											selectedPlugin={field.value}
+											onChange={field.onChange}
+										/>
+									)}
+								/>
 						}
 						{errors.chosen_plugins && (
 							<p className="text-red-500 text-sm mt-1">
@@ -104,7 +101,7 @@ const TroubleShoot = () => {
 					</div>
 					<div className='min-h-[64px] mt-2'>
 						{
-							isFetching ? <span className='text-xl'>{__('Loading...', 'versatile-toolkit')}</span> :
+							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile-toolkit')} /> :
 								<Controller
 									name='ip_tags'
 									control={control}
@@ -162,7 +159,6 @@ const TroubleShoot = () => {
 					</Button>
 				</form>
 			</div>
-			
 		</div>
 	);
 };

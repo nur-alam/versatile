@@ -85,7 +85,13 @@ body {}
 a:focus,
 a:focus .media-icon img,
 a:focus .plugin-icon {
-	color: #043959;
-	box-shadow: 0 0 0 0px #2271b1;
-	outline: 0px solid transparent;
+	color: unset;
+	box-shadow: unset;
+	outline: unset;
+}
+
+a:active,
+a:hover,
+a:focus {
+	color: unset;
 }
