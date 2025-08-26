@@ -90,7 +90,7 @@ class DebugLog {
 			$request_verify = versatile_verify_request( $sanitized_data );
 
 			if ( ! $request_verify['success'] ) {
-				$this->json_response( $request_verify['message'], 'error', 400 );
+				$this->json_response( $request_verify['message'] ?? __( 'Invalid input data', 'versatile-toolkit' ), 'error', 400 );
 			}
 
 			$verified_data = (object) $request_verify['data'];
@@ -234,13 +234,13 @@ class DebugLog {
 			);
 
 			if ( ! $sanitized_data['success'] ) {
-				wp_send_json_error( array( 'message' => 'Invalid input data' ) );
+				$this->json_response( __( 'Invalid input data', 'versatile-toolkit' ), null, 400 );
 			}
 
 			$request_verify = versatile_verify_request( $sanitized_data );
 
 			if ( ! $request_verify['success'] ) {
-				wp_send_json_error( array( 'message' => $request_verify['message'] ) );
+				$this->json_response( $request_verify['message'] ?? __( 'Invalid input data', 'versatile-toolkit' ), null, 400 );
 			}
 
 			$verified_data = (object) $request_verify['data'];
@@ -392,7 +392,7 @@ class DebugLog {
 					$this->json_response( __( 'Failed to clear debug log', 'versatile-toolkit' ), 400 );
 				}
 			} else {
-				$this->json_response( __( 'Debug log file does not exist', 'versatile-toolkit' ), 200 );
+				$this->json_response( __( 'Debug log file does not exist', 'versatile-toolkit' ), 400 );
 			}
 		} catch ( \Throwable $th ) {
 			$this->json_response( __( 'Error clearing debug log', 'versatile-toolkit' ), 400 );
@@ -421,7 +421,7 @@ class DebugLog {
 			$log_path = $this->get_debug_log_path();
 
 			if ( ! file_exists( $log_path ) ) {
-				$this->json_response( 'Debug log file not found', 400 );
+				$this->json_response( __( 'Debug log file not found', 'versatile-toolkit' ), 400 );
 			}
 
 			$filename = 'debug-log-' . gmdate( 'Y-m-d-H-i-s' ) . '.log';
@@ -433,7 +433,7 @@ class DebugLog {
 			readfile( $log_path );
 			exit;
 		} catch ( \Throwable $th ) {
-			$this->json_response( 'Error downloading debug log', 400 );
+			$this->json_response( __( 'Error downloading debug log', 'versatile-toolkit' ), 400 );
 		}
 	}
 
