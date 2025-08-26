@@ -289,7 +289,7 @@ const TemplateSelector = <T extends TemplateType>({ selectedTemplate, onTemplate
 
       {/* Template Preview Modal */}
       {previewTemplate && (
-        <div className="template-preview-wrapper fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        <div className="template-preview-wrapper fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-50"
           onClick={handleBackdropClick}
         >
           <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">

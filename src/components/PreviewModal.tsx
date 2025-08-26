@@ -59,7 +59,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed inset-0 z-[999999] flex items-center justify-center bg-black bg-opacity-50"
           onClick={handleBackdropClick}
         >
           <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
