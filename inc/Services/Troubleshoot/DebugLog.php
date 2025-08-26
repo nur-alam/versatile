@@ -247,14 +247,13 @@ class DebugLog {
 			$log_path      = $this->get_debug_log_path();
 
 			if ( ! file_exists( $log_path ) ) {
-				wp_send_json_success(
-					array(
-						'entries'      => array(),
-						'total_lines'  => 0,
-						'current_page' => 1,
-						'total_pages'  => 0,
-					)
+				$data = array(
+					'entries'      => array(),
+					'total_lines'  => 0,
+					'current_page' => 1,
+					'total_pages'  => 0,
 				);
+				$this->json_response( __( 'Debug log file not found', 'versatile-toolkit' ), $data, 400 );
 			}
 
 			$page     = (int) $verified_data->page;
