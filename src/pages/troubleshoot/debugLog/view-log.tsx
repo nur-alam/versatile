@@ -14,9 +14,12 @@ import {
 
 import { DebugRow } from '@/services/debug-log-services';
 import { __ } from '@wordpress/i18n';
+import { getLogTypeColor } from '@/utils/log-type-utils';
+
+
 
 export const ViewLog = ({ row }: { row: DebugRow }) => {
-	const { type, message, raw_line, severity, timestamp } = row;
+	const { raw_line } = row;
 	return <div className="flex gap-1">
 		<Dialog>
 			<DialogTrigger asChild>
@@ -31,13 +34,13 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Warning Type: {row.type}</DialogTitle>
+					<DialogTitle>Warning Type: <span className={getLogTypeColor(row.type)}>{row.type}</span></DialogTitle>
 					<DialogDescription className='mt-2 hidden'>
 						{row.timestamp}
 					</DialogDescription>
 				</DialogHeader>
 				<div className="max-h-[70vh] overflow-auto bg-[#e5e5e5] p-3 my-2">
-					<span>{raw_line}</span>
+					<pre className="whitespace-pre-wrap font-mono text-sm">{raw_line}</pre>
 				</div>
 				<DialogFooter className="sm:justify-end">
 					<DialogClose asChild>
