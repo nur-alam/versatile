@@ -40,7 +40,7 @@ export interface DebugLogData {
     current_page: number;
     entries: DebugRow[];
     per_page: number;
-    total_lines: number;
+    total_entries: number;
     total_pages: number;
 }
 
@@ -175,7 +175,7 @@ export const debugLogApi = {
                 const data = responseData.data as DebugLogData;
                 return {
                     data: data.entries,
-                    total: data?.total_lines,
+                    total: data?.total_entries,
                     totalPages: data?.total_pages
                 };
             } else {

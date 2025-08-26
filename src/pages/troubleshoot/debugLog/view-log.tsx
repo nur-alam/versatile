@@ -15,7 +15,6 @@ import {
 import { DebugRow } from '@/services/debug-log-services';
 
 export const ViewLog = ({ row }: { row: DebugRow }) => {
-	console.log('full row', row);
 	return <div className="flex gap-1">
 		<Dialog>
 			<DialogTrigger asChild>
@@ -28,9 +27,9 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 					<Eye className="h-4 w-4" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-md">
+			<DialogContent className="">
 				<DialogHeader>
-					<DialogTitle>Warning Type: {row.severity}</DialogTitle>
+					<DialogTitle>Warning Type: {row.type}</DialogTitle>
 					<DialogDescription className='mt-2 hidden'>
 						{row.timestamp}
 					</DialogDescription>
@@ -38,9 +37,6 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 				<div className="flex flex-col gap-2">
 					<div>
 						<strong>Description</strong>: <span>{row.message}</span>
-					</div>
-					<div>
-						<strong>Role</strong>: <span>{row.type}</span>
 					</div>
 				</div>
 				<DialogFooter className="sm:justify-end">

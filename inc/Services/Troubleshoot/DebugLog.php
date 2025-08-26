@@ -249,38 +249,32 @@ class DebugLog {
 			if ( ! file_exists( $log_path ) ) {
 				$data = array(
 					'entries'      => array(),
-					'total_lines'  => 0,
+					'total_entries' => 0,
 					'current_page' => 1,
 					'total_pages'  => 0,
 				);
 				$this->json_response( __( 'Debug log file not found', 'versatile-toolkit' ), $data, 400 );
 			}
 
-			$page     = (int) $verified_data->page;
-			$per_page = (int) $verified_data->per_page;
+			$page     = isset($verified_data->page) ? (int) $verified_data->page : 1;
+			$per_page = isset($verified_data->per_page) ? (int) $verified_data->per_page : 20;
 
-			$lines       = file( $log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-			$total_lines = count( $lines );
-			$total_pages = ceil( $total_lines / $per_page );
+			$lines = file( $log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+			
+			// Parse complete error entries (multi-line support)
+			$error_entries = $this->parse_complete_error_entries( $lines );
+			$total_entries = count( $error_entries );
+			$total_pages = ceil( $total_entries / $per_page );
 
-			// Reverse lines to show newest first
-			$lines = array_reverse( $lines );
+			// Reverse entries to show newest first
+			$error_entries = array_reverse( $error_entries );
 
 			$start      = ( $page - 1 ) * $per_page;
-			$page_lines = array_slice( $lines, $start, $per_page );
-
-			// Parse log entries
-			$parsed_entries = array();
-			foreach ( $page_lines as $index => $line ) {
-				$parsed_entry = $this->parse_log_entry( $line, $start + $index + 1 );
-				if ( $parsed_entry ) {
-					$parsed_entries[] = $parsed_entry;
-				}
-			}
+			$parsed_entries = array_slice( $error_entries, $start, $per_page );
 
 			$data = array(
 				'entries'      => $parsed_entries,
-				'total_lines'  => $total_lines,
+				'total_entries' => $total_entries,
 				'current_page' => $page,
 				'total_pages'  => $total_pages,
 				'per_page'     => $per_page,
@@ -290,6 +284,45 @@ class DebugLog {
 		} catch ( \Throwable $th ) {
 			$this->json_response( __( 'Error getting debug log content', 'versatile-toolkit' ), 400 );
 		}
+	}
+
+	/**
+	 * Parse complete error entries from log lines, handling multi-line errors.
+	 *
+	 * @param array $lines Array of log lines.
+	 * @return array Array of parsed error entries.
+	 */
+	private function parse_complete_error_entries( $lines ) {
+		$error_entries = array();
+		$current_error = null;
+		$entry_id = 1;
+
+		foreach ( $lines as $line_number => $line ) {
+			// Check if this line starts a new error entry
+			if ( preg_match( '/^\[([^\]]+)\]\s+(PHP\s+)?(Notice|Warning|Error|Fatal\s+error|Parse\s+error|Deprecated|Strict\s+Standards|WordPress\s+database\s+error):/i', $line, $matches ) ) {
+				// Save previous error if exists
+				if ( $current_error !== null ) {
+					$error_entries[] = $current_error;
+				}
+
+				// Start new error entry
+				$current_error = $this->parse_log_entry( $line, $entry_id++ );
+			} elseif ( $current_error !== null ) {
+				// This line is part of the current error (stack trace, continuation, etc.)
+				// Skip automatic update messages and other non-error lines
+				if ( !preg_match( '/^\[([^\]]+)\]\s+(Automatic\s+updates|WordPress\s+database\s+error)/i', $line ) ) {
+					$current_error['message'] .= "\n" . trim( $line );
+					$current_error['raw_line'] .= "\n" . $line;
+				}
+			}
+		}
+
+		// Don't forget the last error
+		if ( $current_error !== null ) {
+			$error_entries[] = $current_error;
+		}
+
+		return $error_entries;
 	}
 
 	/**

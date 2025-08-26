@@ -16,7 +16,6 @@ import {
 } from '@/services/debug-log-services';
 
 
-
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
 	const [searchParams] = useSearchParams();
@@ -105,11 +104,31 @@ const debugLog = () => {
 	const columns = [
 		{ key: "id", header: "No" },
 		{ key: "type", header: "Type" },
-		{ key: "message", header: "Message" },
+		{
+			key: "message", header: "Message",
+			render: (row, value?: string) => {
+				return <>{row['message'].substring(0, 200)}...</>;
+			}
+		},
 		{ key: "severity", header: "Severity" },
 		{
 			key: "timestamp", header: "Timestamp",
-			render: (row, value?: string) => new Date(value || '').toLocaleString() || ''
+			render: (row) => {
+				const timestamp = row['timestamp'];
+				if (!timestamp) return 'Invalid Date';
+
+				try {
+					// Parse the format "18-Aug-2025 20:01:25 UTC"
+					// Convert to ISO format for proper parsing
+					const cleanTimestamp = timestamp.replace(' UTC', '');
+					const date = new Date(cleanTimestamp + ' UTC');
+					// Convert to local time and format
+					return date.toLocaleString();
+				} catch (error) {
+					console.error('Error parsing timestamp:', timestamp, error);
+					return 'Invalid Date';
+				}
+			}
 		},
 		{
 			key: 'actions', header: 'Actions',
