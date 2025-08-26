@@ -30,7 +30,7 @@ const DebugLogSettings = ({
 			{/* Debug Logging Status */}
 			<div className="space-y-3 relative">
 				{!statusLoading ? (
-					<div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border">
+					<div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border">
 						<div className="flex items-center space-x-3">
 							<div className={`w-3 h-3 rounded-full ${debugStatus ? 'bg-green-500' : 'bg-red-500'}`}></div>
 							<div>
@@ -116,7 +116,7 @@ const DebugLogSettings = ({
 			{/* Log File Information */}
 			<div className="space-y-3">
 				{isLoading ? (
-					<div className="p-4 bg-slate-50 rounded-lg border">
+					<div className="p-3 bg-slate-50 rounded-lg border">
 						<div className="h-9 bg-slate-200 rounded animate-pulse mb-3"></div>
 						<div className="space-y-2">
 							<div className="flex justify-between items-center">

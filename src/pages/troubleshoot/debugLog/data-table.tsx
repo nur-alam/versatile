@@ -208,6 +208,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
 
         {/* Footer */}
         <div className="flex flex-col gap-3 border-t border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* per page dropdown, showing total */}
           <div className="flex items-center gap-2">
             <div className="text-xs text-slate-600">
               Showing <span className="font-semibold">{rows.length ? (page - 1) * perPage + 1 : 0}</span>–
@@ -230,7 +231,129 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
               </select>
             </div>
           </div>
+
           <div className="flex items-center gap-1">
+            {/* Previous Button */}
+            <button
+              className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => {
+                const prevPage = Math.max(1, page - 1);
+                setPage(prevPage);
+                navigate(buildNavigationParams(prevPage, perPage, query, sort.key, sort.order));
+              }}
+              disabled={page === 1}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1 mx-2">
+              {(() => {
+                const pages = [];
+                const maxVisiblePages = 3;
+                let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2)); 2
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1); 4
+
+                // Adjust start if we're near the end
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                  startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                // First page + ellipsis if needed
+                if (startPage > 1) {
+                  pages.push(
+                    <button
+                      key={1}
+                      className={`min-w-[40px] h-10 rounded-lg text-sm font-medium ${1 === page
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                      onClick={() => {
+                        setPage(1);
+                        navigate(buildNavigationParams(1, perPage, query, sort.key, sort.order));
+                      }}
+                    >
+                      1
+                    </button>
+                  );
+
+                  if (startPage > 2) {
+                    pages.push(
+                      <span key="ellipsis1" className="px-2 text-slate-400">
+                        ...
+                      </span>
+                    );
+                  }
+                }
+
+                // Visible page range
+                for (let i = startPage; i <= endPage; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      className={`min-w-[40px] h-10 rounded-lg text-sm font-medium ${i === page
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                      onClick={() => {
+                        setPage(i);
+                        navigate(buildNavigationParams(i, perPage, query, sort.key, sort.order));
+                      }}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+
+                // Last page + ellipsis if needed
+                if (endPage < totalPages) {
+                  if (endPage < totalPages - 1) {
+                    pages.push(
+                      <span key="ellipsis2" className="px-2 text-slate-400">
+                        ...
+                      </span>
+                    );
+                  }
+
+                  pages.push(
+                    <button
+                      key={totalPages}
+                      className={`min-w-[40px] h-10 rounded-lg text-sm font-medium ${totalPages === page
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                      onClick={() => {
+                        setPage(totalPages);
+                        navigate(buildNavigationParams(totalPages, perPage, query, sort.key, sort.order));
+                      }}
+                    >
+                      {totalPages}
+                    </button>
+                  );
+                }
+
+                return pages;
+              })()}
+            </div>
+
+            {/* Next Button */}
+            <button
+              className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => {
+                const nextPage = Math.min(totalPages, page + 1);
+                setPage(nextPage);
+                navigate(buildNavigationParams(nextPage, perPage, query, sort.key, sort.order));
+              }}
+              disabled={page === totalPages}
+            >
+              Next
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* pagination */}
+          {/* <div className="flex items-center gap-1">
             <button
               className="rounded-xl px-3 py-1.5 text-sm shadow-sm border border-slate-200 disabled:opacity-40"
               onClick={() => {
@@ -275,7 +398,7 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
             >
               Last »
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

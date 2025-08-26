@@ -12,9 +12,10 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog"
 
-import { DebugRow } from './debug-log';
+import { DebugRow } from '@/services/debug-log-services';
 
 export const ViewLog = ({ row }: { row: DebugRow }) => {
+	console.log('full row', row);
 	return <div className="flex gap-1">
 		<Dialog>
 			<DialogTrigger asChild>
