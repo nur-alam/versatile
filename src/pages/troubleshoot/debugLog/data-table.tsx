@@ -1,8 +1,8 @@
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Eye, Edit, Trash2, ArrowUpAZ, ArrowDownAZ } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpAZ, ArrowDownAZ } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
+import { TableSkeleton, type TableSkeletonColumn } from "@/components/loader";
 
 /**
  * Server-side DataTable
@@ -179,11 +179,13 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-500">
-                    {__('Loading...', 'versatile-toolkit')}
-                  </td>
-                </tr>
+                <TableSkeleton
+                  columns={columns.map(col => ({
+                    key: String(col.key),
+                    type: String(col.key) as TableSkeletonColumn['type']
+                  }))}
+                  rows={perPage}
+                />
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-500">

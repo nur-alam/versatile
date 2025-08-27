@@ -14,6 +14,7 @@ import {
 	debugLogApi,
 	DebugRow
 } from '@/services/debug-log-services';
+import { LogTypeDisplay } from '@/utils/log-type-utils';
 
 
 const debugLog = () => {
@@ -105,25 +106,8 @@ const debugLog = () => {
 		{ key: "id", header: "No" },
 		{
 			key: "type", header: "Type",
-			render: (row, key?: string) => {
-				const getTypeDisplay = (type: string) => {
-					switch (type) {
-						case 'PHP Fatal error':
-						case 'PHP Error':
-						case 'PHP Parse error':
-							return <span className='text-red-500'>Error</span>;
-						case 'PHP Warning':
-							return <span className='text-yellow-500'>Warning</span>;
-						case 'PHP Notice':
-							return <span className='text-blue-500'>Info</span>;
-						case 'debug':
-							return <span className='text-gray-500'>Debug</span>;
-						default:
-							return <span className='text-gray-500'>{type}</span>;
-					}
-				};
-
-				return getTypeDisplay(row['type']);
+			render: (row) => {
+				return <LogTypeDisplay type={row['type']} />;
 			}
 		},
 		{
@@ -160,48 +144,63 @@ const debugLog = () => {
 
 	return (
 		<div className="mx-auto max-w-6xl p-6">
-			<div className='bg-white p-6 rounded-lg border border-slate-200 mt-3'>
-				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-4">
-						<div className={`w-3 h-3 rounded-full ${debugStatus ? 'bg-green-500' : 'bg-red-500'}`}></div>
-						<div>
-							<h3 className="font-medium text-slate-800">{__('Debug Logging', 'versatile-toolkit')}</h3>
-							<p className="text-sm text-slate-600">
-								{debugStatus ? __('Currently enabled', 'versatile-toolkit') : __('Currently disabled', 'versatile-toolkit')}
-								{isAutoRefresh && <span className="ml-2 text-blue-600">• {__('Auto refresh active', 'versatile-toolkit')}</span>}
-							</p>
-						</div>
-					</div>
-					<Sheet>
-						<SheetTrigger asChild>
-							<button className="flex items-center space-x-2 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-								</svg>
-								<span className="text-sm">{__('Settings', 'versatile-toolkit')}</span>
-							</button>
-						</SheetTrigger>
-						<SheetContent>
-							<SheetHeader>
-								<SheetTitle>{__('Debug Log Settings', 'versatile-toolkit')}</SheetTitle>
-							</SheetHeader>
-							<div className="mt-6">
-								<DebugLogSettings
-									debugStatus={debugStatus}
-									logFileInfo={logFileInfo}
-									isAutoRefresh={isAutoRefresh}
-									isLoading={isLoading}
-									statusLoading={statusLoading}
-									onToggleDebugLog={handleToggleDebugLog}
-									onToggleAutoRefresh={handleToggleAutoRefresh}
-									onStopAutoRefresh={handleStopAutoRefresh}
-								/>
+			{statusLoading ?
+				<div className="bg-white p-6 rounded-lg border border-slate-200 mt-3">
+					<div className="flex items-center justify-between animate-pulse">
+						<div className="flex items-center space-x-4">
+							<div className="w-3 h-3 rounded-full bg-slate-300"></div>
+							<div>
+								<div className="h-5 bg-slate-300 rounded w-32 mb-2"></div>
+								<div className="h-3 bg-slate-200 rounded w-24"></div>
 							</div>
-						</SheetContent>
-					</Sheet>
+						</div>
+						<div className="h-9 bg-slate-300 rounded-lg w-20"></div>
+					</div>
 				</div>
-			</div>
+				:
+				<div className='bg-white p-6 rounded-lg border border-slate-200 mt-3'>
+					<div className="flex items-center justify-between">
+						<div className="flex items-center space-x-4">
+							<div className={`w-3 h-3 rounded-full ${debugStatus ? 'bg-green-500' : 'bg-red-500'}`}></div>
+							<div>
+								<h3 className="font-medium text-slate-800">{__('Debug Logging', 'versatile-toolkit')}</h3>
+								<p className="text-sm text-slate-600">
+									{debugStatus ? __('Currently enabled', 'versatile-toolkit') : __('Currently disabled', 'versatile-toolkit')}
+									{isAutoRefresh && <span className="ml-2 text-blue-600">• {__('Auto refresh active', 'versatile-toolkit')}</span>}
+								</p>
+							</div>
+						</div>
+						<Sheet>
+							<SheetTrigger asChild>
+								<button className="flex items-center space-x-2 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
+									<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+									</svg>
+									<span className="text-sm">{__('Settings', 'versatile-toolkit')}</span>
+								</button>
+							</SheetTrigger>
+							<SheetContent>
+								<SheetHeader>
+									<SheetTitle>{__('Debug Log Settings', 'versatile-toolkit')}</SheetTitle>
+								</SheetHeader>
+								<div className="mt-6">
+									<DebugLogSettings
+										debugStatus={debugStatus}
+										logFileInfo={logFileInfo}
+										isAutoRefresh={isAutoRefresh}
+										isLoading={isLoading}
+										statusLoading={statusLoading}
+										onToggleDebugLog={handleToggleDebugLog}
+										onToggleAutoRefresh={handleToggleAutoRefresh}
+										onStopAutoRefresh={handleStopAutoRefresh}
+									/>
+								</div>
+							</SheetContent>
+						</Sheet>
+					</div>
+				</div>
+			}
 			<div className="my-8">
 				<div className=' bg-white rounded-lg border p-2 flex items-center justify-between'>
 					<h3 className="font-medium text-slate-800 text-lg">{__('Debug Log', 'versatile-toolkit')}</h3>
