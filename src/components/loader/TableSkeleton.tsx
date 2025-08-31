@@ -2,18 +2,23 @@ import React from 'react';
 
 export interface TableSkeletonColumn {
   key: string;
-  type?: 'id' | 'type' | 'message' | 'timestamp' | 'actions' | 'default';
+  label?: string;
 }
 
 export interface TableSkeletonProps {
-  columns: TableSkeletonColumn[];
+  columns?: TableSkeletonColumn[];
   rows?: number;
   className?: string;
   animate?: boolean;
 }
 
+const DefaultColumns = Array.from({ length: 10 }, (_, index) => ({
+  key: `column-${index}`,
+  label: `Column ${index + 1}`,
+}));
+
 export function TableSkeleton({ 
-  columns, 
+  columns = DefaultColumns,
   rows = 10, 
   className = '', 
   animate = true 
@@ -60,7 +65,7 @@ export function TableSkeleton({
         >
           {columns.map((col, colIndex) => (
             <td key={`skeleton-${index}-${colIndex}`} className="px-4 py-3">
-              {getSkeletonForColumn(col.type || col.key)}
+              {getSkeletonForColumn(col.label || col.key)}
             </td>
           ))}
         </tr>

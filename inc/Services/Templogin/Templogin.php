@@ -67,7 +67,7 @@ class Templogin {
 		// }
 
 		// Also trigger cleanup on admin pages and temp login attempts as fallback
-		// add_action( 'admin_init', array( $this, 'maybe_cleanup_expired_logins' ) );
+		add_action( 'admin_init', array( $this, 'maybe_cleanup_expired_logins' ) );
 		// add_action( 'init', array( $this, 'maybe_cleanup_expired_logins' ) );
 
 		// add_filter(
@@ -350,8 +350,7 @@ class Templogin {
 			// Check if email already exists
 			$existing_temp_login = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE email = %s',
-					$this->table_name,
+					"SELECT * FROM {$this->table_name} WHERE email = %s",
 					$verified_data->email
 				)
 			);
@@ -402,8 +401,7 @@ class Templogin {
 			// Get the created record
 			$temp_login = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE id = %d',
-					$this->table_name,
+					"SELECT * FROM {$this->table_name} WHERE id = %d",
 					$temp_login_id
 				)
 			);
@@ -575,8 +573,7 @@ class Templogin {
 			// Get updated record
 			$updated_temp_login = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE id = %d',
-					$this->table_name,
+					"SELECT * FROM {$this->table_name} WHERE id = %d",
 					$verified_data->id
 				)
 			);
@@ -638,8 +635,7 @@ class Templogin {
 			// Check if temp login exists
 			$temp_login = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE id = %d',
-					$this->table_name,
+					"SELECT * FROM {$this->table_name} WHERE id = %d",
 					$verified_data->id
 				)
 			);
@@ -721,8 +717,7 @@ class Templogin {
 			// Get updated record
 			$temp_login = $wpdb->get_row(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE id = %d',
-					$this->table_name,
+					"SELECT * FROM {$this->table_name} WHERE id = %d",
 					$verified_data->id
 				)
 			);
@@ -793,8 +788,7 @@ class Templogin {
 		// Get temporary login by token
 		$temp_login = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %s WHERE token = %s AND is_active = 1 AND expires_at > NOW()',
-				$this->table_name,
+				"SELECT * FROM {$this->table_name} WHERE token = %s AND is_active = 1 AND expires_at > NOW()",
 				$token
 			)
 		);
@@ -816,7 +810,7 @@ class Templogin {
 
 		// Update login statistics
 		$wpdb->update(
-			$this->table_name,
+			"{$this->table_name}",
 			array(
 				'last_login'  => current_time( 'mysql', true ),
 				'login_count' => $temp_login->login_count + 1,
@@ -933,11 +927,17 @@ class Templogin {
 		// Log cleanup start for debugging
 		error_log( 'Versatile Temp Login: Starting cleanup at ' . current_time( 'mysql' ) );
 
+		// update is_active to false for expired logins
+		$update_is_active = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$this->table_name} SET is_active = 0 WHERE expires_at <= NOW() AND is_active = 1",
+			)
+		);
+
 		// Delete expired temporary logins
 		$deleted_count = $wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM %s WHERE expires_at <= NOW()',
-				$this->table_name
+				"DELETE FROM {$this->table_name} WHERE expires_at <= NOW()",
 			)
 		);
 		error_log( "Versatile Temp Login: Deleted {$deleted_count} expired logins" );
@@ -957,8 +957,7 @@ class Templogin {
 			// Check if associated temp login still exists
 			$temp_login_exists = $wpdb->get_var(
 				$wpdb->prepare(
-					'SELECT COUNT(*) FROM %s WHERE id = %d',
-					$this->table_name,
+					"SELECT COUNT(*) FROM {$this->table_name} WHERE id = %d",
 					$temp_login_id
 				)
 			);
@@ -979,10 +978,11 @@ class Templogin {
 	 */
 	public function maybe_cleanup_expired_logins() {
 		// Only run cleanup every 5 minutes to avoid performance issues
+		// if ( ! defined( 'DOING_CRON' ) || ! DOING_CRON ) {
 		$last_cleanup = get_option( 'versatile_last_temp_login_cleanup', 0 );
 		$current_time = time();
 
-		if ( ( $current_time - $last_cleanup ) > 300 ) { // 5 minutes
+		if ( ( $current_time - $last_cleanup ) > 3 ) { // 5 minutes
 			update_option( 'versatile_last_temp_login_cleanup', $current_time );
 			$this->cleanup_expired_logins();
 		}
@@ -1038,8 +1038,7 @@ class Templogin {
 			// Get total count
 			$total_entries = $wpdb->get_var(
 				$wpdb->prepare(
-					'SELECT COUNT(*) FROM %s WHERE temp_login_id = %d',
-					$this->activity_table_name,
+					"SELECT COUNT(*) FROM {$this->activity_table_name} WHERE temp_login_id = %d",
 					$verified_data->temp_login_id
 				)
 			);
@@ -1047,8 +1046,7 @@ class Templogin {
 			// Get paginated results
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM %s WHERE temp_login_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d',
-					$this->activity_table_name,
+					"SELECT * FROM {$this->activity_table_name} WHERE temp_login_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d",
 					$verified_data->temp_login_id,
 					$per_page,
 					$offset
@@ -1139,6 +1137,18 @@ class Templogin {
 
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to run manual cleanup', 'versatile-toolkit' ), array(), 500 );
+		}
+	}
+
+	/**
+	 * Cleanup expired temporary logins
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function versatile_cleanup_temp_user( $user_id ) {
+		$user = get_userdata( $user_id );
+		if ( $user ) {
+			wp_delete_user( $user_id );
 		}
 	}
 }

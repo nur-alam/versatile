@@ -79,7 +79,7 @@ export const tempLoginApi = {
 		const payload = {
 			action: 'versatile_get_temp_login_list',
 			...params,
-		};
+        };
 		const response = await fetchUtil<TempLoginListData>(config.ajax_url, { body: payload });
 		if (200 !== response.status_code) {
 			throw new Error(response.message || __('Failed to get temporary login list', 'versatile-toolkit'));

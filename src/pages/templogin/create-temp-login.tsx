@@ -133,9 +133,8 @@ const CreateTempLogin = () => {
 														isAvailableRolesLoading ?
 															<InlineLoader size="md" className='ml-2' text={__('Loading roles', 'versatile-toolkit')} />
 															:
-															availableRoles &&
-															rolesOptions.map((option) => (
-																<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+															Object.entries(availableRoles ?? {}).map(([key, value]) => (
+																<SelectItem key={key} value={key}>{String(value)}</SelectItem>
 															))
 													}
 												</SelectContent>
