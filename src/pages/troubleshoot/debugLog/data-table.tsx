@@ -126,8 +126,6 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
       .finally(() => setLoading(false));
   }, [page, perPage, query, sort]);
 
-  console.log(rows);
-
   function toggleSort(key: string) {
     setSort((prev) => {
       if (prev.key !== key) return { key, order: "asc" };

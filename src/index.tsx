@@ -7,6 +7,7 @@ import Dashboard from '@/pages/versatile';
 import TroubleShoot from '@/pages/troubleshoot';
 import Maintenance from '@pages/maintenance';
 import Comingsoon from '@/pages/comingsoon';
+import TempLogin from '@/pages/templogin/temp-login';
 import Header from '@/pages/Header';
 import { RouteGuard } from '@/components/RouteGuard';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -68,6 +69,13 @@ root.render(
 								<RouteGuard>
 									<ErrorBoundary>
 										<Comingsoon />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+							<Route path="/templogin" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<TempLogin />
 									</ErrorBoundary>
 								</RouteGuard>
 							} />

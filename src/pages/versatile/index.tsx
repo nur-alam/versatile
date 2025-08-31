@@ -16,7 +16,7 @@ const Dashboard = () => {
 			<div className='mt-10 flex flex-wrap gap-3'>
 				{
 					isLoading ? <SkeletonLoader lines={3} height="h-[100px]" width="w-[900px]" /> :
-						Object.entries(serviceList)
+						serviceList && Object.entries(serviceList)
 							.filter(([key, addon]) => addon.enable) // Only show enabled services
 							.map(([key, addon]) => (
 								<Card key={key} className='w-[300px] hover:bg-gray-100 rounded-sm'>

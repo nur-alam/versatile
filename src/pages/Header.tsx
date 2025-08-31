@@ -17,8 +17,6 @@ const Header = () => {
     const { data: serviceListResponse, isLoading: servicesIsLoading } = useGetServiceList();
     const services = serviceListResponse?.data as ServiceListType;
 
-    console.log('services', services?.troubleshoot.enable);
-
     // Get current service based on the route
     const getCurrentService = () => {
         if (!services || location.pathname === '/') return null;

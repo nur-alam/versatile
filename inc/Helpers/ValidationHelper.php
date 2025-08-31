@@ -144,6 +144,16 @@ class ValidationHelper {
 								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not an array', 'versatile-toolkit' );
 							}
 							break;
+						case 'in_array':
+							$values = explode( ':', $rule, 2 )[1];
+							if ( empty( $data[ $key ] ) ) {
+								break;
+							}
+							if ( ! self::in_array( $data[ $key ], explode( ',', $values ) ) ) {
+								$validation_pass             = false;
+								$validation_errors[ $key ][] = versatile_readable_key( $key ) . __( ' is not valid', 'versatile-toolkit' );
+							}
+							break;
 						case 'date_format':
 							$format = explode( ':', $rule, 2 )[1];
 							if ( ! self::is_valid_date( $data[ $key ], $format ) ) {

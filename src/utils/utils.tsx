@@ -1,3 +1,6 @@
+import { __ } from "@wordpress/i18n";
+import toast from "react-hot-toast";
+
 export function getSlugFromUrl(url: string = '', slug: string = 'page'): string {
 	if (url && slug) {
 		const _url = new URL(url);
@@ -87,3 +90,12 @@ export const copyToClipboard = (text: string) => {
 		}
 	});
 };
+
+export const copyUrl = async (url: string) => {
+	try {
+		await copyToClipboard(url);
+		toast.success(__('URL copied to clipboard!', 'versatile-toolkit'));
+	} catch (error) {
+		toast.error(__('Failed to copy URL', 'versatile-toolkit'));
+	}
+}

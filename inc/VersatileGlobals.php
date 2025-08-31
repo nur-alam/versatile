@@ -96,7 +96,7 @@ function versatile_sanitization_validation( $inputs = array() ) {
 			'name'     => 'versatile_nonce',
 			'value'    => $_REQUEST['versatile_nonce'], //phpcs:ignore
 			'sanitize' => 'sanitize_text_field',
-			'rules'    => 'required|alphanumeric',
+			'rules'    => 'required',
 		),
 	);
 	$merged_inputs    = array_merge( $default_inputs, $inputs );

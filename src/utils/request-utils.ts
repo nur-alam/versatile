@@ -10,7 +10,7 @@ type FetchUtilOptions = {
 
 type optionsType = Omit<RequestInit, 'body'> & { body?: AnyObject };
 
-export async function fetchUtil(endpoint: string, options: optionsType): Promise<VersatileResponseType> {
+export async function fetchUtil<T>(endpoint: string, options: optionsType): Promise<VersatileResponseType<T>> {
 	const { wp_rest_nonce, nonce_key, nonce_value } = config;
 	let url = `${endpoint}`;
 
@@ -38,7 +38,7 @@ export async function fetchUtil(endpoint: string, options: optionsType): Promise
 
 	try {
 		const apiResponse = await fetch(url, fetchOptions);
-		const response = (await apiResponse.json()) as VersatileResponseType;
+		const response = (await apiResponse.json()) as VersatileResponseType<T>;
 
 		if (response.status_code === 200) {
 			return response;

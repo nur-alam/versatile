@@ -18,6 +18,7 @@ use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
 use Versatile\Services\QuickPick\QuickPick;
+use Versatile\Services\Templogin\Templogin;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -48,6 +49,11 @@ class ServiceInit {
 		}
 		if ( $versatile_service_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
+		}
+
+		// Templogin service
+		if ( $versatile_service_list['templogin']['enable'] ) {
+			new Templogin();
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
