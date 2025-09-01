@@ -163,8 +163,8 @@ const TempLoginTable = () => {
 										{getStatusBadge(tempLogin)}
 									</TableCell>
 									<TableCell>
-										{tempLogin.expires_at}
-										{/* {new Date(tempLogin.expires_at).toLocaleString('en-BD', {
+										{/* {tempLogin.expires_at} */}
+										{new Date(tempLogin.expires_at).toLocaleString('en-BD', {
 											timeZone: 'Asia/Dhaka',
 											hour12: true,
 											year: 'numeric',
@@ -172,7 +172,7 @@ const TempLoginTable = () => {
 											day: 'numeric',
 											hour: '2-digit',
 											minute: '2-digit',
-										})} */}
+										})}
 									</TableCell>
 									<TableCell>
 										{tempLogin.login_count}

@@ -61,13 +61,13 @@ class Templogin {
 		add_action( 'init', array( $this, 'handle_temp_login' ) );
 
 		// Clean up expired logins
-		// add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
-		// if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
-		// wp_schedule_event( time(), 'per_minute', 'versatile_cleanup_expired_temp_logins' );
-		// }
+		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
+		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
+			wp_schedule_event( time(), 'daily', 'versatile_cleanup_expired_temp_logins' );
+		}
 
 		// Also trigger cleanup on admin pages and temp login attempts as fallback
-		add_action( 'admin_init', array( $this, 'maybe_cleanup_expired_logins' ) );
+		// add_action( 'admin_init', array( $this, 'maybe_cleanup_expired_logins' ) );
 		// add_action( 'init', array( $this, 'maybe_cleanup_expired_logins' ) );
 
 		// add_filter(
@@ -347,6 +347,8 @@ class Templogin {
 
 			global $wpdb;
 
+			$current_time = current_time( 'mysql', true );
+
 			// Check if email already exists
 			$existing_temp_login = $wpdb->get_row(
 				$wpdb->prepare(
@@ -414,7 +416,6 @@ class Templogin {
 				'email'        => $temp_login->email,
 				'expires_at'   => $temp_login->expires_at,
 				'redirect_url' => $temp_login->redirect_url,
-				'language'     => $temp_login->language,
 				'created_at'   => $temp_login->created_at,
 				'last_login'   => $temp_login->last_login,
 				'login_count'  => intval( $temp_login->login_count ),
@@ -423,7 +424,6 @@ class Templogin {
 			);
 
 			return $this->json_response( __( 'Temporary login created successfully', 'versatile-toolkit' ), $response_data, 200 );
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 		}
@@ -777,6 +777,15 @@ class Templogin {
 	 * Handle temporary login authentication
 	 */
 	public function handle_temp_login() {
+		// if ( ! function_exists( 'wp_get_scheduled_events' ) ) {
+		// 	echo 'This function requires WordPress 5.1 or higher.';
+		// 	return;
+		// }
+
+		// $events = wp_get_scheduled_events( 'versatile_cleanup_expired_temp_logins',  );
+
+		// var_dump( $events );
+
 		if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
 			return;
 		}
@@ -869,7 +878,7 @@ class Templogin {
 		$user_id = wp_insert_user( $user_data );
 
 		// Schedule user deletion after session ends
-		wp_schedule_single_event( time() + DAY_IN_SECONDS, 'versatile_cleanup_temp_user', array( $user_id ) );
+		wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'versatile_cleanup_temp_user', array( $user_id ) );
 
 		return $user_id;
 	}
@@ -927,10 +936,12 @@ class Templogin {
 		// Log cleanup start for debugging
 		error_log( 'Versatile Temp Login: Starting cleanup at ' . current_time( 'mysql' ) );
 
+		$now = current_time( 'mysql' );
+
 		// update is_active to false for expired logins
 		$update_is_active = $wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$this->table_name} SET is_active = 0 WHERE expires_at <= NOW() AND is_active = 1",
+				"UPDATE {$this->table_name} SET is_active = 0 WHERE expires_at <= NOW()",
 			)
 		);
 
@@ -1102,8 +1113,8 @@ class Templogin {
 				$datetime = new \DateTime( $datetime_string );
 			}
 			// Convert to WordPress timezone
-			$wp_timezone = wp_timezone();
-			$datetime->setTimezone( $wp_timezone );
+			// $wp_timezone = wp_timezone();
+			// $datetime->setTimezone( $wp_timezone );
 			// Return in MySQL format
 			return $datetime->format( 'Y-m-d H:i:s' );
 		} catch ( \Exception $e ) {
@@ -1146,6 +1157,7 @@ class Templogin {
 	 * @param int $user_id The user ID.
 	 */
 	public function versatile_cleanup_temp_user( $user_id ) {
+		error_log( 'schedule wp cron versatile_cleanup_temp_user: ' . $user_id );
 		$user = get_userdata( $user_id );
 		if ( $user ) {
 			wp_delete_user( $user_id );
