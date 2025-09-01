@@ -44,6 +44,18 @@ class Templogin {
 		$this->table_name          = $wpdb->prefix . 'versatile_temp_logins';
 		$this->activity_table_name = $wpdb->prefix . 'versatile_temp_login_activity';
 
+		// Add custom cron schedule FIRST (before any scheduling)
+		// add_filter(
+		// 'cron_schedules',
+		// function ( $schedules ) {
+		// $schedules['per_3_minute'] = array(
+		// 'interval' => 180, // 180 seconds
+		// 'display'  => __( 'Once Per 3 Minutes' ),
+		// );
+		// return $schedules;
+		// }
+		// );
+
 		// Create database tables
 		$this->create_tables();
 
@@ -62,24 +74,13 @@ class Templogin {
 
 		// Clean up expired logins
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
+
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
-			wp_schedule_event( time(), 'daily', 'versatile_cleanup_expired_temp_logins' );
+			wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
 		}
-
-		// Also trigger cleanup on admin pages and temp login attempts as fallback
-		// add_action( 'admin_init', array( $this, 'maybe_cleanup_expired_logins' ) );
-		// add_action( 'init', array( $this, 'maybe_cleanup_expired_logins' ) );
-
-		// add_filter(
-		// 'cron_schedules',
-		// function ( $schedules ) {
-		// $schedules['per_minute'] = array(
-		// 'interval' => 60, // 60 seconds = 1 minute
-		// 'display'  => __( 'Once Per Minute' ),
-		// );
-		// return $schedules;
-		// }
-		// );
+		// $next_scheduled = wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' );
+		// $schedule_details = wp_get_scheduled_event( 'versatile_cleanup_expired_temp_logins', array(), $next_scheduled );
+		// $available_schedules = wp_get_schedules();
 	}
 
 	/**
@@ -767,7 +768,6 @@ class Templogin {
 			}
 
 			return $this->json_response( __( 'Available roles retrieved successfully', 'versatile-toolkit' ), $formatted_roles, 200 );
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to retrieve available roles', 'versatile-toolkit' ), array(), 500 );
 		}
@@ -777,22 +777,19 @@ class Templogin {
 	 * Handle temporary login authentication
 	 */
 	public function handle_temp_login() {
-		// if ( ! function_exists( 'wp_get_scheduled_events' ) ) {
-		// 	echo 'This function requires WordPress 5.1 or higher.';
-		// 	return;
-		// }
-
-		// $events = wp_get_scheduled_events( 'versatile_cleanup_expired_temp_logins',  );
-
-		// var_dump( $events );
+		global $wpdb;
 
 		if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
+			$temp_login = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM {$this->table_name} WHERE token = %s AND is_active = 1 AND expires_at > NOW()",
+					$token
+				)
+			);
 			return;
 		}
 
 		$token = sanitize_text_field( $_GET['versatile_temp_login'] ); // phpcs:ignore
-
-		global $wpdb;
 
 		// Get temporary login by token
 		$temp_login = $wpdb->get_row(
@@ -933,25 +930,12 @@ class Templogin {
 	public function cleanup_expired_logins() {
 		global $wpdb;
 
-		// Log cleanup start for debugging
-		error_log( 'Versatile Temp Login: Starting cleanup at ' . current_time( 'mysql' ) );
-
-		$now = current_time( 'mysql' );
-
-		// update is_active to false for expired logins
-		$update_is_active = $wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$this->table_name} SET is_active = 0 WHERE expires_at <= NOW()",
-			)
-		);
-
 		// Delete expired temporary logins
 		$deleted_count = $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$this->table_name} WHERE expires_at <= NOW()",
 			)
 		);
-		error_log( "Versatile Temp Login: Deleted {$deleted_count} expired logins" );
 
 		// Clean up temporary users
 		$temp_users = get_users(
@@ -978,24 +962,6 @@ class Templogin {
 				wp_delete_user( $user->ID );
 				++$cleaned_users;
 			}
-		}
-
-		error_log( "Versatile Temp Login: Cleaned up {$cleaned_users} temporary users" );
-		error_log( 'Versatile Temp Login: Cleanup completed at ' . current_time( 'mysql' ) );
-	}
-
-	/**
-	 * Maybe cleanup expired logins (fallback for when cron doesn't work)
-	 */
-	public function maybe_cleanup_expired_logins() {
-		// Only run cleanup every 5 minutes to avoid performance issues
-		// if ( ! defined( 'DOING_CRON' ) || ! DOING_CRON ) {
-		$last_cleanup = get_option( 'versatile_last_temp_login_cleanup', 0 );
-		$current_time = time();
-
-		if ( ( $current_time - $last_cleanup ) > 3 ) { // 5 minutes
-			update_option( 'versatile_last_temp_login_cleanup', $current_time );
-			$this->cleanup_expired_logins();
 		}
 	}
 
@@ -1162,5 +1128,25 @@ class Templogin {
 		if ( $user ) {
 			wp_delete_user( $user_id );
 		}
+	}
+
+	/**
+	 * Check cron status for debugging
+	 */
+	public function check_cron_status() {
+		$next_scheduled = wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' );
+
+		$status = array(
+			'is_scheduled'     => (bool) $next_scheduled,
+			'next_run'         => $next_scheduled ? date( 'Y-m-d H:i:s', $next_scheduled ) : 'Not scheduled',
+			'time_until_next'  => $next_scheduled ? human_time_diff( $next_scheduled ) : 'N/A',
+			'current_time'     => current_time( 'mysql' ),
+			'wp_cron_disabled' => defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON,
+		);
+
+		// Log the status
+		error_log( 'Versatile Temp Login Cron Status: ' . print_r( $status, true ) );
+
+		return $status;
 	}
 }
