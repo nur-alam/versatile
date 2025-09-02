@@ -62,7 +62,9 @@ abstract class DatabaseAbstract {
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = $this->get_table_schema() . $charset_collate;
+		// $sql             = $this->get_table_schema() . $charset_collate;
+		$static_obj = new static();
+		$sql        = $static_obj->get_table_schema() . $charset_collate;
 
 		if ( ! function_exists( 'dbDelta' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
