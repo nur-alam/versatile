@@ -61,7 +61,7 @@ const Header = () => {
 
     return (
         <>
-            <header className="bg-white border-b border-gray-200 py-4 pr-4 flex items-center justify-between relative">
+            <header className="bg-white border-b border-gray-200 py-4 flex items-center justify-between relative">
                 {/* Left side - Plugin Title */}
                 <Link to="/" className="flex items-center text-blue-600 text-lg font-semibold">
                     {__('Versatile Toolkit', 'versatile-toolkit')}

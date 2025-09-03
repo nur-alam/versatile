@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
 import { __ } from '@wordpress/i18n';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search } from 'lucide-react';
 import TempLoginTable from "@/pages/templogin/temp-login-table";
 import CreateTemplogin from "@/pages/templogin/create-temp-login";
 
 const TempLogin = () => {
-
-
     return (
         <div className="p-6 space-y-6">
             {/* Header */}

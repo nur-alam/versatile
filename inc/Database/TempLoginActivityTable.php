@@ -15,17 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Temp Login Table Class
+ * Temp Login Activity Table Class
  *
  * @since 1.0.0
  */
-class TempLoginTable extends DatabaseAbstract {
+class TempLoginActivityTable extends DatabaseAbstract {
 	/**
 	 * Table name
 	 *
 	 * @var string
 	 */
-	private $table_name = 'templogin';
+	private $table_name = 'templogin_activity';
 
 	/**
 	 * Constructor
@@ -56,22 +56,21 @@ class TempLoginTable extends DatabaseAbstract {
 	 * @return string
 	 */
 	public function get_table_schema(): string {
+		$temp_login_table      = new TempLoginTable();
+		$temp_login_table_name = $temp_login_table->get_table_name();
+
 		return "CREATE TABLE IF NOT EXISTS {$this->get_table_name()} (
 			id int(11) NOT NULL AUTO_INCREMENT,
-			token varchar(255) NOT NULL UNIQUE,
-			role varchar(50) NOT NULL DEFAULT 'subscriber',
-			display_name varchar(255) NOT NULL,
-			email varchar(255) DEFAULT NULL,
-			expires_at datetime NOT NULL,
-			redirect_url text DEFAULT NULL,
+			temp_login_id int(11) NOT NULL,
+			action varchar(50) NOT NULL,
+			description text DEFAULT NULL,
 			ip_address varchar(45) DEFAULT NULL,
+			user_agent text DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
-			last_login datetime DEFAULT NULL,
-			login_count int(11) DEFAULT 0,
-			is_active tinyint(1) DEFAULT 1,
 			PRIMARY KEY (id),
-			KEY expires_at (expires_at),
-			KEY is_active (is_active)
+			KEY temp_login_id (temp_login_id),
+			KEY created_at (created_at),
+			FOREIGN KEY (temp_login_id) REFERENCES {$temp_login_table_name}(id) ON DELETE CASCADE
 		)";
 	}
 }

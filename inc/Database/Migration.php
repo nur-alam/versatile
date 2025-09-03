@@ -29,6 +29,7 @@ class Migration {
 	public static function tables() {
 		$tables = array(
 			new TempLoginTable(),
+			new TempLoginActivityTable(),
 		);
 		return $tables;
 	}
@@ -41,7 +42,7 @@ class Migration {
 	 * @return void | Throwable
 	 * @throws \Throwable When table creation fails.
 	 */
-	public function migrate() {
+	public static function migrate() {
 		$tables = self::tables();
 		foreach ( $tables as $table ) {
 			try {

@@ -10,7 +10,9 @@
 
 namespace Versatile\Services\Templogin;
 
+use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
+use Versatile\Database\TempLoginActivityTable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,22 +29,22 @@ class Templogin {
 	 *
 	 * @var string
 	 */
-	private $table_name;
+	private $table_name = 'templogin';
 
 	/**
 	 * Database table name for temporary login activity
 	 *
 	 * @var string
 	 */
-	private $activity_table_name;
+	private $activity_table_name = 'templogin_activity';
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		global $wpdb;
-		$this->table_name          = $wpdb->prefix . 'versatile_temp_logins';
-		$this->activity_table_name = $wpdb->prefix . 'versatile_temp_login_activity';
+		$this->table_name          = ( new TempLoginTable() )->get_table_name();
+		$this->activity_table_name = ( new TempLoginActivityTable() )->get_table_name();
 
 		// Add custom cron schedule FIRST (before any scheduling)
 		// add_filter(
@@ -57,7 +59,7 @@ class Templogin {
 		// );
 
 		// Create database tables
-		$this->create_tables();
+		// $this->create_tables();
 
 		// Register AJAX actions
 		add_action( 'wp_ajax_versatile_get_temp_login_list', array( $this, 'get_temp_login_list' ) );
@@ -780,12 +782,6 @@ class Templogin {
 		global $wpdb;
 
 		if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
-			$temp_login = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} WHERE token = %s AND is_active = 1 AND expires_at > NOW()",
-					$token
-				)
-			);
 			return;
 		}
 
@@ -1138,10 +1134,11 @@ class Templogin {
 
 		$status = array(
 			'is_scheduled'     => (bool) $next_scheduled,
-			'next_run'         => $next_scheduled ? date( 'Y-m-d H:i:s', $next_scheduled ) : 'Not scheduled',
+			'next_run'         => $next_scheduled ? date( 'Y-m-d H:i:s', $next_scheduled ) : 'Not scheduled', // phpcs:ignore
 			'time_until_next'  => $next_scheduled ? human_time_diff( $next_scheduled ) : 'N/A',
 			'current_time'     => current_time( 'mysql' ),
-			'wp_cron_disabled' => defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON,
+			'wp_cron_disabled' => defined( 'DISABLE_WP_CRON' ),
+			// 'wp_cron_disabled' => defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON,
 		);
 
 		// Log the status

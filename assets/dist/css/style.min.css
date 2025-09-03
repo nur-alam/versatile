@@ -1039,6 +1039,9 @@ video {
 .grid-cols-6 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
+.grid-cols-\[repeat\(auto-fill\2c minmax\(300px\2c 1fr\)\)\] {
+  grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+}
 .flex-row {
   flex-direction: row;
 }
@@ -1884,6 +1887,10 @@ a:active,
 a:hover,
 a:focus {
   color: unset;
+}
+
+#versatile-root {
+  margin-right: 20px;
 }
 
 .file\:border-0::file-selector-button {

@@ -20,7 +20,6 @@ export interface TempLogin {
     login_count: number;
     login_url: string;
 	last_login: string;
-	allowed_ip: string;
 	is_active: boolean;
 	created_at: string;
 	updated_at: string;

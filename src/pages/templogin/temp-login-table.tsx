@@ -181,7 +181,7 @@ const TempLoginTable = () => {
 										{tempLogin.last_login}
 									</TableCell>
 									<TableCell>
-										{tempLogin.allowed_ip}
+										{tempLogin.ip_address}
 									</TableCell>
 									<TableCell>
 										<div className="flex space-x-2">
