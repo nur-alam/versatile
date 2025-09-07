@@ -126,6 +126,7 @@ const TempLoginTable = () => {
 						<SelectContent>
 							<SelectItem value="all">{__('All Status', 'versatile-toolkit')}</SelectItem>
 							<SelectItem value="active">{__('Active', 'versatile-toolkit')}</SelectItem>
+							<SelectItem value="inactive">{__('Inactive', 'versatile-toolkit')}</SelectItem>
 							<SelectItem value="expired">{__('Expired', 'versatile-toolkit')}</SelectItem>
 						</SelectContent>
 					</Select>

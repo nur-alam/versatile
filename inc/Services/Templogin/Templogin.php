@@ -167,7 +167,7 @@ class Templogin {
 						'name'     => 'status',
 						'value'    => isset( $_POST['status'] ) ? $_POST['status'] : 'all', // @phpcs:ignore	
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|in_array:active,inactive,all',
+						'rules'    => 'if_input|in_array:active,inactive,all,expired',
 					),
 					array(
 						'name'     => 'order',
@@ -225,6 +225,8 @@ class Templogin {
 			if ( 'all' !== $verified_data->status ) {
 				if ( 'active' === $verified_data->status ) {
 					$where_conditions[] = 'is_active = 1 AND expires_at > NOW()';
+				} elseif ( 'inactive' === $verified_data->status ) {
+					$where_conditions[] = 'is_active = 0';
 				} elseif ( 'expired' === $verified_data->status ) {
 					$where_conditions[] = '(is_active = 0 OR expires_at <= NOW())';
 				}
@@ -930,7 +932,8 @@ class Templogin {
 		// Delete expired temporary logins
 		$deleted_count = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$this->table_name} WHERE expires_at <= NOW()",
+				"DELETE FROM {$this->table_name} WHERE expires_at <= %s",
+				current_time( 'mysql', true ),
 			)
 		);
 

@@ -49,7 +49,7 @@ if ( ! class_exists( 'Versatile' ) ) {
 		 *
 		 * @return void
 		 */
-		public function __construct() {
+		private function __construct() {
 			require_once 'constants.php';
 
 			// Load Composer autoloader only if not already loaded
