@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Singleton Class
  */
-abstract class Singleton {
+final class Singleton {
 	/**
 	 * Instance
 	 *
@@ -28,28 +28,25 @@ abstract class Singleton {
 	private static $instance = array();
 
 	/**
-	 * Constructor (protected) prevent new instance.
+	 * Constructor (private) prevent new instance.
 	 *
 	 * @since 1.0.0
 	 */
-	protected function __construct() {
-	}
+	private function __construct() {}
 
 	/**
 	 * Magic method clone (prevent clone instance)
 	 *
 	 * @since 1.0.0
 	 */
-	final protected function __clone() {
-	}
+	private function __clone() {}
 
 	/**
 	 * Magic method wakeup (prevent unserialize instance)
 	 *
 	 * @since 1.0.0
 	 */
-	final protected function __wakeup() {
-	}
+	private function __wakeup() {}
 
 	/**
 	 * Get instance
@@ -59,9 +56,9 @@ abstract class Singleton {
 	 * @return self
 	 */
 	public static function get_instance() {
-		$class = static::class;
+		$class = self::class;
 		if ( ! isset( self::$instance[ $class ] ) ) {
-			self::$instance[ $class ] = new static();
+			self::$instance[ $class ] = new self();
 		}
 		return self::$instance[ $class ];
 	}
@@ -74,7 +71,7 @@ abstract class Singleton {
 	 * @return void
 	 */
 	public static function reset_instance() {
-		$class = static::class;
+		$class = self::class;
 		if ( isset( self::$instance[ $class ] ) ) {
 			unset( self::$instance[ $class ] );
 		}

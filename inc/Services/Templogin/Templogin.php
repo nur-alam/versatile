@@ -264,6 +264,7 @@ class Templogin {
 					'role'         => $result->role,
 					'display_name' => $result->display_name,
 					'email'        => $result->email,
+					'ip_address'   => $result->ip_address,
 					'expires_at'   => $result->expires_at,
 					'redirect_url' => $result->redirect_url,
 					'created_at'   => $result->created_at,

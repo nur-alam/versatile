@@ -23,7 +23,7 @@ const columns = [
 	{ key: 'expires_at', label: 'Expires At' },
 	{ key: 'login_count', label: 'Login Count' },
 	{ key: 'last_login', label: 'Last Login' },
-	{ key: 'allowed_ip', label: 'Allowed IP' },
+	{ key: 'ip_address', label: 'Allowed IP' }, 
 	{ key: 'actions', label: 'Actions' },
 ];
 
@@ -87,6 +87,8 @@ const TempLoginTable = () => {
 		console.log('key', key, 'value', value);
 		setSearchParams(prev => ({ ...prev, [key]: value }));
 	};
+
+	console.log('tempLoginList', tempLoginList);
 
 	return <>
 		<Card>
