@@ -208,20 +208,17 @@ class Templogin {
 			$email        = 'kobyj@mailinator.com';
 			$id           = 3;
 			// $yo           = TempLoginModel::find( $id );
-			// $yo = TempLoginModel::where( 'role', 'editor' )->get();
-			$yo = TempLoginModel::where(
-				function ( $query ) {
-					$query->where( 'display_name', 'LIKE', '%nur%' )
-					->orWhere( 'email', 'LIKE', '%nur%' );
-				}
-			)
-			->where( 'is_active', 0 )
+			$yo = TempLoginModel::where( 'role', '=', 'editor' )
+			->where( 'is_active', '=', 1 )
 			->get();
-			// ->where( 'is_active', 1 )
-			// $u  = TempLoginModel::where( 'name', 'Nur' )->orWhere( 'email', 'like', '%nuralam862@gmail.com%' )->get();
-			// $yo = TempLoginModel::where( 'display_name', 'LIKE', '%alam%' )
-			// ->orWhere( 'email', 'LIKE', '%alam%' )->get();
-
+			// $yo = TempLoginModel::where(
+			// function ( $query ) {
+			// $query->where( 'display_name', 'LIKE', '%nur%' )
+			// ->orWhere( 'email', 'LIKE', '%nur%' );
+			// }
+			// )
+			// ->where( 'is_active', 0 )
+			// ->get();
 			$page     = max( 1, intval( $verified_data->page ) );
 			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
 			$offset   = ( $page - 1 ) * $per_page;
