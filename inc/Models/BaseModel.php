@@ -146,13 +146,13 @@ abstract class BaseModel {
 	public static function find( $id ) {
 		$instance = new static();
 		$result   = $instance->query_builder->where( $instance->primary_key, $id )->first();
-		
+
 		if ( $result ) {
 			$model         = new static( (array) $result );
 			$model->exists = true;
 			return $model;
 		}
-		
+
 		return null;
 	}
 
@@ -166,6 +166,10 @@ abstract class BaseModel {
 	 */
 	public static function where( $column, $operator = null, $value = null ) {
 		$instance = new static();
+		// if ( null === $value ) {
+		// 	$value    = $operator;
+		// 	$operator = '=';
+		// }
 		return $instance->query_builder->where( $column, $operator, $value );
 	}
 
@@ -212,7 +216,7 @@ abstract class BaseModel {
 			array( '%d' )
 		);
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -231,7 +235,7 @@ abstract class BaseModel {
 
 		if ( $result ) {
 			$this->attributes[ $this->primary_key ] = $wpdb->insert_id;
-			$this->exists = true;
+			$this->exists                           = true;
 			return true;
 		}
 
@@ -258,7 +262,7 @@ abstract class BaseModel {
 			array( '%d' )
 		);
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**

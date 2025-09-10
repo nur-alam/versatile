@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class QueryBuilder {
 
+
 	/**
 	 * The table name
 	 *
@@ -66,14 +67,19 @@ class QueryBuilder {
 	/**
 	 * Add a basic where clause to the query
 	 *
-	 * @param string $column   Column name.
-	 * @param mixed  $operator Operator or value.
-	 * @param mixed  $value    Value (if operator is provided).
+	 * @param string|callable $column   Column name or closure for grouped conditions.
+	 * @param mixed           $operator Operator or value.
+	 * @param mixed           $value    Value (if operator is provided).
 	 * @return $this
 	 */
 	public function where( $column, $operator = null, $value = null ) {
+		// Handle closure for grouped conditions
+		if ( is_callable( $column ) ) {
+			return $this->where_nested( $column, 'and' );
+		}
+
 		// If only two arguments, assume equals operator
-		if ( func_num_args() === 2 ) {
+		if ( null === $value ) {
 			$value    = $operator;
 			$operator = '=';
 		}
@@ -92,14 +98,19 @@ class QueryBuilder {
 	/**
 	 * Add an "or where" clause to the query
 	 *
-	 * @param string $column   Column name.
-	 * @param mixed  $operator Operator or value.
-	 * @param mixed  $value    Value (if operator is provided).
+	 * @param string|callable $column   Column name or closure for grouped conditions.
+	 * @param mixed           $operator Operator or value.
+	 * @param mixed           $value    Value (if operator is provided).
 	 * @return $this
 	 */
 	public function orWhere( $column, $operator = null, $value = null ) {
+		// Handle closure for grouped conditions
+		if ( is_callable( $column ) ) {
+			return $this->where_nested( $column, 'or' );
+		}
+
 		// If only two arguments, assume equals operator
-		if ( func_num_args() === 2 ) {
+		if ( null === $value ) {
 			$value    = $operator;
 			$operator = '=';
 		}
@@ -116,13 +127,34 @@ class QueryBuilder {
 	}
 
 	/**
+	 * Add a nested where clause to the query
+	 *
+	 * @param callable $callback Callback function for nested conditions.
+	 * @param string   $boolean  Boolean operator (and/or).
+	 * @return $this
+	 */
+	protected function where_nested( $callback, $boolean = 'and' ) {
+		$query = new static( $this->table );
+
+		call_user_func( $callback, $query );
+
+		$this->wheres[] = array(
+			'type'    => 'nested',
+			'query'   => $query,
+			'boolean' => $boolean,
+		);
+
+		return $this;
+	}
+
+	/**
 	 * Add an "order by" clause to the query
 	 *
 	 * @param string $column    Column name.
 	 * @param string $direction Direction (asc or desc).
 	 * @return $this
 	 */
-	public function orderBy( $column, $direction = 'asc' ) {
+	public function orderBy( $column, $direction = 'asc' ) { // phpcs:ignore
 		$this->orders[] = array(
 			'column'    => $column,
 			'direction' => strtolower( $direction ) === 'desc' ? 'desc' : 'asc',
@@ -138,9 +170,9 @@ class QueryBuilder {
 	 * @param string $direction Direction (asc or desc).
 	 * @return $this
 	 */
-	public function orderby( $column, $direction = 'asc' ) {
-		return $this->orderBy( $column, $direction );
-	}
+	// public function orderby( $column, $direction = 'asc' ) {
+	// return $this->orderBy( $column, $direction );
+	// }
 
 	/**
 	 * Set the "limit" value of the query
@@ -257,44 +289,53 @@ class QueryBuilder {
 		$compiled = array();
 
 		foreach ( $this->wheres as $index => $where ) {
-			$column   = $where['column'];
-			$operator = $where['operator'];
-			$value    = $where['value'];
-			$boolean  = $where['boolean'];
-
+			$boolean   = $where['boolean'];
 			$condition = '';
 
-			// Handle LIKE operator
-			if ( strtoupper( $operator ) === 'LIKE' ) {
-				$condition = $wpdb->prepare( "{$column} LIKE %s", $value );
+			if ( 'nested' === $where['type'] ) {
+				// Handle nested conditions
+				$nested_wheres = $where['query']->compile_wheres();
+				if ( ! empty( $nested_wheres ) ) {
+					$condition = '(' . $nested_wheres . ')';
+				}
 			} else {
-				// Handle other operators
-				switch ( $operator ) {
-					case '=':
-					case '!=':
-					case '<>':
-					case '>':
-					case '>=':
-					case '<':
-					case '<=':
-						if ( is_numeric( $value ) ) {
-							$condition = $wpdb->prepare( "{$column} {$operator} %d", $value );
-						} else {
-							$condition = $wpdb->prepare( "{$column} {$operator} %s", $value );
-						}
-						break;
-					default:
-						if ( is_numeric( $value ) ) {
-							$condition = $wpdb->prepare( "{$column} = %d", $value );
-						} else {
-							$condition = $wpdb->prepare( "{$column} = %s", $value );
-						}
-						break;
+				// Handle basic conditions
+				$column   = $where['column'];
+				$operator = $where['operator'];
+				$value    = $where['value'];
+
+				// Handle LIKE operator
+				if ( strtoupper( $operator ) === 'LIKE' ) {
+					$condition = $wpdb->prepare( "{$column} LIKE %s", $value );
+				} else {
+					// Handle other operators
+					switch ( $operator ) {
+						case '=':
+						case '!=':
+						case '<>':
+						case '>':
+						case '>=':
+						case '<':
+						case '<=':
+							if ( is_numeric( $value ) ) {
+								$condition = $wpdb->prepare( "{$column} {$operator} %d", $value );
+							} else {
+								$condition = $wpdb->prepare( "{$column} {$operator} %s", $value );
+							}
+							break;
+						default:
+							if ( is_numeric( $value ) ) {
+								$condition = $wpdb->prepare( "{$column} = %d", $value );
+							} else {
+								$condition = $wpdb->prepare( "{$column} = %s", $value );
+							}
+							break;
+					}
 				}
 			}
 
 			// Add boolean operator (AND/OR) except for the first condition
-			if ( $index === 0 ) {
+			if ( 0 === $index ) {
 				$compiled[] = $condition;
 			} else {
 				$compiled[] = strtoupper( $boolean ) . ' ' . $condition;

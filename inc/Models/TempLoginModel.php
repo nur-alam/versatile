@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Temp Login Model Class
+ *
+ * @since 1.0.0
  */
 class TempLoginModel extends BaseModel {
 
@@ -57,7 +59,7 @@ class TempLoginModel extends BaseModel {
 	 */
 	public static function active() {
 		return static::where( 'is_active', 1 )
-					 ->where( 'expires_at', '>', current_time( 'mysql', true ) );
+					->where( 'expires_at', '>', current_time( 'mysql', true ) );
 	}
 
 	/**
@@ -67,7 +69,7 @@ class TempLoginModel extends BaseModel {
 	 */
 	public static function expired() {
 		return static::where( 'is_active', 0 )
-					 ->orWhere( 'expires_at', '<=', current_time( 'mysql', true ) );
+					->orWhere( 'expires_at', '<=', current_time( 'mysql', true ) );
 	}
 
 	/**
@@ -79,7 +81,7 @@ class TempLoginModel extends BaseModel {
 	public static function findByToken( $token ) {
 		$result = static::where( 'token', $token )->first();
 		if ( $result ) {
-			$model = new static( (array) $result );
+			$model         = new static( (array) $result );
 			$model->exists = true;
 			return $model;
 		}
@@ -92,8 +94,8 @@ class TempLoginModel extends BaseModel {
 	 * @return bool
 	 */
 	public function isActive() {
-		return $this->is_active && 
-			   strtotime( $this->expires_at ) > time();
+		return $this->is_active &&
+				strtotime( $this->expires_at ) > time();
 	}
 
 	/**

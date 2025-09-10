@@ -13,6 +13,7 @@ namespace Versatile\Services\Templogin;
 use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
 use Versatile\Database\TempLoginActivityTable;
+use Versatile\Models\TempLoginModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -199,9 +200,33 @@ class Templogin {
 
 			global $wpdb;
 
+			// $yo = TempLoginModel::active()->get();
+			$token        = 'PQp0LAr6BgzOdbWlnkjfLuBAckPSsefA';
+			$login_count  = 0;
+			$display_name = 'Tanek Lara';
+			$ip_address   = '127.0.0.1';
+			$email        = 'kobyj@mailinator.com';
+			$id           = 3;
+			// $yo           = TempLoginModel::find( $id );
+			// $yo = TempLoginModel::where( 'role', 'editor' )->get();
+			$yo = TempLoginModel::where(
+				function ( $query ) {
+					$query->where( 'display_name', 'LIKE', '%nur%' )
+					->orWhere( 'email', 'LIKE', '%nur%' );
+				}
+			)
+			->where( 'is_active', 0 )
+			->get();
+			// ->where( 'is_active', 1 )
+			// $u  = TempLoginModel::where( 'name', 'Nur' )->orWhere( 'email', 'like', '%nuralam862@gmail.com%' )->get();
+			// $yo = TempLoginModel::where( 'display_name', 'LIKE', '%alam%' )
+			// ->orWhere( 'email', 'LIKE', '%alam%' )->get();
+
 			$page     = max( 1, intval( $verified_data->page ) );
 			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
 			$offset   = ( $page - 1 ) * $per_page;
+
+			// $temp_logins = TempLoginModel::where( 'is_active', 1 )->get();
 
 			// Build WHERE clause
 			$where_conditions = array( '1=1' );
@@ -927,6 +952,7 @@ class Templogin {
 	 * Clean up expired temporary logins
 	 */
 	public function cleanup_expired_logins() {
+		return true;
 		global $wpdb;
 
 		// Delete expired temporary logins

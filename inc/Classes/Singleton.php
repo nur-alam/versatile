@@ -35,20 +35,6 @@ final class Singleton {
 	private function __construct() {}
 
 	/**
-	 * Magic method clone (prevent clone instance)
-	 *
-	 * @since 1.0.0
-	 */
-	private function __clone() {}
-
-	/**
-	 * Magic method wakeup (prevent unserialize instance)
-	 *
-	 * @since 1.0.0
-	 */
-	private function __wakeup() {}
-
-	/**
 	 * Get instance
 	 *
 	 * @since 1.0.0
@@ -76,4 +62,18 @@ final class Singleton {
 			unset( self::$instance[ $class ] );
 		}
 	}
+
+	/**
+	 * Magic method clone (prevent clone instance)
+	 *
+	 * @since 1.0.0
+	 */
+	private function __clone() {}
+
+	/**
+	 * Magic method wakeup (prevent unserialize instance)
+	 *
+	 * @since 1.0.0
+	 */
+	private function __wakeup() {}
 }
