@@ -30,6 +30,8 @@ class QueryBuilder
 
 	protected $offset;
 
+	protected $columns = ['*'];
+
 	/**
 	 * Constructor
 	 *
@@ -38,6 +40,12 @@ class QueryBuilder
 	public function __construct($table)
 	{
 		$this->table = $table;
+	}
+
+	public function select($columns)
+	{
+		$this->columns = is_array($columns) ? $columns : func_get_args();
+		return $this;
 	}
 
 	public function get()
@@ -56,9 +64,16 @@ class QueryBuilder
 
 	public function where($column, $operator = null, $value = null)
 	{
+		if(is_callable($column)) {
+			return $this->where_nested($column, 'and');
+		}
+
 		if (null === $value) {
 			$value = $operator;
 			$operator = '=';
+		}
+		if('' === $value) {
+			return $this;
 		}
 		$this->wheres[] = array(
 			'type' => 'basic',
@@ -70,11 +85,18 @@ class QueryBuilder
 		return $this;
 	}
 
-	public function orWhere($column, $operator, $value)
+	public function orWhere($column, $operator = null, $value = null)
 	{
+		if(is_callable($column)) {
+			return $this->where_nested($column, 'or');
+		}
+
 		if (null === $value) {
 			$value = $operator;
 			$operator = '=';
+		}
+		if('' === $value) {
+			return $this;
 		}
 		$this->wheres[] = array(
 			'type' => 'basic',
@@ -86,12 +108,64 @@ class QueryBuilder
 		return $this;
 	}
 
+	/**
+	 * Add a raw where clause to the query
+	 *
+	 * @param string $sql Raw SQL condition
+	 * @param string $combine 'and' or 'or'
+	 * @return $this
+	 */
+	public function whereRaw($sql, $combine = 'and')
+	{
+		$this->wheres[] = array(
+			'type' => 'raw',
+			'sql' => $sql,
+			'combine' => $combine
+		);
+		return $this;
+	}
+
+	/**
+	 * Add a raw OR where clause to the query
+	 *
+	 * @param string $sql Raw SQL condition
+	 * @return $this
+	 */
+	public function orWhereRaw($sql)
+	{
+		return $this->whereRaw($sql, 'or');
+	}
+
+	protected function where_nested($callback, $operator)
+	{
+		$query = new static($this->table);
+		call_user_func($callback, $query);
+		$this->wheres[] = array(
+			'type' => 'nested',
+			'query' => $query,
+			'operator' => $operator
+		);
+
+		return $this;
+	}
+
 	public function orderBy($column, $direction = 'asc')
 	{
-		$this->orders[] = array(
-			'column' => $column,
-			'direction' => strtolower($direction) === 'desc' ? 'desc' : 'asc'
-		);
+		// If $column is an array, handle multiple order by clauses
+		if (is_array($column)) {
+			foreach ($column as $col => $dir) {
+				$this->orders[] = array(
+					'column' => $col,
+					'direction' => strtolower($dir) === 'desc' ? 'desc' : 'asc'
+				);
+			}
+		} else {
+			// Handle single column ordering
+			$this->orders[] = array(
+				'column' => $column,
+				'direction' => strtolower($direction) === 'desc' ? 'desc' : 'asc'
+			);
+		}
 		return $this;
 	}
 
@@ -111,21 +185,34 @@ class QueryBuilder
 
 	public function to_sql()
 	{
-		$sql = "SELECT * FROM {$this->table}";
+		$columns = implode(', ', $this->columns);
+		$sql = "SELECT {$columns} FROM {$this->table}";
 		if (! empty($this->wheres)) {
-			$sql .= ' WHERE ' . $this->compile_wheres();
+			$compiled_wheres = $this->compile_wheres();
+			if(!empty($compiled_wheres)) {
+				$sql .= ' WHERE ' . $this->compile_wheres();
+			}
 		}
 
 		if (! empty($this->orders)) {
-			$sql .= ' ORDER BY ' . $this->compile_orders();
+			$compiled_orders = $this->compile_orders();
+			if(!empty($compiled_orders)) {
+				$sql .= ' ORDER BY ' . $this->compile_orders();
+			}
 		}
 
 		if (! empty($this->limit)) {
-			$sql .= ' LIMIT ' . $this->limit;
+			$compiled_limit = $this->limit;
+			if(!empty($compiled_limit)) {
+				$sql .= ' LIMIT ' . $this->limit;
+			}
 		}
 
 		if (! empty($this->offset)) {
-			$sql .= ' OFFSET ' . $this->offset;
+			$compiled_offset = $this->offset;
+			if(!empty($compiled_offset)) {
+				$sql .= ' OFFSET ' . $this->offset;
+			}
 		}
 
 		return $sql;
@@ -136,60 +223,170 @@ class QueryBuilder
 		global $wpdb;
 		$compile_wheres_string = '';
 		foreach ($this->wheres as $index => $where) {
-			$column = $where['column'];
-			$operator = $where['operator'];
-			$value = $where['value'];
-			$combine_operator = $where['combine'];
-
+			$combine_operator = isset($where['combine']) ? $where['combine'] : 'and';
 			if (0 !== $index) {
 				$compile_wheres_string .= " {$combine_operator} ";
 			}
-
-			if (strtoupper($operator) === 'LIKE') {
-				// $compile_wheres_string .= "{$column} LIKE '{$value}'";
-				$compile_wheres_string .= $wpdb->prepare("{$column} LIKE %s", $value);
+			if('nested' === $where['type']) {
+				// Handle nested conditions
+				$nested_wheres = $where['query']->compile_wheres();
+				if(!empty($nested_wheres)) {
+					if(count($where['query']->wheres) > 1) {
+						$compile_wheres_string .= '(' . $nested_wheres . ')';
+					} else {
+						$compile_wheres_string .= $nested_wheres;
+					}
+				}
+			} elseif('raw' === $where['type']) {
+				// Handle raw SQL conditions
+				$compile_wheres_string .= $where['sql'];
 			} else {
-				switch ($operator) {
-					case '=':
-					case '!=':
-					case '<>':
-					case '>':
-					case '>=':
-					case '<':
-					case '<=':
-						// $compile_wheres_string .= "{$column} {$operator} '{$value}'";
-						if (is_numeric($value)) {
-							$yo = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$condition = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %d", $value);
-						} else {
-							$yo = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$condition = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %s", $value);
-						}
-						break;
-					default:
-						// $compile_wheres_string .= "{$column} = '{$value}'";
-						if (is_numeric($value)) {
-							$yo = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$condition = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %d", $value);
-						} else {
-							$yo = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$condition = $wpdb->prepare("{$column} {$operator} %d", $value);
-							$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %s", $value);
-						}
-						break;
+				$column = $where['column'];
+				$operator = $where['operator'];
+				$value = $where['value'];
+				
+				// Check if value is a MySQL function (contains parentheses and common function names)
+				$is_mysql_function = $this->is_mysql_function($value);
+				
+				if (strtoupper($operator) === 'LIKE') {
+					if ($is_mysql_function) {
+						$compile_wheres_string .= "{$column} LIKE {$value}";
+					} else {
+						$compile_wheres_string .= $wpdb->prepare("{$column} LIKE %s", $value);
+					}
+				} else {
+					switch ($operator) {
+						case '=':
+						case '!=':
+						case '<>':
+						case '>':
+						case '>=':
+						case '<':
+						case '<=':
+							if ($is_mysql_function) {
+								$compile_wheres_string .= "{$column} {$operator} {$value}";
+							} elseif (is_numeric($value)) {
+								$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %d", $value);
+							} else {
+								$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %s", $value);
+							}
+							break;
+						default:
+							if ($is_mysql_function) {
+								$compile_wheres_string .= "{$column} = {$value}";
+							} elseif (is_numeric($value)) {
+								$compile_wheres_string .= $wpdb->prepare("{$column} = %d", $value);
+							} else {
+								$compile_wheres_string .= $wpdb->prepare("{$column} = %s", $value);
+							}
+							break;
+					}
 				}
 			}
 		}
 		return $compile_wheres_string;
 	}
 
+	/**
+	 * Check if a value is a MySQL function
+	 *
+	 * @param mixed $value The value to check
+	 * @return bool
+	 */
+	protected function is_mysql_function($value)
+	{
+		if (!is_string($value)) {
+			return false;
+		}
+		
+		// List of common MySQL functions
+		$mysql_functions = [
+			'NOW()', 'CURDATE()', 'CURTIME()', 'UTC_TIMESTAMP()', 'CURRENT_TIMESTAMP()',
+			'CURRENT_DATE()', 'CURRENT_TIME()', 'UNIX_TIMESTAMP()', 'DATE()', 'TIME()',
+			'YEAR()', 'MONTH()', 'DAY()', 'HOUR()', 'MINUTE()', 'SECOND()',
+			'COUNT()', 'SUM()', 'AVG()', 'MIN()', 'MAX()', 'CONCAT()', 'LENGTH()',
+			'UPPER()', 'LOWER()', 'TRIM()', 'SUBSTRING()', 'REPLACE()', 'NULL'
+		];
+		
+		// Check for exact matches with common functions
+		if (in_array(strtoupper($value), $mysql_functions)) {
+			return true;
+		}
+		
+		// Check for function patterns (word followed by parentheses)
+		if (preg_match('/^[A-Z_][A-Z0-9_]*\s*\(/i', $value)) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	// protected function compile_wheres() {
+	// 	global $wpdb;
+
+	// 	$compiled = array();
+
+	// 	foreach ( $this->wheres as $index => $where ) {
+	// 		$boolean   = $where['boolean'];
+	// 		$condition = '';
+
+	// 		if ( 'nested' === $where['type'] ) {
+	// 			// Handle nested conditions
+	// 			$nested_wheres = $where['query']->compile_wheres();
+	// 			if ( ! empty( $nested_wheres ) ) {
+	// 				$condition = '(' . $nested_wheres . ')';
+	// 			}
+	// 		} else {
+	// 			// Handle basic conditions
+	// 			$column   = $where['column'];
+	// 			$operator = $where['operator'];
+	// 			$value    = $where['value'];
+
+	// 			// Handle LIKE operator
+	// 			if ( strtoupper( $operator ) === 'LIKE' ) {
+	// 				$condition = $wpdb->prepare( "{$column} LIKE %s", $value );
+	// 			} else {
+	// 				// Handle other operators
+	// 				switch ( $operator ) {
+	// 					case '=':
+	// 					case '!=':
+	// 					case '<>':
+	// 					case '>':
+	// 					case '>=':
+	// 					case '<':
+	// 					case '<=':
+	// 						if ( is_numeric( $value ) ) {
+	// 							$condition = $wpdb->prepare( "{$column} {$operator} %d", $value );
+	// 						} else {
+	// 							$condition = $wpdb->prepare( "{$column} {$operator} %s", $value );
+	// 						}
+	// 						break;
+	// 					default:
+	// 						if ( is_numeric( $value ) ) {
+	// 							$condition = $wpdb->prepare( "{$column} = %d", $value );
+	// 						} else {
+	// 							$condition = $wpdb->prepare( "{$column} = %s", $value );
+	// 						}
+	// 						break;
+	// 				}
+	// 			}
+	// 		}
+
+	// 		// Add boolean operator (AND/OR) except for the first condition
+	// 		if ( 0 === $index ) {
+	// 			$compiled[] = $condition;
+	// 		} else {
+	// 			$compiled[] = strtoupper( $boolean ) . ' ' . $condition;
+	// 		}
+	// 	}
+
+	// 	return implode( ' ', $compiled );
+	// }
+
 	public function compile_orders()
 	{
 		$compiled = array();
-		foreach ($this->orders as $index => $order) {
+		foreach ($this->orders as $order) {
 			$compiled[] = $order['column'] . ' ' . strtoupper($order['direction']);
 		}
 		return implode(', ', $compiled);

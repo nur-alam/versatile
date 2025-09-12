@@ -30,7 +30,7 @@ const columns = [
 const TempLoginTable = () => {
 	const [searchParams, setSearchParams] = useState<TempLoginListQueryParams>({
 		page: 1,
-		per_page: 10,
+		per_page: 2,
 		order: 'desc',
 		orderby: 'created_at',
 		role: '',
@@ -89,6 +89,10 @@ const TempLoginTable = () => {
 	};
 
 	console.log('tempLoginList', tempLoginList);
+
+	const onPageChange = (page: number) => {
+		setSearchParams(prev => ({ ...prev, page }));
+	};
 
 	return <>
 		<Card>
@@ -228,6 +232,32 @@ const TempLoginTable = () => {
 					</TableBody>
 				</Table>
 			</CardContent>
+
+			{/* Pagination */}
+            {tempLoginList && tempLoginList.total_pages > 1 && ( 
+                <CardContent className="pt-0">
+                    <div className="flex justify-center space-x-2">
+                        <Button
+                            variant="outline"
+                            disabled={tempLoginList.current_page === 1}
+                            onClick={() => onPageChange(tempLoginList.current_page - 1)}
+                        >
+                            {__('Previous', 'versatile-toolkit')}
+                        </Button>
+                        <span className="flex items-center px-4">
+                            {__('Page', 'versatile-toolkit')} {tempLoginList.current_page} {__('of', 'versatile-toolkit')} {tempLoginList.total_pages}
+                        </span>
+                        <Button
+                            variant="outline"
+                            disabled={tempLoginList.current_page === tempLoginList.total_pages}
+                            onClick={() => onPageChange(tempLoginList.current_page + 1)}
+                        >
+                            {__('Next', 'versatile-toolkit')}
+                        </Button>
+                    </div>
+                </CardContent>
+            )}
+
 		</Card>
 	</>
 }

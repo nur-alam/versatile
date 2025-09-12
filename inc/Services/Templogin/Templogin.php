@@ -201,26 +201,31 @@ class Templogin {
 			global $wpdb;
 
 			// $yo = TempLoginModel::active()->get();
-			$yo           = TempLoginModel::find(3);
-			$yo->login_count = rand(1, 100);
-			$yo->save();
-			$ppp = TempLoginModel::create(array(
-				'token'        => wp_generate_password(32, false),
-				'role'         => 'editor',
-				'display_name' => 'pinTanek Lara',
-				'email'        => 'sadfkobyj@mailinatorabd.com',
-				'expires_at'   => '2026-09-04 10:33:39',
-				'redirect_url' => 'http://localhost:10050/wp-admin/',
-				'ip_address'   => '127.0.0.1',
-				'created_at'   => '2025-09-04 04:33:39',
-				'last_login'   => '2025-09-07 18:43:42',
-				'login_count'  => wp_rand( 101, 200),
-				'is_active'    => '1',
-			));
-			$yoo = TempLoginModel::where( 'role', '=', 'editor' )
-			->where( 'is_active', '=', 1 )
-			->orWhere('is_active', '=', 0)
-			->get();
+			// $all = TempLoginModel::all();
+			// $temp_logins = TempLoginModel::select('id', 'display_name', 'email')->get();
+			// $yo           = TempLoginModel::find(3);
+			// $yo->login_count = rand(1, 100);
+			// $yo->save();
+			// $ppp = TempLoginModel::create(array(
+			// 	'token'        => wp_generate_password(32, false),
+			// 	'role'         => 'editor',
+			// 	'display_name' => 'pinTanek Lara',
+			// 	'email'        => 'sadfkobyj@mailinatorabd.com',
+			// 	'expires_at'   => '2026-09-04 10:33:39',
+			// 	'redirect_url' => 'http://localhost:10050/wp-admin/',
+			// 	'ip_address'   => '127.0.0.1',
+			// 	'created_at'   => '2025-09-04 04:33:39',
+			// 	'last_login'   => '2025-09-07 18:43:42',
+			// 	'login_count'  => wp_rand( 101, 200),
+			// 	'is_active'    => '1',
+			// ));
+
+			// SELECT COUNT(*) FROM wp_temp_logins WHERE 1=1 AND (display_name LIKE '%admin%' OR email LIKE '%admin%') 
+			// AND role = 'editor' AND is_active = 1 AND expires_at > NOW()
+
+			// SELECT * FROM wp_temp_logins WHERE 1=1 AND (display_name LIKE '%admin%' OR email LIKE '%admin%') 
+			// AND role = 'editor' AND is_active = 1 AND expires_at > NOW() ORDER BY display_name ASC LIMIT 10 OFFSET 20
+
 			// $yo = TempLoginModel::where(
 			// function ( $query ) {
 			// $query->where( 'display_name', 'LIKE', '%nur%' )
@@ -229,65 +234,115 @@ class Templogin {
 			// )
 			// ->where( 'is_active', 0 )
 			// ->get();
+			// $temp_logins = TempLoginModel::where( 'is_active', 1 )->get();
+
+
+
+			// Build WHERE clause
+			// $where_conditions = array( '1=1' );
+			// $where_values     = array();
+
+			// // Search filter
+			// if ( ! empty( $verified_data->search ) ) {
+			// 	$where_conditions[] = '(display_name LIKE %s OR email LIKE %s)';
+			// 	$search_term        = '%' . $wpdb->esc_like( $verified_data->search ) . '%';
+			// 	$where_values[]     = $search_term;
+			// 	$where_values[]     = $search_term;
+			// }
+
+			// // Role filter
+			// if ( ! empty( $verified_data->role ) ) {
+			// 	$where_conditions[] = 'role = %s';
+			// 	$where_values[]     = $verified_data->role;
+			// }
+
+			// // Status filter
+			// if ( 'all' !== $verified_data->status ) {
+			// 	if ( 'active' === $verified_data->status ) {
+			// 		$where_conditions[] = 'is_active = 1 AND expires_at > NOW()';
+			// 	} elseif ( 'inactive' === $verified_data->status ) {
+			// 		$where_conditions[] = 'is_active = 0';
+			// 	} elseif ( 'expired' === $verified_data->status ) {
+			// 		$where_conditions[] = '(is_active = 0 OR expires_at <= NOW())';
+			// 	}
+			// }
+
+			// $where_clause = implode( ' AND ', $where_conditions );
+
+			// // Build ORDER BY clause
+			// $orderby = 'created_at DESC';
+			// if ( ! empty( $verified_data->orderby ) ) {
+			// 	$allowed_sort_keys = array( 'display_name', 'role', 'expires_at', 'created_at', 'last_login', 'login_count' );
+			// 	if ( in_array( $verified_data->orderby, $allowed_sort_keys, true ) ) {
+			// 		$order_direction = ( strtoupper( $verified_data->order ) === 'ASC' ) ? 'ASC' : 'DESC';
+			// 		$orderby         = $verified_data->orderby . ' ' . $order_direction;
+			// 	}
+			// }
+
+			// // Get total count
+			// $count_query = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where_clause}";
+			// if ( ! empty( $where_values ) ) {
+			// 	$total_entries = $wpdb->get_var( $wpdb->prepare( $count_query, $where_values ) ); //phpcs:ignore
+			// } else {
+			// 	$total_entries = $wpdb->get_var( $count_query ); //phpcs:ignore
+			// }
+
+			// // Get paginated results
+			// $results_query = "SELECT * FROM {$this->table_name} WHERE {$where_clause} ORDER BY {$orderby} LIMIT %d OFFSET %d";
+			// $query_values  = array_merge( $where_values, array( $per_page, $offset ) );
+			// $results       = $wpdb->get_results( $wpdb->prepare( $results_query, $query_values ) ); //phpcs:ignore
+
+			if('all' !== $verified_data->status) {
+				if('active' === $verified_data->status) {
+					$verified_data->status = 1;
+				} else if('inactive' === $verified_data->status) {
+					$verified_data->status = 0;
+				} else if('expired' === $verified_data->status) {
+					// $verified_data->status = 'expires_at <= NOW()';
+				}
+			} else {
+				$verified_data->status = '';
+			}
+
 			$page     = max( 1, intval( $verified_data->page ) );
 			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
 			$offset   = ( $page - 1 ) * $per_page;
 
-			// $temp_logins = TempLoginModel::where( 'is_active', 1 )->get();
+			// ->where('is_active', $verified_data->status)
+			// ->where('expires_at', '>', 'NOW()')
+			// ->where('expires_at', '<', 'NOW()');
 
-			// Build WHERE clause
-			$where_conditions = array( '1=1' );
-			$where_values     = array();
+			$results = TempLoginModel::where( 'role', '=', $verified_data->role )
+			->where(function($query) use ($verified_data) {
+				$query->where('display_name', $verified_data->search)->orWhere('email', $verified_data->search);
+			})
+			// ->orderBy('created_at', 'asc')
+			->orderBy([
+				'created_at'=> 'asc',
+				'id'=> 'asc'
+			])
+			->limit($per_page)
+			->offset($offset)
+			->get();
 
-			// Search filter
-			if ( ! empty( $verified_data->search ) ) {
-				$where_conditions[] = '(display_name LIKE %s OR email LIKE %s)';
-				$search_term        = '%' . $wpdb->esc_like( $verified_data->search ) . '%';
-				$where_values[]     = $search_term;
-				$where_values[]     = $search_term;
-			}
 
-			// Role filter
-			if ( ! empty( $verified_data->role ) ) {
-				$where_conditions[] = 'role = %s';
-				$where_values[]     = $verified_data->role;
-			}
+			// $results = TempLoginModel::where( 'role', '=', $verified_data->role )
+			// ->whereRaw('expires_at <= NOW()')
+			// ->orderBy('created_at', 'asc')
+			// ->limit($per_page)
+			// ->offset($offset)
+			// ->get();
 
-			// Status filter
-			if ( 'all' !== $verified_data->status ) {
-				if ( 'active' === $verified_data->status ) {
-					$where_conditions[] = 'is_active = 1 AND expires_at > NOW()';
-				} elseif ( 'inactive' === $verified_data->status ) {
-					$where_conditions[] = 'is_active = 0';
-				} elseif ( 'expired' === $verified_data->status ) {
-					$where_conditions[] = '(is_active = 0 OR expires_at <= NOW())';
-				}
-			}
+			// if ('expired' === $verified_data->status) {
+			// 	$query->whereRaw('expires_at <= NOW()');
+			// } else {
+			// 	$query->where('is_active', '=', $verified_data->status);
+			// }
+			
+			// $results = $query->orderBy('created_at', 'asc')->get();
 
-			$where_clause = implode( ' AND ', $where_conditions );
-
-			// Build ORDER BY clause
-			$orderby = 'created_at DESC';
-			if ( ! empty( $verified_data->orderby ) ) {
-				$allowed_sort_keys = array( 'display_name', 'role', 'expires_at', 'created_at', 'last_login', 'login_count' );
-				if ( in_array( $verified_data->orderby, $allowed_sort_keys, true ) ) {
-					$order_direction = ( strtoupper( $verified_data->order ) === 'ASC' ) ? 'ASC' : 'DESC';
-					$orderby         = $verified_data->orderby . ' ' . $order_direction;
-				}
-			}
-
-			// Get total count
-			$count_query = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where_clause}";
-			if ( ! empty( $where_values ) ) {
-				$total_entries = $wpdb->get_var( $wpdb->prepare( $count_query, $where_values ) ); //phpcs:ignore
-			} else {
-				$total_entries = $wpdb->get_var( $count_query ); //phpcs:ignore
-			}
-
-			// Get paginated results
-			$results_query = "SELECT * FROM {$this->table_name} WHERE {$where_clause} ORDER BY {$orderby} LIMIT %d OFFSET %d";
-			$query_values  = array_merge( $where_values, array( $per_page, $offset ) );
-			$results       = $wpdb->get_results( $wpdb->prepare( $results_query, $query_values ) ); //phpcs:ignore
+			$total = TempLoginModel::where( 'role', '=', $verified_data->role )->get();
+			$total_entries = count($total);
 
 			// Format results
 			$temp_logins = array();

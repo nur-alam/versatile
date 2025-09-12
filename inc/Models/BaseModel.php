@@ -76,16 +76,38 @@ abstract class BaseModel
 		return empty($this->fillable) || in_array($key, $this->fillable, true);
 	}
 
-	public static function where($column, $operator, $value)
+	public static function where($column, $operator = null, $value = null)
 	{
 		$instance = new static();
 		return $instance->query_builder->where($column, $operator, $value);
 	}
 
-	public static function orWhere($column, $operator, $value)
+	public static function orWhere($column, $operator = null, $value = null)
 	{
 		$instance = new static();
 		return $instance->query_builder->orWhere($column, $operator, $value);
+	}
+
+	public static function all()
+	{
+		$instance = new static();
+		$results = $instance->query_builder->get();
+		
+		$models = array();
+		foreach ($results as $result) {
+			$model = new static();
+			$model->attributes = (array) $result;
+			$model->exists = true;
+			$models[] = $model;
+		}
+		
+		return $models;
+	}
+
+	public static function select(...$columns)
+	{
+		$instance = new static();
+		return $instance->query_builder->select($columns);
 	}
 
 	public static function find($id)
