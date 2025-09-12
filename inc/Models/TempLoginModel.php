@@ -24,16 +24,36 @@ if (! defined('ABSPATH')) {
  */
 class TempLoginModel extends BaseModel
 {
+
+	/**
+	 * The attributes that are mass assignable
+	 *
+	 * @var array
+	 */
+	protected $fillable = array(
+		'token',
+		'role',
+		'display_name',
+		'email',
+		'expires_at',
+		'redirect_url',
+		'ip_address',
+		'created_at',
+		'last_login',
+		'login_count',
+		'is_active',
+	);
+
 	protected $token = '';
 	/**
 	 * Constructor
 	 *
 	 * @param array $attributes Initial attributes.
 	 */
-	public function __construct()
+	public function __construct(array $attributes = array())
 	{
 		$this->table = (new TempLoginTable)->get_table_name();
-		parent::__construct();
+		parent::__construct($attributes);
 	}
 
 	/**

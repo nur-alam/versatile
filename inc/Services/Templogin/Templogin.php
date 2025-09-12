@@ -201,15 +201,25 @@ class Templogin {
 			global $wpdb;
 
 			// $yo = TempLoginModel::active()->get();
-			$token        = 'PQp0LAr6BgzOdbWlnkjfLuBAckPSsefA';
-			$login_count  = 0;
-			$display_name = 'Tanek Lara';
-			$ip_address   = '127.0.0.1';
-			$email        = 'kobyj@mailinator.com';
-			$id           = 3;
-			// $yo           = TempLoginModel::find( $id );
-			$yo = TempLoginModel::where( 'role', '=', 'editor' )
+			$yo           = TempLoginModel::find(3);
+			$yo->login_count = rand(1, 100);
+			$yo->save();
+			$ppp = TempLoginModel::create(array(
+				'token'        => wp_generate_password(32, false),
+				'role'         => 'editor',
+				'display_name' => 'pinTanek Lara',
+				'email'        => 'sadfkobyj@mailinatorabd.com',
+				'expires_at'   => '2026-09-04 10:33:39',
+				'redirect_url' => 'http://localhost:10050/wp-admin/',
+				'ip_address'   => '127.0.0.1',
+				'created_at'   => '2025-09-04 04:33:39',
+				'last_login'   => '2025-09-07 18:43:42',
+				'login_count'  => wp_rand( 101, 200),
+				'is_active'    => '1',
+			));
+			$yoo = TempLoginModel::where( 'role', '=', 'editor' )
 			->where( 'is_active', '=', 1 )
+			->orWhere('is_active', '=', 0)
 			->get();
 			// $yo = TempLoginModel::where(
 			// function ( $query ) {
