@@ -37,7 +37,7 @@ export interface TempLoginListQueryParams {
 	page: number;
 	per_page: number;
 	search?: string;
-	role?: string | '';
+	role?: string;
 	status?: 'active' | 'expired' | 'all' | '';
 	is_active?: boolean;
 	order?: 'asc' | 'desc' | '';

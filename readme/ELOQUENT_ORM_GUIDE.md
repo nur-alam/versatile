@@ -255,3 +255,54 @@ The ORM integrates seamlessly with WordPress:
 - Respects WordPress table prefixes
 - Uses WordPress security functions
 - Compatible with WordPress coding standards
+
+
+## Explanaiton of is_mysql_function() function inside QueryBuilder
+Examples that would match (return true):
+Check for function patterns (word followed by parentheses)
+```php
+if (preg_match('/^[A-Z_][A-Z0-9_]*\s*\(/i', $value)) {
+    return true;
+}
+```
+```php
+$examples_match = [
+    'NOW()',           // Current timestamp function
+    'COUNT(*)',        // Aggregate function
+    'UPPER(name)',     // String function
+    'DATE_FORMAT(',    // Date function (partial)
+    'MY_CUSTOM_FUNC(', // Custom function
+    'CONCAT (',        // Function with space before parenthesis
+    '_private_func(',  // Function starting with underscore
+];
+```
+
+## Examples that would NOT match (return false):
+```php
+$examples_no_match = [
+    '123ABC(',         // Starts with number
+    'some-func(',      // Contains hyphen
+    'func',            // No parenthesis
+    'UPPER',           // No parenthesis
+    '(SELECT',         // Starts with parenthesis
+    'user.name',       // Regular column reference
+];
+```
+
+##  Practical usage in QueryBuilder:
+$queryBuilder = new QueryBuilder();
+-
+
+##  This would be treated as a function (not escaped):
+$queryBuilder->where('created_at', '>', 'NOW()');
+// Generates: WHERE created_at > NOW()
+
+##  This would be treated as a regular value (escaped):
+$queryBuilder->where('name', '=', 'John');
+##  Generates: WHERE name = 'John'
+
+##  Function with parameters:
+$queryBuilder->where('date_column', '=', 'DATE_FORMAT(NOW(), "%Y-%m-%d")');
+##  Generates: WHERE date_column = DATE_FORMAT(NOW(), "%Y-%m-%d")
+The regex ensures that MySQL functions aren't incorrectly quoted or escaped, which would break the SQL query. It's a safety mechanism to preserve function calls while still protecting against SQL injection for regular string values.
+

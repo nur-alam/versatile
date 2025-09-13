@@ -144,43 +144,43 @@ class Templogin {
 						'name'     => 'page',
 						'value'    => isset( $_POST['page'] ) ? $_POST['page'] : '1', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|numeric',
+						'rules'    => 'numeric',
 					),
 					array(
 						'name'     => 'per_page',
 						'value'    => isset( $_POST['per_page'] ) ? $_POST['per_page'] : '10', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|numeric',
+						'rules'    => 'numeric',
 					),
 					array(
 						'name'     => 'search',
 						'value'    => isset( $_POST['search'] ) ? $_POST['search'] : '', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input',
+						'rules'    => '',
 					),
 					array(
 						'name'     => 'role',
 						'value'    => isset( $_POST['role'] ) ? $_POST['role'] : '', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|in_array:all,administrator,subscriber,editor,author,contributor,author',
+						'rules'    => '',
 					),
 					array(
 						'name'     => 'status',
 						'value'    => isset( $_POST['status'] ) ? $_POST['status'] : 'all', // @phpcs:ignore	
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|in_array:active,inactive,all,expired',
+						'rules'    => 'in_array:active,inactive,all,expired',
 					),
 					array(
 						'name'     => 'order',
 						'value'    => isset( $_POST['order'] ) ? $_POST['order'] : '', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|in_array:asc,desc',
+						'rules'    => 'in_array:asc,desc',
 					),
 					array(
 						'name'     => 'orderby',
 						'value'    => isset( $_POST['orderby'] ) ? $_POST['orderby'] : '', // @phpcs:ignore
 						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|in_array:id,display_name,email,expires_at,created_at,login_count',
+						'rules'    => 'in_array:id,display_name,email,expires_at,created_at,login_count',
 					),
 				)
 			);
@@ -200,98 +200,6 @@ class Templogin {
 
 			global $wpdb;
 
-			// $yo = TempLoginModel::active()->get();
-			// $all = TempLoginModel::all();
-			// $temp_logins = TempLoginModel::select('id', 'display_name', 'email')->get();
-			// $yo           = TempLoginModel::find(3);
-			// $yo->login_count = rand(1, 100);
-			// $yo->save();
-			// $ppp = TempLoginModel::create(array(
-			// 	'token'        => wp_generate_password(32, false),
-			// 	'role'         => 'editor',
-			// 	'display_name' => 'pinTanek Lara',
-			// 	'email'        => 'sadfkobyj@mailinatorabd.com',
-			// 	'expires_at'   => '2026-09-04 10:33:39',
-			// 	'redirect_url' => 'http://localhost:10050/wp-admin/',
-			// 	'ip_address'   => '127.0.0.1',
-			// 	'created_at'   => '2025-09-04 04:33:39',
-			// 	'last_login'   => '2025-09-07 18:43:42',
-			// 	'login_count'  => wp_rand( 101, 200),
-			// 	'is_active'    => '1',
-			// ));
-
-			// SELECT COUNT(*) FROM wp_temp_logins WHERE 1=1 AND (display_name LIKE '%admin%' OR email LIKE '%admin%') 
-			// AND role = 'editor' AND is_active = 1 AND expires_at > NOW()
-
-			// SELECT * FROM wp_temp_logins WHERE 1=1 AND (display_name LIKE '%admin%' OR email LIKE '%admin%') 
-			// AND role = 'editor' AND is_active = 1 AND expires_at > NOW() ORDER BY display_name ASC LIMIT 10 OFFSET 20
-
-			// $yo = TempLoginModel::where(
-			// function ( $query ) {
-			// $query->where( 'display_name', 'LIKE', '%nur%' )
-			// ->orWhere( 'email', 'LIKE', '%nur%' );
-			// }
-			// )
-			// ->where( 'is_active', 0 )
-			// ->get();
-			// $temp_logins = TempLoginModel::where( 'is_active', 1 )->get();
-
-
-
-			// Build WHERE clause
-			// $where_conditions = array( '1=1' );
-			// $where_values     = array();
-
-			// // Search filter
-			// if ( ! empty( $verified_data->search ) ) {
-			// 	$where_conditions[] = '(display_name LIKE %s OR email LIKE %s)';
-			// 	$search_term        = '%' . $wpdb->esc_like( $verified_data->search ) . '%';
-			// 	$where_values[]     = $search_term;
-			// 	$where_values[]     = $search_term;
-			// }
-
-			// // Role filter
-			// if ( ! empty( $verified_data->role ) ) {
-			// 	$where_conditions[] = 'role = %s';
-			// 	$where_values[]     = $verified_data->role;
-			// }
-
-			// // Status filter
-			// if ( 'all' !== $verified_data->status ) {
-			// 	if ( 'active' === $verified_data->status ) {
-			// 		$where_conditions[] = 'is_active = 1 AND expires_at > NOW()';
-			// 	} elseif ( 'inactive' === $verified_data->status ) {
-			// 		$where_conditions[] = 'is_active = 0';
-			// 	} elseif ( 'expired' === $verified_data->status ) {
-			// 		$where_conditions[] = '(is_active = 0 OR expires_at <= NOW())';
-			// 	}
-			// }
-
-			// $where_clause = implode( ' AND ', $where_conditions );
-
-			// // Build ORDER BY clause
-			// $orderby = 'created_at DESC';
-			// if ( ! empty( $verified_data->orderby ) ) {
-			// 	$allowed_sort_keys = array( 'display_name', 'role', 'expires_at', 'created_at', 'last_login', 'login_count' );
-			// 	if ( in_array( $verified_data->orderby, $allowed_sort_keys, true ) ) {
-			// 		$order_direction = ( strtoupper( $verified_data->order ) === 'ASC' ) ? 'ASC' : 'DESC';
-			// 		$orderby         = $verified_data->orderby . ' ' . $order_direction;
-			// 	}
-			// }
-
-			// // Get total count
-			// $count_query = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where_clause}";
-			// if ( ! empty( $where_values ) ) {
-			// 	$total_entries = $wpdb->get_var( $wpdb->prepare( $count_query, $where_values ) ); //phpcs:ignore
-			// } else {
-			// 	$total_entries = $wpdb->get_var( $count_query ); //phpcs:ignore
-			// }
-
-			// // Get paginated results
-			// $results_query = "SELECT * FROM {$this->table_name} WHERE {$where_clause} ORDER BY {$orderby} LIMIT %d OFFSET %d";
-			// $query_values  = array_merge( $where_values, array( $per_page, $offset ) );
-			// $results       = $wpdb->get_results( $wpdb->prepare( $results_query, $query_values ) ); //phpcs:ignore
-
 			if('all' !== $verified_data->status) {
 				if('active' === $verified_data->status) {
 					$verified_data->status = 1;
@@ -308,41 +216,24 @@ class Templogin {
 			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
 			$offset   = ( $page - 1 ) * $per_page;
 
-			// ->where('is_active', $verified_data->status)
-			// ->where('expires_at', '>', 'NOW()')
-			// ->where('expires_at', '<', 'NOW()');
+			$query = TempLoginModel::where( 'role', '=', $verified_data->role )
+									->where(function($query) use ($verified_data) {
+										if(! empty($verified_data->search)) {
+											$query->where('display_name', 'like', '%' . $verified_data->search . '%')
+												->orWhere('email', 'like', '%' . $verified_data->search . '%');
+										}
+									});
+			if ('expired' === $verified_data->status) {
+				$query->whereRaw('expires_at <= NOW()');
+			} else {
+				$query->where('is_active', '=', $verified_data->status);
+			}
 
-			$results = TempLoginModel::where( 'role', '=', $verified_data->role )
-			->where(function($query) use ($verified_data) {
-				$query->where('display_name', $verified_data->search)->orWhere('email', $verified_data->search);
-			})
-			// ->orderBy('created_at', 'asc')
-			->orderBy([
-				'created_at'=> 'asc',
-				'id'=> 'asc'
-			])
-			->limit($per_page)
-			->offset($offset)
-			->get();
+			$query->orderBy($verified_data->orderby, $verified_data->order)->limit($per_page)->offset($offset);
 
+			$results = $query->get();
 
-			// $results = TempLoginModel::where( 'role', '=', $verified_data->role )
-			// ->whereRaw('expires_at <= NOW()')
-			// ->orderBy('created_at', 'asc')
-			// ->limit($per_page)
-			// ->offset($offset)
-			// ->get();
-
-			// if ('expired' === $verified_data->status) {
-			// 	$query->whereRaw('expires_at <= NOW()');
-			// } else {
-			// 	$query->where('is_active', '=', $verified_data->status);
-			// }
-			
-			// $results = $query->orderBy('created_at', 'asc')->get();
-
-			$total = TempLoginModel::where( 'role', '=', $verified_data->role )->get();
-			$total_entries = count($total);
+			$total_entries = TempLoginModel::count();
 
 			// Format results
 			$temp_logins = array();
@@ -469,8 +360,22 @@ class Templogin {
 			}
 
 			// Insert new temporary login
-			$result = $wpdb->insert(
-				$this->table_name,
+			// $result = $wpdb->insert(
+			// 	$this->table_name,
+			// 	array(
+			// 		'token'        => $token,
+			// 		'role'         => $verified_data->role,
+			// 		'display_name' => $verified_data->display_name,
+			// 		'email'        => $verified_data->email,
+			// 		'expires_at'   => $expires_at_timestamp,
+			// 		'redirect_url' => $verified_data->redirect_url,
+			// 		'ip_address'   => $verified_data->ip_address,
+			// 		'created_at'   => current_time( 'mysql', true ),
+			// 	),
+			// 	array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+			// );
+
+			$createTempLogin = TempLoginModel::create(
 				array(
 					'token'        => $token,
 					'role'         => $verified_data->role,
@@ -480,15 +385,15 @@ class Templogin {
 					'redirect_url' => $verified_data->redirect_url,
 					'ip_address'   => $verified_data->ip_address,
 					'created_at'   => current_time( 'mysql', true ),
-				),
-				array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+				)
 			);
 
-			if ( false === $result ) {
+			if ( false === $createTempLogin ) {
 				return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
 
-			$temp_login_id = $wpdb->insert_id;
+			// $temp_login_id = $wpdb->insert_id; 
+			$temp_login_id = $createTempLogin->id;
 
 			// Log activity
 			$this->log_activity( $temp_login_id, 'created', 'Temporary login created' );

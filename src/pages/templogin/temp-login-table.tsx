@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trash2, Copy, Eye, EyeOff, Check, Search } from 'lucide-react';
@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDebounce } from '@/hooks/useDebounce';
 import { TableSkeleton } from '@/components/loader';
-import { EmptyStateIcon } from '@/icons';
 import TableRowEmptyState from '@/components/loader/TableRowEmptyState';
 
 const columns = [
@@ -30,7 +29,7 @@ const columns = [
 const TempLoginTable = () => {
 	const [searchParams, setSearchParams] = useState<TempLoginListQueryParams>({
 		page: 1,
-		per_page: 2,
+		per_page: 10,
 		order: 'desc',
 		orderby: 'created_at',
 		role: '',

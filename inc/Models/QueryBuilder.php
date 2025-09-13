@@ -62,6 +62,13 @@ class QueryBuilder
 		return ! empty($result) ? $result[0] : null;
 	}
 
+	public function count()
+	{
+		global $wpdb;
+		$sql = $this->to_count_sql();
+		return (int) $wpdb->get_var( $sql );
+	}
+
 	public function where($column, $operator = null, $value = null)
 	{
 		if(is_callable($column)) {
@@ -215,6 +222,16 @@ class QueryBuilder
 			}
 		}
 
+		return $sql;
+	}
+
+	public function to_count_sql()
+	{
+		$sql = "SELECT COUNT(*) FROM {$this->table}";
+		// Add WHERE clauses
+		if(! empty($this->wheres)) {
+			$sql .= ' WHERE ' . $this->compile_wheres();
+		}
 		return $sql;
 	}
 

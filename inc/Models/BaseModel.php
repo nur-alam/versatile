@@ -88,6 +88,12 @@ abstract class BaseModel
 		return $instance->query_builder->orWhere($column, $operator, $value);
 	}
 
+	public static function count() 
+	{
+		$instance = new static();
+		return $instance->query_builder->count();
+	}
+
 	public static function all()
 	{
 		$instance = new static();
