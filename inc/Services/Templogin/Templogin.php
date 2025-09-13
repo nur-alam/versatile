@@ -331,15 +331,8 @@ class Templogin {
 
 			global $wpdb;
 
-			$current_time = current_time( 'mysql', true );
+			$existing_temp_login = TempLoginModel::where('email', 'LIKE', '%' . $verified_data->email . '%')->first();
 
-			// Check if email already exists
-			$existing_temp_login = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} WHERE email = %s",
-					$verified_data->email
-				)
-			);
 			if ( $existing_temp_login && $existing_temp_login->is_active ) {
 				return $this->json_response( __( 'Error: Email already exists', 'versatile-toolkit' ), array(), 400 );
 			}
@@ -359,23 +352,7 @@ class Templogin {
 				return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
 			}
 
-			// Insert new temporary login
-			// $result = $wpdb->insert(
-			// 	$this->table_name,
-			// 	array(
-			// 		'token'        => $token,
-			// 		'role'         => $verified_data->role,
-			// 		'display_name' => $verified_data->display_name,
-			// 		'email'        => $verified_data->email,
-			// 		'expires_at'   => $expires_at_timestamp,
-			// 		'redirect_url' => $verified_data->redirect_url,
-			// 		'ip_address'   => $verified_data->ip_address,
-			// 		'created_at'   => current_time( 'mysql', true ),
-			// 	),
-			// 	array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
-			// );
-
-			$createTempLogin = TempLoginModel::create(
+			$create_new_temp_login = TempLoginModel::create(
 				array(
 					'token'        => $token,
 					'role'         => $verified_data->role,
@@ -388,37 +365,29 @@ class Templogin {
 				)
 			);
 
-			if ( false === $createTempLogin ) {
+			if ( false === $create_new_temp_login ) {
 				return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
 
 			// $temp_login_id = $wpdb->insert_id; 
-			$temp_login_id = $createTempLogin->id;
+			$temp_login_id = $create_new_temp_login->id;
 
 			// Log activity
-			$this->log_activity( $temp_login_id, 'created', 'Temporary login created' );
-
-			// Get the created record
-			$temp_login = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} WHERE id = %d",
-					$temp_login_id
-				)
-			);
+			// $this->log_activity( $temp_login_id, 'created', 'Temporary login created' );
 
 			$response_data = array(
-				'id'           => intval( $temp_login->id ),
-				'token'        => $temp_login->token,
-				'role'         => $temp_login->role,
-				'display_name' => $temp_login->display_name,
-				'email'        => $temp_login->email,
-				'expires_at'   => $temp_login->expires_at,
-				'redirect_url' => $temp_login->redirect_url,
-				'created_at'   => $temp_login->created_at,
-				'last_login'   => $temp_login->last_login,
-				'login_count'  => intval( $temp_login->login_count ),
-				'is_active'    => (bool) $temp_login->is_active,
-				'login_url'    => home_url( '?versatile_temp_login=' . $temp_login->token ),
+				'id'           => intval( $create_new_temp_login->id ),
+				'token'        => $create_new_temp_login->token,
+				'role'         => $create_new_temp_login->role,
+				'display_name' => $create_new_temp_login->display_name,
+				'email'        => $create_new_temp_login->email,
+				'expires_at'   => $create_new_temp_login->expires_at,
+				'redirect_url' => $create_new_temp_login->redirect_url,
+				'created_at'   => $create_new_temp_login->created_at,
+				'last_login'   => $create_new_temp_login->last_login,
+				'login_count'  => intval( $create_new_temp_login->login_count ),
+				'is_active'    => (bool) $create_new_temp_login->is_active,
+				'login_url'    => home_url( '?versatile_temp_login=' . $create_new_temp_login->token ),
 			);
 
 			return $this->json_response( __( 'Temporary login created successfully', 'versatile-toolkit' ), $response_data, 200 );

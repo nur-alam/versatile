@@ -31,7 +31,7 @@ abstract class BaseModel
 
 	protected $attributes = array();
 
-	protected $setted_attributes = array();
+	protected $set_attributes = array();
 
 	protected $query_builder;
 
@@ -56,8 +56,8 @@ abstract class BaseModel
 	public function __set($key, $value)
 	{
 		$this->attributes[$key] = $value;
-		if($key !== $this->primary_key) {
-			$this->setted_attributes[$key] = $value;
+		if ($key !== $this->primary_key) {
+			$this->set_attributes[$key] = $value;
 		}
 	}
 
@@ -88,7 +88,7 @@ abstract class BaseModel
 		return $instance->query_builder->orWhere($column, $operator, $value);
 	}
 
-	public static function count() 
+	public static function count()
 	{
 		$instance = new static();
 		return $instance->query_builder->count();
@@ -98,7 +98,7 @@ abstract class BaseModel
 	{
 		$instance = new static();
 		$results = $instance->query_builder->get();
-		
+
 		$models = array();
 		foreach ($results as $result) {
 			$model = new static();
@@ -106,7 +106,7 @@ abstract class BaseModel
 			$model->exists = true;
 			$models[] = $model;
 		}
-		
+
 		return $models;
 	}
 
@@ -133,8 +133,10 @@ abstract class BaseModel
 	public static function create(array $attributes = array())
 	{
 		$instance = new static($attributes);
-		$instance->save();
-		return $instance;
+		if ($instance->save()) {
+			return $instance;
+		}
+		return false;
 	}
 
 	public function save()
@@ -171,14 +173,28 @@ abstract class BaseModel
 	protected function perform_insert()
 	{
 		global $wpdb;
+
+		// Remove only null, empty string, or zero primary key before insert
+		// Allow valid IDs to be inserted (for data migration, imports, etc.)
+		$insert_data = $this->attributes;
+		if (isset($insert_data[$this->primary_key]) && $this->shouldRemovePrimaryKey($insert_data[$this->primary_key])) {
+			unset($insert_data[$this->primary_key]);
+		}
+
 		$result = $wpdb->insert(
 			$this->get_table(),
-			$this->attributes,
-			$this->get_insert_format()
+			$insert_data,
+			$this->get_insert_format_for_data($insert_data)
 		);
+
 		if ($result) {
-			$this->attributes[$this->primary_key] = $wpdb->insert_id;
+			// Only set insert_id if we didn't provide our own primary key
+			if (!isset($insert_data[$this->primary_key])) {
+				$this->attributes[$this->primary_key] = $wpdb->insert_id;
+			}
 			$this->exists = true;
+			// Clear seted_attributes since we've saved
+			$this->set_attributes = array();
 			return true;
 		}
 		return false;
@@ -192,7 +208,7 @@ abstract class BaseModel
 
 		global $wpdb;
 
-		$update_data = $this->setted_attributes;
+		$update_data = $this->set_attributes;
 
 		unset($update_data[$this->primary_key]);
 
@@ -209,16 +225,21 @@ abstract class BaseModel
 
 	protected function get_insert_format()
 	{
+		return $this->get_insert_format_for_data($this->attributes);
+	}
+
+	protected function get_insert_format_for_data(array $data)
+	{
 		$format = array();
-		foreach ($this->attributes as $key => $value) {
+		foreach ($data as $key => $value) {
 			$format[] = $this->get_column_format($key, $value);
 		}
 		return $format;
 	}
 
-	protected function get_update_format( ?array $attributes = null )
+	protected function get_update_format(?array $attributes = null)
 	{
-		if(empty($attributes)) {
+		if (empty($attributes)) {
 			$attributes = $this->attributes;
 		}
 		$format = array();
@@ -237,6 +258,19 @@ abstract class BaseModel
 		} else {
 			return '%s';
 		}
+	}
+
+	/**
+	 * Determine if primary key should be removed before insert
+	 * Only removes null, empty string, or integer zero
+	 * Keeps string '0' and other valid values
+	 *
+	 * @param mixed $value The primary key value
+	 * @return bool
+	 */
+	protected function shouldRemovePrimaryKey($value)
+	{
+		return $value === null || $value === '' || $value === 0;
 	}
 
 	/**
