@@ -69,26 +69,80 @@ class QueryBuilder
 		return (int) $wpdb->get_var( $sql );
 	}
 
+	/**
+	 * Delete records from the table
+	 *
+	 * @return int|bool Number of rows affected, or false on error
+	 */
+	public function delete()
+	{
+		global $wpdb;
+		$sql = $this->to_delete_sql();
+		return $wpdb->query($sql);
+	}
+
+	/**
+	 * Destroy records by their IDs
+	 *
+	 * @param array $ids Array of record IDs to delete
+	 * @return int|bool Number of rows affected, or false on error
+	 */
+	public function destroy(array $ids, $column)
+	{
+		$this->wheres[] = array(
+			'type' => 'basic',
+			'column' => $column,
+			'operator' => 'IN',
+			'value' => $ids,
+			'combine' => 'and',
+		);
+		return $this->delete();
+	}
+
 	public function where($column, $operator = null, $value = null)
 	{
 		if(is_callable($column)) {
 			return $this->where_nested($column, 'and');
 		}
 
-		if (null === $value) {
-			$value = $operator;
-			$operator = '=';
+		if(is_array($column)) {
+			foreach($column as $col => $val) {
+				if(count($val) === 3) {
+					$col = $val[0];
+					$operator = $val[1];
+					$value = $val[2];
+				} else if (count($val) === 2) {
+					$col = $val;
+					$operator = '=';
+					$value = $val;
+				} else {
+					continue;
+				}
+
+				$this->wheres[] = array(
+					'type' => 'basic',
+					'column' => $col,
+					'operator' => $operator,
+					'value' => $value,
+					'combine' => 'and',
+				);
+			}
+		} else {
+			if (null === $value) {
+				$value = $operator;
+				$operator = '=';
+			}
+			if('' === $value) {
+				return $this;
+			}
+			$this->wheres[] = array(
+				'type' => 'basic',
+				'column' => $column,
+				'operator' => $operator,
+				'value' => $value,
+				'combine' => 'and',
+			);
 		}
-		if('' === $value) {
-			return $this;
-		}
-		$this->wheres[] = array(
-			'type' => 'basic',
-			'column' => $column,
-			'operator' => $operator,
-			'value' => $value,
-			'combine' => 'and',
-		);
 		return $this;
 	}
 
@@ -98,20 +152,44 @@ class QueryBuilder
 			return $this->where_nested($column, 'or');
 		}
 
-		if (null === $value) {
-			$value = $operator;
-			$operator = '=';
+		if(is_array($column)) {
+			foreach($column as $col => $val) {
+				if(count($val) === 3) {
+					$col = $val[0];
+					$operator = $val[1];
+					$value = $val[2];
+				} else if (count($val) === 2) {
+					$col = $val;
+					$operator = '=';
+					$value = $val;
+				} else {
+					continue;
+				}
+
+				$this->wheres[] = array(
+					'type' => 'basic',
+					'column' => $col,
+					'operator' => $operator,
+					'value' => $value,
+					'combine' => 'or',
+				);
+			}
+		} else {
+			if (null === $value) {
+				$value = $operator;
+				$operator = '=';
+			}
+			if('' === $value) {
+				return $this;
+			}
+			$this->wheres[] = array(
+				'type' => 'basic',
+				'column' => $column,
+				'operator' => $operator,
+				'value' => $value,
+				'combine' => 'or'
+			);
 		}
-		if('' === $value) {
-			return $this;
-		}
-		$this->wheres[] = array(
-			'type' => 'basic',
-			'column' => $column,
-			'operator' => $operator,
-			'value' => $value,
-			'combine' => 'or'
-		);
 		return $this;
 	}
 
@@ -235,6 +313,16 @@ class QueryBuilder
 		return $sql;
 	}
 
+	public function to_delete_sql()
+	{
+		$sql = "DELETE FROM {$this->table}";
+		// Add WHERE clauses
+		if(! empty($this->wheres)) {
+			$sql .= ' WHERE ' . $this->compile_wheres();
+		}
+		return $sql;
+	}
+
 	public function compile_wheres()
 	{
 		global $wpdb;
@@ -270,6 +358,13 @@ class QueryBuilder
 						$compile_wheres_string .= "{$column} LIKE {$value}";
 					} else {
 						$compile_wheres_string .= $wpdb->prepare("{$column} LIKE %s", $value);
+					}
+				} else if (strtoupper($operator) === 'IN') {
+					if(is_array($value)) {
+						$placeholders = implode(',', array_fill(0, count($value), '%d'));
+						$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} ({$placeholders})", ...$value);
+					} else {
+						$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %d", $value);
 					}
 				} else {
 					switch ($operator) {

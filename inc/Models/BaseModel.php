@@ -162,12 +162,22 @@ abstract class BaseModel
 			return false;
 		}
 		global $wpdb;
-		$result = $wpdb->delete(
+		$is_deleted = $wpdb->delete(
 			$this->get_table(),
 			array($this->primary_key => $this->attributes[$this->primary_key]),
 			array('%d')
 		);
-		return false !== $result;
+		return false !== $is_deleted;
+	}
+
+	public static function destroy($ids, $column = null)
+	{
+		if (empty($ids)) {
+			return false;
+		}
+		$instance = new static();
+		$column = $column ?? $instance->primary_key;
+		return $instance->query_builder->destroy((array) $ids, $column);
 	}
 
 	protected function perform_insert()

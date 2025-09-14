@@ -62,3 +62,31 @@ $results = TempLoginModel::where( 'role', '=', $verified_data->role )
     ->offset($offset)
     ->get();
 ```
+
+```php
+SELECT * FROM wp_versatile_templogin WHERE id = 3 and email = 'kobyj@mailinator.com'
+$result = TempLoginModel::where([['id', '=', 3], ['email', '=', 'kobyj@mailinator.com']])->get();
+
+SELECT * FROM wp_versatile_templogin WHERE id = 3 or email = 'nuralam862@gmail.com'
+$result = TempLoginModel::orWhere([['id', '=', 3], ['email', '=', 'nuralam862@gmail.com']])->get();
+
+SELECT * FROM wp_versatile_templogin WHERE id = 3 and email = 'kobyj@mailinator.com'
+$results = TempLoginModel::where(function($query) {
+    $query->where('id', 3)->where('email', 'kobyj@mailinator.com');
+})
+->get();
+
+$multi_where = TempLoginModel::where( 'role', 'editor' )->where(function ($query) {
+    query->where('id', 26)->where('id', 35);
+})->get();
+
+$result = TempLoginModel::where([['id', '=', 3], ['email', '=', 'kobyj@mailinator.com']])->get();
+$result = TempLoginModel::orWhere([['id', '=', 3], ['email', '=', 'nuralam862@gmail.com']])->get();
+
+$is_temp_login_deleted = TempLoginModel::destroy( 26 ); 
+$is_temp_login_deleted = TempLoginModel::destroy( [ 26 ] ); 
+$is_temp_login_deleted = TempLoginModel::destroy( [ 26, 35 ] );
+
+$ids = TempLoginModel::select('id', 'display_name')->where('id', $verified_data->id)->get();
+
+```
