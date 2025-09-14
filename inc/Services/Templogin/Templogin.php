@@ -221,6 +221,8 @@ class Templogin {
 										if(! empty($verified_data->search)) {
 											$query->where('display_name', 'like', '%' . $verified_data->search . '%')
 												->orWhere('email', 'like', '%' . $verified_data->search . '%');
+											// $query->where('display_name', 'like', '%' . $verified_data->search . '%')
+											// 	->orWhere('email', 'like', '%' . $verified_data->search . '%');
 										}
 									});
 			if ('expired' === $verified_data->status) {
@@ -369,7 +371,6 @@ class Templogin {
 				return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
 
-			// $temp_login_id = $wpdb->insert_id; 
 			$temp_login_id = $create_new_temp_login->id;
 
 			// Log activity
@@ -599,7 +600,7 @@ class Templogin {
 
 			global $wpdb;
 
-			$has_temp_login = TempLoginModel::find( 0 );
+			$has_temp_login = TempLoginModel::find( $verified_data->id );
 
 			if ( ! $has_temp_login ) {
 				return $this->json_response( __( 'Error: Temporary login not found', 'versatile-toolkit' ), array(), 404 );

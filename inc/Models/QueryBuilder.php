@@ -225,11 +225,13 @@ class QueryBuilder
 	{
 		$query = new static($this->table);
 		call_user_func($callback, $query);
-		$this->wheres[] = array(
-			'type' => 'nested',
-			'query' => $query,
-			'operator' => $operator
-		);
+		if(count($query->wheres) > 0) {
+			$this->wheres[] = array(
+				'type' => 'nested',
+				'query' => $query,
+				'operator' => $operator
+			);
+		}
 
 		return $this;
 	}
@@ -275,28 +277,28 @@ class QueryBuilder
 		if (! empty($this->wheres)) {
 			$compiled_wheres = $this->compile_wheres();
 			if(!empty($compiled_wheres)) {
-				$sql .= ' WHERE ' . $this->compile_wheres();
+				$sql .= ' WHERE ' . $compiled_wheres;
 			}
 		}
 
 		if (! empty($this->orders)) {
 			$compiled_orders = $this->compile_orders();
 			if(!empty($compiled_orders)) {
-				$sql .= ' ORDER BY ' . $this->compile_orders();
+				$sql .= ' ORDER BY ' . $compiled_orders;
 			}
 		}
 
 		if (! empty($this->limit)) {
 			$compiled_limit = $this->limit;
 			if(!empty($compiled_limit)) {
-				$sql .= ' LIMIT ' . $this->limit;
+				$sql .= ' LIMIT ' . $compiled_limit;
 			}
 		}
 
 		if (! empty($this->offset)) {
 			$compiled_offset = $this->offset;
 			if(!empty($compiled_offset)) {
-				$sql .= ' OFFSET ' . $this->offset;
+				$sql .= ' OFFSET ' . $compiled_offset;
 			}
 		}
 
