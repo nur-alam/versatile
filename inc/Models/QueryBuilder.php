@@ -70,6 +70,19 @@ class QueryBuilder
 	}
 
 	/**
+	 * Update records in the table
+	 *
+	 * @param array $data Array of column => value pairs to update
+	 * @return int|bool Number of rows affected, or false on error
+	 */
+	public function update(array $data)
+	{
+		global $wpdb;
+		$sql = $this->to_update_sql($data);
+		return $wpdb->query($sql);
+	}
+
+	/**
 	 * Delete records from the table
 	 *
 	 * @return int|bool Number of rows affected, or false on error
@@ -315,6 +328,29 @@ class QueryBuilder
 		return $sql;
 	}
 
+	public function to_update_sql(array $data)
+	{
+		global $wpdb;
+		
+		$set_clauses = array();
+		foreach ($data as $column => $value) {
+			if (is_numeric($value)) {
+				$set_clauses[] = $wpdb->prepare("{$column} = %d", $value);
+			} else {
+				$set_clauses[] = $wpdb->prepare("{$column} = %s", $value);
+			}
+		}
+		
+		$sql = "UPDATE {$this->table} SET " . implode(', ', $set_clauses);
+		
+		// Add WHERE clauses
+		if(! empty($this->wheres)) {
+			$sql .= ' WHERE ' . $this->compile_wheres();
+		}
+		
+		return $sql;
+	}
+
 	public function to_delete_sql()
 	{
 		$sql = "DELETE FROM {$this->table}";
@@ -365,8 +401,6 @@ class QueryBuilder
 					if(is_array($value)) {
 						$placeholders = implode(',', array_fill(0, count($value), '%d'));
 						$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} ({$placeholders})", ...$value);
-					} else {
-						$compile_wheres_string .= $wpdb->prepare("{$column} {$operator} %d", $value);
 					}
 				} else {
 					switch ($operator) {

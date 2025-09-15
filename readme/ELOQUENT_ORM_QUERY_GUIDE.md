@@ -10,6 +10,18 @@ $temp_logins = TempLoginModel::select('id', 'display_name', 'email')->get();
 $yo  = TempLoginModel::find(3);
 $yo->login_count = rand(1, 100);
 $yo->save();
+
+$result = TempLoginModel::find($verified_data->id)->update( ['is_active' => $is_active ? 1 : 0] );
+
+UPDATE wp_versatile_templogin SET is_active = 1 WHERE expires_at < '2025-09-15 18:53:26'
+$result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->update(['is_active' => 0]);
+
+UPDATE wp_versatile_templogin SET is_active = 1, login_count = 0 WHERE expires_at < '2025-09-15 18:55:38'
+$result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->update(['is_active' => 0, 'login_count' => 0]);
+
+UPDATE wp_versatile_templogin SET is_active = 0, login_count = 0 WHERE expires_at < '2025-09-15 19:00:39' and login_count = 1
+$result = TempLoginModel::where([['expires_at', '<', current_time('mysql', true)], ['login_count', '=', '1']])->update(['is_active' => 0, 'login_count' => 0]);
+
 ```
 
 # Conditionally build query

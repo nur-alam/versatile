@@ -48,16 +48,16 @@ class Templogin {
 		$this->activity_table_name = ( new TempLoginActivityTable() )->get_table_name();
 
 		// Add custom cron schedule FIRST (before any scheduling)
-		// add_filter(
-		// 'cron_schedules',
-		// function ( $schedules ) {
-		// $schedules['per_3_minute'] = array(
-		// 'interval' => 180, // 180 seconds
-		// 'display'  => __( 'Once Per 3 Minutes' ),
-		// );
-		// return $schedules;
-		// }
-		// );
+		add_filter(
+			'cron_schedules',
+			function ( $schedules ) {
+				$schedules['yptemp'] = array(
+					'interval' => 30,
+					'display'  => __( 'Once Per 30 seconds' ),
+				);
+				return $schedules;
+			}
+		);
 
 		// Create database tables
 		// $this->create_tables();
@@ -65,22 +65,33 @@ class Templogin {
 		// Register AJAX actions
 		add_action( 'wp_ajax_versatile_get_temp_login_list', array( $this, 'get_temp_login_list' ) );
 		add_action( 'wp_ajax_versatile_create_temp_login', array( $this, 'create_temp_login' ) );
-		add_action( 'wp_ajax_versatile_update_temp_login', array( $this, 'update_temp_login' ) );
+		// add_action( 'wp_ajax_versatile_update_temp_login', array( $this, 'update_temp_login' ) );
 		add_action( 'wp_ajax_versatile_delete_temp_login', array( $this, 'delete_temp_login' ) );
 		add_action( 'wp_ajax_versatile_toggle_temp_login_status', array( $this, 'toggle_temp_login_status' ) );
-		add_action( 'wp_ajax_versatile_get_temp_login_activity', array( $this, 'get_temp_login_activity' ) );
+		// add_action( 'wp_ajax_versatile_get_temp_login_activity', array( $this, 'get_temp_login_activity' ) );
 		add_action( 'wp_ajax_versatile_get_available_roles', array( $this, 'get_available_roles' ) );
 		add_action( 'wp_ajax_versatile_manual_cleanup_temp_logins', array( $this, 'manual_cleanup_temp_logins' ) );
 
 		// Handle temporary login authentication
 		add_action( 'init', array( $this, 'handle_temp_login' ) );
 
+		// Check if event is scheduled
+		$next_run = wp_next_scheduled('versatile_cleanup_expired_temp_logins');
+
+		// wp_clear_scheduled_hook('versatile_cleanup_expired_temp_logins');
+
 		// Clean up expired logins
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
 
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
-			wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
+			wp_schedule_event( time(), 'yptemp', 'versatile_cleanup_expired_temp_logins' );
 		}
+
+		// add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
+
+		// if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
+		// 	wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
+		// }
 		// $next_scheduled = wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' );
 		// $schedule_details = wp_get_scheduled_event( 'versatile_cleanup_expired_temp_logins', array(), $next_scheduled );
 		// $available_schedules = wp_get_schedules();
@@ -657,14 +668,9 @@ class Templogin {
 
 			$is_active = filter_var( $verified_data->is_active, FILTER_VALIDATE_BOOLEAN );
 
-			// Update the temporary login status
-			$result = $wpdb->update(
-				$this->table_name,
-				array( 'is_active' => $is_active ? 1 : 0 ),
-				array( 'id' => $verified_data->id ),
-				array( '%d' ),
-				array( '%d' )
-			);
+			$query = TempLoginModel::find($verified_data->id);
+			$query->is_active = $is_active ? 1 : 0;
+			$result = $query->save();
 
 			if ( false === $result ) {
 				return $this->json_response( __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
@@ -675,12 +681,7 @@ class Templogin {
 			$this->log_activity( $verified_data->id, $action, "Temporary login {$action}" );
 
 			// Get updated record
-			$temp_login = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$this->table_name} WHERE id = %d",
-					$verified_data->id
-				)
-			);
+			$temp_login = TempLoginModel::find($verified_data->id);
 
 			$response_data = array(
 				'id'           => intval( $temp_login->id ),
@@ -690,7 +691,6 @@ class Templogin {
 				'email'        => $temp_login->email,
 				'expires_at'   => $temp_login->expires_at,
 				'redirect_url' => $temp_login->redirect_url,
-				'language'     => $temp_login->language,
 				'created_at'   => $temp_login->created_at,
 				'last_login'   => $temp_login->last_login,
 				'login_count'  => intval( $temp_login->login_count ),
@@ -881,16 +881,20 @@ class Templogin {
 	 * Clean up expired temporary logins
 	 */
 	public function cleanup_expired_logins() {
-		return true;
 		global $wpdb;
 
 		// Delete expired temporary logins
-		$deleted_count = $wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$this->table_name} WHERE expires_at <= %s",
-				current_time( 'mysql', true ),
-			)
-		);
+		// $deleted_count = $wpdb->query(
+		// 	$wpdb->prepare(
+		// 		"DELETE FROM {$this->table_name} WHERE expires_at <= %s",
+		// 		current_time( 'mysql', true ),
+		// 	)
+		// );
+
+		// $result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->update(['is_active' => 0]);
+		// $result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->destroy();
+		$fuck = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->get();
+		$result = TempLoginModel::where([['expires_at', '<', current_time('mysql', true)], ['login_count', '=', '1']])->update(['is_active' => 0, 'login_count' => 0]);
 
 		// Clean up temporary users
 		$temp_users = get_users(
@@ -914,7 +918,7 @@ class Templogin {
 
 			// If temp login doesn't exist, delete the user
 			if ( ! $temp_login_exists ) {
-				wp_delete_user( $user->ID );
+				// wp_delete_user( $user->ID );
 				++$cleaned_users;
 			}
 		}
@@ -923,96 +927,96 @@ class Templogin {
 	/**
 	 * Get temporary login activity logs
 	 */
-	public function get_temp_login_activity() {
-		try {
-			$sanitized_data = versatile_sanitization_validation(
-				array(
-					array(
-						'name'     => 'temp_login_id',
-						'value'    => isset( $_GET['temp_login_id'] ) ? wp_unslash( $_GET['temp_login_id'] ) : '', // phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required|numeric',
-					),
-					array(
-						'name'     => 'page',
-						'value'    => isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '1', // phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|numeric',
-					),
-					array(
-						'name'     => 'per_page',
-						'value'    => isset( $_GET['per_page'] ) ? wp_unslash( $_GET['per_page'] ) : '10', // phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'if_input|numeric',
-					),
-				)
-			);
+	// public function get_temp_login_activity() {
+	// 	try {
+	// 		$sanitized_data = versatile_sanitization_validation(
+	// 			array(
+	// 				array(
+	// 					'name'     => 'temp_login_id',
+	// 					'value'    => isset( $_GET['temp_login_id'] ) ? wp_unslash( $_GET['temp_login_id'] ) : '', // phpcs:ignore
+	// 					'sanitize' => 'sanitize_text_field',
+	// 					'rules'    => 'required|numeric',
+	// 				),
+	// 				array(
+	// 					'name'     => 'page',
+	// 					'value'    => isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '1', // phpcs:ignore
+	// 					'sanitize' => 'sanitize_text_field',
+	// 					'rules'    => 'if_input|numeric',
+	// 				),
+	// 				array(
+	// 					'name'     => 'per_page',
+	// 					'value'    => isset( $_GET['per_page'] ) ? wp_unslash( $_GET['per_page'] ) : '10', // phpcs:ignore
+	// 					'sanitize' => 'sanitize_text_field',
+	// 					'rules'    => 'if_input|numeric',
+	// 				),
+	// 			)
+	// 		);
 
-			if ( ! $sanitized_data['success'] ) {
-				$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
-				return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
-			}
+	// 		if ( ! $sanitized_data['success'] ) {
+	// 			$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
+	// 			return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
+	// 		}
 
-			$verify_request = versatile_verify_request( $sanitized_data );
+	// 		$verify_request = versatile_verify_request( $sanitized_data );
 
-			if ( ! $verify_request['success'] ) {
-				return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
-			}
+	// 		if ( ! $verify_request['success'] ) {
+	// 			return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
+	// 		}
 
-			$verified_data = (object) $verify_request['data'];
+	// 		$verified_data = (object) $verify_request['data'];
 
-			global $wpdb;
+	// 		global $wpdb;
 
-			$page     = max( 1, intval( $verified_data->page ) );
-			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
-			$offset   = ( $page - 1 ) * $per_page;
+	// 		$page     = max( 1, intval( $verified_data->page ) );
+	// 		$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
+	// 		$offset   = ( $page - 1 ) * $per_page;
 
-			// Get total count
-			$total_entries = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->activity_table_name} WHERE temp_login_id = %d",
-					$verified_data->temp_login_id
-				)
-			);
+	// 		// Get total count
+	// 		$total_entries = $wpdb->get_var(
+	// 			$wpdb->prepare(
+	// 				"SELECT COUNT(*) FROM {$this->activity_table_name} WHERE temp_login_id = %d",
+	// 				$verified_data->temp_login_id
+	// 			)
+	// 		);
 
-			// Get paginated results
-			$results = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$this->activity_table_name} WHERE temp_login_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d",
-					$verified_data->temp_login_id,
-					$per_page,
-					$offset
-				)
-			);
+	// 		// Get paginated results
+	// 		$results = $wpdb->get_results(
+	// 			$wpdb->prepare(
+	// 				"SELECT * FROM {$this->activity_table_name} WHERE temp_login_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d",
+	// 				$verified_data->temp_login_id,
+	// 				$per_page,
+	// 				$offset
+	// 			)
+	// 		);
 
-			// Format results
-			$activities = array();
-			foreach ( $results as $result ) {
-				$activities[] = array(
-					'id'            => intval( $result->id ),
-					'temp_login_id' => intval( $result->temp_login_id ),
-					'action'        => $result->action,
-					'description'   => $result->description,
-					'ip_address'    => $result->ip_address,
-					'user_agent'    => $result->user_agent,
-					'created_at'    => $result->created_at,
-				);
-			}
+	// 		// Format results
+	// 		$activities = array();
+	// 		foreach ( $results as $result ) {
+	// 			$activities[] = array(
+	// 				'id'            => intval( $result->id ),
+	// 				'temp_login_id' => intval( $result->temp_login_id ),
+	// 				'action'        => $result->action,
+	// 				'description'   => $result->description,
+	// 				'ip_address'    => $result->ip_address,
+	// 				'user_agent'    => $result->user_agent,
+	// 				'created_at'    => $result->created_at,
+	// 			);
+	// 		}
 
-			$response_data = array(
-				'current_page'  => $page,
-				'activities'    => $activities,
-				'per_page'      => $per_page,
-				'total_entries' => intval( $total_entries ),
-				'total_pages'   => ceil( $total_entries / $per_page ),
-			);
+	// 		$response_data = array(
+	// 			'current_page'  => $page,
+	// 			'activities'    => $activities,
+	// 			'per_page'      => $per_page,
+	// 			'total_entries' => intval( $total_entries ),
+	// 			'total_pages'   => ceil( $total_entries / $per_page ),
+	// 		);
 
-			return $this->json_response( __( 'Activity logs retrieved successfully', 'versatile-toolkit' ), $response_data, 200 );
+	// 		return $this->json_response( __( 'Activity logs retrieved successfully', 'versatile-toolkit' ), $response_data, 200 );
 
-		} catch ( \Throwable $th ) {
-			return $this->json_response( __( 'Error: Failed to retrieve activity logs', 'versatile-toolkit' ), array(), 500 );
-		}
-	}
+	// 	} catch ( \Throwable $th ) {
+	// 		return $this->json_response( __( 'Error: Failed to retrieve activity logs', 'versatile-toolkit' ), array(), 500 );
+	// 	}
+	// }
 
 	/**
 	 * Parse datetime string to MySQL format

@@ -148,10 +148,13 @@ abstract class BaseModel
 		}
 	}
 
-	public function update(array $attribute = array())
+	public function update(array $data = array())
 	{
 		if (! empty($this->attributes)) {
-			$this->fill($attribute);
+			$this->fill($data);
+		}
+		if(is_array($data)) {
+			$this->set_attributes = $data;
 		}
 		return $this->perform_update();
 	}
