@@ -43,7 +43,6 @@ class Templogin {
 	 * Constructor
 	 */
 	public function __construct() {
-		global $wpdb;
 		$this->table_name          = ( new TempLoginTable() )->get_table_name();
 		$this->activity_table_name = ( new TempLoginActivityTable() )->get_table_name();
 
@@ -59,26 +58,16 @@ class Templogin {
 			}
 		);
 
-		// Create database tables
-		// $this->create_tables();
-
 		// Register AJAX actions
 		add_action( 'wp_ajax_versatile_get_temp_login_list', array( $this, 'get_temp_login_list' ) );
 		add_action( 'wp_ajax_versatile_create_temp_login', array( $this, 'create_temp_login' ) );
-		// add_action( 'wp_ajax_versatile_update_temp_login', array( $this, 'update_temp_login' ) );
 		add_action( 'wp_ajax_versatile_delete_temp_login', array( $this, 'delete_temp_login' ) );
 		add_action( 'wp_ajax_versatile_toggle_temp_login_status', array( $this, 'toggle_temp_login_status' ) );
-		// add_action( 'wp_ajax_versatile_get_temp_login_activity', array( $this, 'get_temp_login_activity' ) );
 		add_action( 'wp_ajax_versatile_get_available_roles', array( $this, 'get_available_roles' ) );
 		add_action( 'wp_ajax_versatile_manual_cleanup_temp_logins', array( $this, 'manual_cleanup_temp_logins' ) );
 
 		// Handle temporary login authentication
 		add_action( 'init', array( $this, 'handle_temp_login' ) );
-
-		// Check if event is scheduled
-		$next_run = wp_next_scheduled('versatile_cleanup_expired_temp_logins');
-
-		// wp_clear_scheduled_hook('versatile_cleanup_expired_temp_logins');
 
 		// Clean up expired logins
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
@@ -86,62 +75,6 @@ class Templogin {
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
 			wp_schedule_event( time(), 'yptemp', 'versatile_cleanup_expired_temp_logins' );
 		}
-
-		// add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
-
-		// if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
-		// 	wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
-		// }
-		// $next_scheduled = wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' );
-		// $schedule_details = wp_get_scheduled_event( 'versatile_cleanup_expired_temp_logins', array(), $next_scheduled );
-		// $available_schedules = wp_get_schedules();
-	}
-
-	/**
-	 * Create database tables for temporary logins
-	 */
-	private function create_tables() {
-		global $wpdb;
-
-		$charset_collate = $wpdb->get_charset_collate();
-
-		// Temporary logins table
-		$sql1 = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
-			id int(11) NOT NULL AUTO_INCREMENT,
-			token varchar(255) NOT NULL UNIQUE,
-			role varchar(50) NOT NULL DEFAULT 'subscriber',
-			display_name varchar(255) NOT NULL,
-			email varchar(255) DEFAULT NULL,
-			expires_at datetime NOT NULL,
-			redirect_url text DEFAULT NULL,
-			ip_address varchar(45) DEFAULT NULL,
-			created_at datetime DEFAULT CURRENT_TIMESTAMP,
-			last_login datetime DEFAULT NULL,
-			login_count int(11) DEFAULT 0,
-			is_active tinyint(1) DEFAULT 1,
-			PRIMARY KEY (id),
-			KEY expires_at (expires_at),
-			KEY is_active (is_active)
-		) $charset_collate;";
-
-		// Activity log table
-		$sql2 = "CREATE TABLE IF NOT EXISTS {$this->activity_table_name} (
-			id int(11) NOT NULL AUTO_INCREMENT,
-			temp_login_id int(11) NOT NULL,
-			action varchar(50) NOT NULL,
-			description text DEFAULT NULL,
-			ip_address varchar(45) DEFAULT NULL,
-			user_agent text DEFAULT NULL,
-			created_at datetime DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY (id),
-			KEY temp_login_id (temp_login_id),
-			KEY created_at (created_at),
-			FOREIGN KEY (temp_login_id) REFERENCES {$this->table_name}(id) ON DELETE CASCADE
-		) $charset_collate;";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql1 );
-		dbDelta( $sql2 );
 	}
 
 	/**
@@ -211,13 +144,11 @@ class Templogin {
 
 			global $wpdb;
 
-			if('all' !== $verified_data->status) {
-				if('active' === $verified_data->status) {
+			if ( 'all' !== $verified_data->status ) {
+				if ( 'active' === $verified_data->status ) {
 					$verified_data->status = 1;
-				} else if('inactive' === $verified_data->status) {
+				} elseif ( 'inactive' === $verified_data->status ) {
 					$verified_data->status = 0;
-				} else if('expired' === $verified_data->status) {
-					// $verified_data->status = 'expires_at <= NOW()';
 				}
 			} else {
 				$verified_data->status = '';
@@ -228,45 +159,27 @@ class Templogin {
 			$offset   = ( $page - 1 ) * $per_page;
 
 			$query = TempLoginModel::where( 'role', '=', $verified_data->role )
-									->where(function($query) use ($verified_data) {
-										if(! empty($verified_data->search)) {
-											$query->where('display_name', 'like', '%' . $verified_data->search . '%')
-												->orWhere('email', 'like', '%' . $verified_data->search . '%');
-											// $query->where('display_name', 'like', '%' . $verified_data->search . '%')
-											// 	->orWhere('email', 'like', '%' . $verified_data->search . '%');
+									->where(
+										function ( $query ) use ( $verified_data ) {
+											if ( ! empty( $verified_data->search ) ) {
+												$query->where( 'display_name', 'like', '%' . $verified_data->search . '%' )
+												->or_where( 'email', 'like', '%' . $verified_data->search . '%' );
+											}
 										}
-									});
-			if ('expired' === $verified_data->status) {
-				$query->whereRaw('expires_at <= NOW()');
+									);
+			if ( 'expired' === $verified_data->status ) {
+				$query->where_raw( 'expires_at <= NOW()' );
 			} else {
-				$query->where('is_active', '=', $verified_data->status);
+				$query->where( 'is_active', '=', $verified_data->status );
 			}
 
-			$query->orderBy($verified_data->orderby, $verified_data->order)->limit($per_page)->offset($offset);
+			$query->order_by( $verified_data->orderby, $verified_data->order )->limit( $per_page )->offset( $offset );
 
-			$results = $query->get();
-
+			$results       = $query->get();
 			$total_entries = TempLoginModel::count();
 
 			// Format results
-			$temp_logins = array();
-			foreach ( $results as $result ) {
-				$temp_logins[] = array(
-					'id'           => intval( $result->id ),
-					'token'        => $result->token,
-					'role'         => $result->role,
-					'display_name' => $result->display_name,
-					'email'        => $result->email,
-					'ip_address'   => $result->ip_address,
-					'expires_at'   => $result->expires_at,
-					'redirect_url' => $result->redirect_url,
-					'created_at'   => $result->created_at,
-					'last_login'   => $result->last_login,
-					'login_count'  => intval( $result->login_count ),
-					'is_active'    => (bool) $result->is_active,
-					'login_url'    => home_url( '?versatile_temp_login=' . $result->token ),
-				);
-			}
+			$temp_logins = array_map( fn( $model ) => $model->as_array(), $results );
 
 			$response_data = array(
 				'current_page'  => $page,
@@ -277,7 +190,6 @@ class Templogin {
 			);
 
 			return $this->json_response( __( 'Temporary logins retrieved successfully', 'versatile-toolkit' ), $response_data, 200 );
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to retrieve temporary logins', 'versatile-toolkit' ), array(), 500 );
 		}
@@ -344,7 +256,7 @@ class Templogin {
 
 			global $wpdb;
 
-			$existing_temp_login = TempLoginModel::where('email', 'LIKE', '%' . $verified_data->email . '%')->first();
+			$existing_temp_login = TempLoginModel::where( 'email', 'LIKE', '%' . $verified_data->email . '%' )->first();
 
 			if ( $existing_temp_login && $existing_temp_login->is_active ) {
 				return $this->json_response( __( 'Error: Email already exists', 'versatile-toolkit' ), array(), 400 );
@@ -365,7 +277,7 @@ class Templogin {
 				return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
 			}
 
-			$create_new_temp_login = TempLoginModel::create(
+			$new_temp_login = TempLoginModel::create(
 				array(
 					'token'        => $token,
 					'role'         => $verified_data->role,
@@ -378,207 +290,17 @@ class Templogin {
 				)
 			);
 
-			if ( false === $create_new_temp_login ) {
+			if ( false === $new_temp_login ) {
 				return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
 
-			$temp_login_id = $create_new_temp_login->id;
-
-			// Log activity
-			// $this->log_activity( $temp_login_id, 'created', 'Temporary login created' );
-
-			$response_data = array(
-				'id'           => intval( $create_new_temp_login->id ),
-				'token'        => $create_new_temp_login->token,
-				'role'         => $create_new_temp_login->role,
-				'display_name' => $create_new_temp_login->display_name,
-				'email'        => $create_new_temp_login->email,
-				'expires_at'   => $create_new_temp_login->expires_at,
-				'redirect_url' => $create_new_temp_login->redirect_url,
-				'created_at'   => $create_new_temp_login->created_at,
-				'last_login'   => $create_new_temp_login->last_login,
-				'login_count'  => intval( $create_new_temp_login->login_count ),
-				'is_active'    => (bool) $create_new_temp_login->is_active,
-				'login_url'    => home_url( '?versatile_temp_login=' . $create_new_temp_login->token ),
-			);
+			$response_data = $new_temp_login->as_array();
 
 			return $this->json_response( __( 'Temporary login created successfully', 'versatile-toolkit' ), $response_data, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to create temporary login', 'versatile-toolkit' ), array(), 500 );
 		}
 	}
-
-	/**
-	 * Update temporary login
-	 */
-	// public function update_temp_login() {
-	// 	try {
-	// 		$sanitized_data = versatile_sanitization_validation(
-	// 			array(
-	// 				array(
-	// 					'name'     => 'id',
-	// 					'value'    => isset( $_POST['id'] ) ? $_POST['id'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'required|numeric',
-	// 				),
-	// 				array(
-	// 					'name'     => 'display_name',
-	// 					'value'    => isset( $_POST['display_name'] ) ? $_POST['display_name'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input',
-	// 				),
-	// 				array(
-	// 					'name'     => 'email',
-	// 					'value'    => isset( $_POST['email'] ) ? $_POST['email'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_email',
-	// 					'rules'    => 'if_input|email',
-	// 				),
-	// 				array(
-	// 					'name'     => 'role',
-	// 					'value'    => isset( $_POST['role'] ) ? $_POST['role'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input',
-	// 				),
-	// 				array(
-	// 					'name'     => 'expires_at',
-	// 					'value'    => isset( $_POST['expires_at'] ) ? $_POST['expires_at'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input',
-	// 				),
-	// 				array(
-	// 					'name'     => 'redirect_url',
-	// 					'value'    => isset( $_POST['redirect_url'] ) ? $_POST['redirect_url'] : '', // phpcs:ignore
-	// 					'sanitize' => 'esc_url_raw',
-	// 					'rules'    => 'if_input',
-	// 				),
-	// 				array(
-	// 					'name'     => 'language',
-	// 					'value'    => isset( $_POST['language'] ) ? $_POST['language'] : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input',
-	// 				),
-	// 			)
-	// 		);
-
-	// 		if ( ! $sanitized_data['success'] ) {
-	// 			$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
-	// 			return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
-	// 		}
-
-	// 		$verify_request = versatile_verify_request( $sanitized_data );
-
-	// 		if ( ! $verify_request['success'] ) {
-	// 			return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
-	// 		}
-
-	// 		$verified_data = (object) $verify_request['data'];
-
-	// 		global $wpdb;
-
-	// 		// Check if temp login exists
-	// 		$temp_login = $wpdb->get_row(
-	// 			$wpdb->prepare(
-	// 				'SELECT * FROM %s WHERE id = %d',
-	// 				$this->table_name,
-	// 				$verified_data->id
-	// 			)
-	// 		);
-
-	// 		if ( ! $temp_login ) {
-	// 			return $this->json_response( __( 'Error: Temporary login not found', 'versatile-toolkit' ), array(), 404 );
-	// 		}
-
-	// 		// Prepare update data
-	// 		$update_data   = array();
-	// 		$update_format = array();
-
-	// 		if ( ! empty( $verified_data->display_name ) ) {
-	// 			$update_data['display_name'] = $verified_data->display_name;
-	// 			$update_format[]             = '%s';
-	// 		}
-
-	// 		if ( ! empty( $verified_data->email ) ) {
-	// 			$update_data['email'] = $verified_data->email;
-	// 			$update_format[]      = '%s';
-	// 		}
-
-	// 		if ( ! empty( $verified_data->role ) ) {
-	// 			// Validate role exists
-	// 			$available_roles = get_editable_roles();
-	// 			if ( ! array_key_exists( $verified_data->role, $available_roles ) ) {
-	// 				return $this->json_response( __( 'Error: Invalid role specified', 'versatile-toolkit' ), array(), 400 );
-	// 			}
-	// 			$update_data['role'] = $verified_data->role;
-	// 			$update_format[]     = '%s';
-	// 		}
-
-	// 		if ( ! empty( $verified_data->expires_at ) ) {
-	// 			$expires_at_timestamp = $this->parse_datetime( $verified_data->expires_at );
-	// 			if ( ! $expires_at_timestamp ) {
-	// 				return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
-	// 			}
-	// 			$update_data['expires_at'] = $expires_at_timestamp;
-	// 			$update_format[]           = '%s';
-	// 		}
-
-	// 		if ( isset( $verified_data->redirect_url ) ) {
-	// 			$update_data['redirect_url'] = $verified_data->redirect_url;
-	// 			$update_format[]             = '%s';
-	// 		}
-
-	// 		if ( ! empty( $verified_data->language ) ) {
-	// 			$update_data['language'] = $verified_data->language;
-	// 			$update_format[]         = '%s';
-	// 		}
-
-	// 		// Update the temporary login
-	// 		if ( ! empty( $update_data ) ) {
-	// 			$result = $wpdb->update(
-	// 				$this->table_name,
-	// 				$update_data,
-	// 				array( 'id' => $verified_data->id ),
-	// 				$update_format,
-	// 				array( '%d' )
-	// 			);
-
-	// 			if ( ! $result ) {
-	// 				return $this->json_response( __( 'Error: Failed to update temporary login', 'versatile-toolkit' ), array(), 500 );
-	// 			}
-
-	// 			// Log activity
-	// 			$this->log_activity( $verified_data->id, 'updated', 'Temporary login updated' );
-	// 		}
-
-	// 		// Get updated record
-	// 		$updated_temp_login = $wpdb->get_row(
-	// 			$wpdb->prepare(
-	// 				"SELECT * FROM {$this->table_name} WHERE id = %d",
-	// 				$verified_data->id
-	// 			)
-	// 		);
-
-	// 		$response_data = array(
-	// 			'id'           => intval( $updated_temp_login->id ),
-	// 			'token'        => $updated_temp_login->token,
-	// 			'role'         => $updated_temp_login->role,
-	// 			'display_name' => $updated_temp_login->display_name,
-	// 			'email'        => $updated_temp_login->email,
-	// 			'expires_at'   => $updated_temp_login->expires_at,
-	// 			'redirect_url' => $updated_temp_login->redirect_url,
-	// 			'language'     => $updated_temp_login->language,
-	// 			'created_at'   => $updated_temp_login->created_at,
-	// 			'last_login'   => $updated_temp_login->last_login,
-	// 			'login_count'  => intval( $updated_temp_login->login_count ),
-	// 			'is_active'    => (bool) $updated_temp_login->is_active,
-	// 			'login_url'    => home_url( '?versatile_temp_login=' . $updated_temp_login->token ),
-	// 		);
-
-	// 		return $this->json_response( __( 'Temporary login updated successfully', 'versatile-toolkit' ), $response_data, 200 );
-
-	// 	} catch ( \Throwable $th ) {
-	// 		return $this->json_response( __( 'Error: Failed to update temporary login', 'versatile-toolkit' ), array(), 500 );
-	// 	}
-	// }
 
 	/**
 	 * Delete temporary login
@@ -623,7 +345,6 @@ class Templogin {
 			}
 
 			return $this->json_response( __( 'Temporary login deleted successfully', 'versatile-toolkit' ), array(), 200 );
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to delete temporary login', 'versatile-toolkit' ), array(), 500 );
 		}
@@ -668,9 +389,9 @@ class Templogin {
 
 			$is_active = filter_var( $verified_data->is_active, FILTER_VALIDATE_BOOLEAN );
 
-			$query = TempLoginModel::find($verified_data->id);
+			$query            = TempLoginModel::find( $verified_data->id );
 			$query->is_active = $is_active ? 1 : 0;
-			$result = $query->save();
+			$result           = $query->save();
 
 			if ( false === $result ) {
 				return $this->json_response( __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
@@ -681,25 +402,10 @@ class Templogin {
 			$this->log_activity( $verified_data->id, $action, "Temporary login {$action}" );
 
 			// Get updated record
-			$temp_login = TempLoginModel::find($verified_data->id);
-
-			$response_data = array(
-				'id'           => intval( $temp_login->id ),
-				'token'        => $temp_login->token,
-				'role'         => $temp_login->role,
-				'display_name' => $temp_login->display_name,
-				'email'        => $temp_login->email,
-				'expires_at'   => $temp_login->expires_at,
-				'redirect_url' => $temp_login->redirect_url,
-				'created_at'   => $temp_login->created_at,
-				'last_login'   => $temp_login->last_login,
-				'login_count'  => intval( $temp_login->login_count ),
-				'is_active'    => (bool) $temp_login->is_active,
-				'login_url'    => home_url( '?versatile_temp_login=' . $temp_login->token ),
-			);
+			$temp_login    = TempLoginModel::find( $verified_data->id );
+			$response_data = $temp_login->to_array();
 
 			return $this->json_response( __( 'Temporary login status updated successfully', 'versatile-toolkit' ), $response_data, 200 );
-
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
 		}
@@ -828,7 +534,7 @@ class Templogin {
 		$user_id = wp_insert_user( $user_data );
 
 		// Schedule user deletion after session ends
-		wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'versatile_cleanup_temp_user', array( $user_id ) );
+		// wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'versatile_cleanup_temp_user', array( $user_id ) );
 
 		return $user_id;
 	}
@@ -881,142 +587,43 @@ class Templogin {
 	 * Clean up expired temporary logins
 	 */
 	public function cleanup_expired_logins() {
-		global $wpdb;
+		try {
+			global $wpdb;
+			// Update expired logins to inactive
+			$result = TempLoginModel::where( 'expires_at', '<', 'NOW()' )->update( array( 'is_active' => 0 ) );
 
-		// Delete expired temporary logins
-		// $deleted_count = $wpdb->query(
-		// 	$wpdb->prepare(
-		// 		"DELETE FROM {$this->table_name} WHERE expires_at <= %s",
-		// 		current_time( 'mysql', true ),
-		// 	)
-		// );
-
-		// $result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->update(['is_active' => 0]);
-		// $result = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->destroy();
-		$fuck = TempLoginModel::where('expires_at', '<', current_time('mysql', true))->get();
-		$result = TempLoginModel::where([['expires_at', '<', current_time('mysql', true)], ['login_count', '=', '1']])->update(['is_active' => 0, 'login_count' => 0]);
-
-		// Clean up temporary users
-		$temp_users = get_users(
-			array(
-				'meta_key'   => 'versatile_temp_user',
-				'meta_value' => true,
-			)
-		);
-
-		$cleaned_users = 0;
-		foreach ( $temp_users as $user ) {
-			$temp_login_id = get_user_meta( $user->ID, 'versatile_temp_login_id', true );
-
-			// Check if associated temp login still exists
-			$temp_login_exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->table_name} WHERE id = %d",
-					$temp_login_id
+			// Get temporary users with active temp login
+			$temp_users = get_users(
+				array(
+					'meta_key'   => 'versatile_temp_user',
+					'meta_value' => true,
 				)
 			);
 
-			// If temp login doesn't exist, delete the user
-			if ( ! $temp_login_exists ) {
-				// wp_delete_user( $user->ID );
-				++$cleaned_users;
+			$cleaned_users = 0;
+			foreach ( $temp_users as $user ) {
+				$temp_login_id = get_user_meta( $user->ID, 'versatile_temp_login_id', true );
+				// Check if associated temp login still exists
+				$temp_login_exists = TempLoginModel::where( 'id', $temp_login_id )->where( 'is_active', 0 )->count();
+
+				// If temp login doesn't exist, delete the user
+				if ( $temp_login_exists ) {
+					$user_deleted = $wpdb->delete(
+						$wpdb->users,
+						array(
+							'id' => $user->ID,
+						),
+						array(
+							'%d',
+						)
+					);
+					++$cleaned_users;
+				}
 			}
+		} catch ( \Throwable $th ) {
+			return $this->json_response( __( 'Error: Failed to run cleanup', 'versatile-toolkit' ), array(), 500 );
 		}
 	}
-
-	/**
-	 * Get temporary login activity logs
-	 */
-	// public function get_temp_login_activity() {
-	// 	try {
-	// 		$sanitized_data = versatile_sanitization_validation(
-	// 			array(
-	// 				array(
-	// 					'name'     => 'temp_login_id',
-	// 					'value'    => isset( $_GET['temp_login_id'] ) ? wp_unslash( $_GET['temp_login_id'] ) : '', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'required|numeric',
-	// 				),
-	// 				array(
-	// 					'name'     => 'page',
-	// 					'value'    => isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '1', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input|numeric',
-	// 				),
-	// 				array(
-	// 					'name'     => 'per_page',
-	// 					'value'    => isset( $_GET['per_page'] ) ? wp_unslash( $_GET['per_page'] ) : '10', // phpcs:ignore
-	// 					'sanitize' => 'sanitize_text_field',
-	// 					'rules'    => 'if_input|numeric',
-	// 				),
-	// 			)
-	// 		);
-
-	// 		if ( ! $sanitized_data['success'] ) {
-	// 			$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
-	// 			return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
-	// 		}
-
-	// 		$verify_request = versatile_verify_request( $sanitized_data );
-
-	// 		if ( ! $verify_request['success'] ) {
-	// 			return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
-	// 		}
-
-	// 		$verified_data = (object) $verify_request['data'];
-
-	// 		global $wpdb;
-
-	// 		$page     = max( 1, intval( $verified_data->page ) );
-	// 		$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
-	// 		$offset   = ( $page - 1 ) * $per_page;
-
-	// 		// Get total count
-	// 		$total_entries = $wpdb->get_var(
-	// 			$wpdb->prepare(
-	// 				"SELECT COUNT(*) FROM {$this->activity_table_name} WHERE temp_login_id = %d",
-	// 				$verified_data->temp_login_id
-	// 			)
-	// 		);
-
-	// 		// Get paginated results
-	// 		$results = $wpdb->get_results(
-	// 			$wpdb->prepare(
-	// 				"SELECT * FROM {$this->activity_table_name} WHERE temp_login_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d",
-	// 				$verified_data->temp_login_id,
-	// 				$per_page,
-	// 				$offset
-	// 			)
-	// 		);
-
-	// 		// Format results
-	// 		$activities = array();
-	// 		foreach ( $results as $result ) {
-	// 			$activities[] = array(
-	// 				'id'            => intval( $result->id ),
-	// 				'temp_login_id' => intval( $result->temp_login_id ),
-	// 				'action'        => $result->action,
-	// 				'description'   => $result->description,
-	// 				'ip_address'    => $result->ip_address,
-	// 				'user_agent'    => $result->user_agent,
-	// 				'created_at'    => $result->created_at,
-	// 			);
-	// 		}
-
-	// 		$response_data = array(
-	// 			'current_page'  => $page,
-	// 			'activities'    => $activities,
-	// 			'per_page'      => $per_page,
-	// 			'total_entries' => intval( $total_entries ),
-	// 			'total_pages'   => ceil( $total_entries / $per_page ),
-	// 		);
-
-	// 		return $this->json_response( __( 'Activity logs retrieved successfully', 'versatile-toolkit' ), $response_data, 200 );
-
-	// 	} catch ( \Throwable $th ) {
-	// 		return $this->json_response( __( 'Error: Failed to retrieve activity logs', 'versatile-toolkit' ), array(), 500 );
-	// 	}
-	// }
 
 	/**
 	 * Parse datetime string to MySQL format

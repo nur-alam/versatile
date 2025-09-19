@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Temp Login Model Class
  *
@@ -13,7 +12,7 @@ namespace Versatile\Models;
 
 use Versatile\Database\TempLoginTable;
 
-if (! defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,8 +21,8 @@ if (! defined('ABSPATH')) {
  *
  * @since 1.0.0
  */
-class TempLoginModel extends BaseModel
-{
+class TempLoginModel extends BaseModel {
+
 
 	/**
 	 * The attributes that are mass assignable
@@ -43,17 +42,14 @@ class TempLoginModel extends BaseModel
 		'login_count',
 		'is_active',
 	);
-
-	protected $token = '';
 	/**
 	 * Constructor
 	 *
 	 * @param array $attributes Initial attributes.
 	 */
-	public function __construct(array $attributes = array())
-	{
-		$this->table = (new TempLoginTable)->get_table_name();
-		parent::__construct($attributes);
+	public function __construct( array $attributes = array() ) {
+		$this->table = ( new TempLoginTable() )->get_table_name();
+		parent::__construct( $attributes );
 	}
 
 	/**
@@ -61,9 +57,20 @@ class TempLoginModel extends BaseModel
 	 *
 	 * @return string
 	 */
-	public static function generateToken()
-	{
-		return wp_generate_password(32, false);
+	public static function generateToken() {
+		return wp_generate_password( 32, false );
+	}
+
+	/**
+	 * Get the model as an array
+	 *
+	 * @return array
+	 */
+	public function as_array() {
+		$data              = $this->to_array();
+		$data['is_active'] = isset( $data['is_active'] ) ? (bool) $data['is_active'] : (bool) true;
+		$data['login_url'] = $this->getLoginUrl();
+		return $data;
 	}
 
 	/**
@@ -71,8 +78,7 @@ class TempLoginModel extends BaseModel
 	 *
 	 * @return string
 	 */
-	public function getLoginUrl()
-	{
-		return home_url('?versatile_temp_login=' . $this->token);
+	public function getLoginUrl() {
+		return home_url( '?versatile_temp_login=' . $this->token );
 	}
 }

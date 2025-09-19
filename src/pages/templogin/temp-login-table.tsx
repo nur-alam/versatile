@@ -22,7 +22,7 @@ const columns = [
 	{ key: 'expires_at', label: 'Expires At' },
 	{ key: 'login_count', label: 'Login Count' },
 	{ key: 'last_login', label: 'Last Login' },
-	{ key: 'ip_address', label: 'Allowed IP' }, 
+	{ key: 'ip_address', label: 'Allowed IP' },
 	{ key: 'actions', label: 'Actions' },
 ];
 
@@ -233,29 +233,29 @@ const TempLoginTable = () => {
 			</CardContent>
 
 			{/* Pagination */}
-            {tempLoginList && tempLoginList.total_pages > 1 && ( 
-                <CardContent className="pt-0">
-                    <div className="flex justify-center space-x-2">
-                        <Button
-                            variant="outline"
-                            disabled={tempLoginList.current_page === 1}
-                            onClick={() => onPageChange(tempLoginList.current_page - 1)}
-                        >
-                            {__('Previous', 'versatile-toolkit')}
-                        </Button>
-                        <span className="flex items-center px-4">
-                            {__('Page', 'versatile-toolkit')} {tempLoginList.current_page} {__('of', 'versatile-toolkit')} {tempLoginList.total_pages}
-                        </span>
-                        <Button
-                            variant="outline"
-                            disabled={tempLoginList.current_page === tempLoginList.total_pages}
-                            onClick={() => onPageChange(tempLoginList.current_page + 1)}
-                        >
-                            {__('Next', 'versatile-toolkit')}
-                        </Button>
-                    </div>
-                </CardContent>
-            )}
+			{tempLoginList && tempLoginList.total_pages > 1 && (
+				<CardContent className="pt-0">
+					<div className="flex justify-center space-x-2">
+						<Button
+							variant="outline"
+							disabled={tempLoginList.current_page === 1}
+							onClick={() => onPageChange(tempLoginList.current_page - 1)}
+						>
+							{__('Previous', 'versatile-toolkit')}
+						</Button>
+						<span className="flex items-center px-4">
+							{__('Page', 'versatile-toolkit')} {tempLoginList.current_page} {__('of', 'versatile-toolkit')} {tempLoginList.total_pages}
+						</span>
+						<Button
+							variant="outline"
+							disabled={tempLoginList.current_page === tempLoginList.total_pages}
+							onClick={() => onPageChange(tempLoginList.current_page + 1)}
+						>
+							{__('Next', 'versatile-toolkit')}
+						</Button>
+					</div>
+				</CardContent>
+			)}
 
 		</Card>
 	</>

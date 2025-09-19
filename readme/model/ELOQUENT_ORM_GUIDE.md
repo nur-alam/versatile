@@ -4,10 +4,28 @@ This guide explains how to use the Laravel Eloquent-style ORM implementation in 
 
 ## Overview
 
+BaseModel (Active Record Pattern):
+
 The ORM consists of three main components:
 - `BaseModel` - The base model class that provides core functionality
 - `QueryBuilder` - Handles fluent query building
 - `TempLoginModel` - Example model extending BaseModel
+
+#### Better Pattern
+The typical ORM pattern separates concerns like this:
+
+#### BaseModel: Instance methods for single records (save(), delete(), update())
+QueryBuilder: Query methods for multiple records (where(), select(), get())
+
+
+### BaseModel (Active Record Pattern):
+Static methods (where(), find(), all()) return QueryBuilder instances or models
+Instance methods (save(), update(), delete()) work on single records
+Acts as a factory for QueryBuilder instances
+### QueryBuilder (Query Builder Pattern):
+Handles all query construction and execution
+Can return raw results or hydrated model instances
+Chainable methods for building complex queries
 
 ## Basic Usage
 
