@@ -80,7 +80,7 @@ define(
 			'label'       => 'Troubleshoot',
 			'enable'      => true,
 			'path'        => 'troubleshoot',
-			'description' => 'Disable plugin byIP specific, plugin conflicts, and view debug logs.',
+			'description' => 'Disable plugin by IP specific, plugin conflicts, and view debug logs.',
 			'menus'       => array(
 				'troubleshoot' => array(
 					'slug'   => '',

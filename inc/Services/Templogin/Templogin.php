@@ -64,7 +64,7 @@ class Templogin {
 		add_action( 'wp_ajax_versatile_delete_temp_login', array( $this, 'delete_temp_login' ) );
 		add_action( 'wp_ajax_versatile_toggle_temp_login_status', array( $this, 'toggle_temp_login_status' ) );
 		add_action( 'wp_ajax_versatile_get_available_roles', array( $this, 'get_available_roles' ) );
-		add_action( 'wp_ajax_versatile_manual_cleanup_temp_logins', array( $this, 'manual_cleanup_temp_logins' ) );
+		// add_action( 'wp_ajax_versatile_manual_cleanup_temp_logins', array( $this, 'manual_cleanup_temp_logins' ) );
 
 		// Handle temporary login authentication
 		add_action( 'init', array( $this, 'handle_temp_login' ) );
@@ -158,7 +158,8 @@ class Templogin {
 			$per_page = max( 1, min( 100, intval( $verified_data->per_page ) ) );
 			$offset   = ( $page - 1 ) * $per_page;
 
-			$query = TempLoginModel::where( 'role', '=', $verified_data->role )
+			// Build the base query for both data retrieval and counting
+			$base_query = TempLoginModel::where( 'role', '=', $verified_data->role )
 									->where(
 										function ( $query ) use ( $verified_data ) {
 											if ( ! empty( $verified_data->search ) ) {
@@ -168,16 +169,19 @@ class Templogin {
 										}
 									);
 			if ( 'expired' === $verified_data->status ) {
-				$query->where_raw( 'expires_at <= NOW()' );
+				$base_query->where_raw( 'expires_at <= NOW()' );
 			} else {
-				$query->where( 'is_active', '=', $verified_data->status );
+				$base_query->where( 'is_active', '=', $verified_data->status );
 			}
 
+			// Get total count of filtered records
+			$total_entries = $base_query->count();
+
+			// Get paginated results
+			$query = clone $base_query;
 			$query->order_by( $verified_data->orderby, $verified_data->order )->limit( $per_page )->offset( $offset );
 
-			$results       = $query->get();
-			$total_entries = TempLoginModel::count();
-
+			$results = $query->get();
 			// Format results
 			$temp_logins = array_map( fn( $model ) => $model->as_array(), $results );
 
