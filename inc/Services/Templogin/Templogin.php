@@ -186,7 +186,7 @@ class Templogin {
 			$temp_logins = array_map( fn( $model ) => $model->as_array(), $results );
 
 			$response_data = array(
-				'current_page'  => $page,
+				'page'          => $page, // current page
 				'temp_logins'   => $temp_logins,
 				'per_page'      => $per_page,
 				'total_entries' => intval( $total_entries ),
