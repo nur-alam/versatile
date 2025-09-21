@@ -10,6 +10,7 @@
 
 namespace Versatile\Services\Templogin;
 
+use Exception;
 use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
 use Versatile\Database\TempLoginActivityTable;
@@ -47,20 +48,22 @@ class Templogin {
 		$this->activity_table_name = ( new TempLoginActivityTable() )->get_table_name();
 
 		// Add custom cron schedule FIRST (before any scheduling)
-		add_filter(
-			'cron_schedules',
-			function ( $schedules ) {
-				$schedules['yptemp'] = array(
-					'interval' => 30,
-					'display'  => __( 'Once Per 30 seconds' ),
-				);
-				return $schedules;
-			}
-		);
+		// add_filter(
+		// 'cron_schedules',
+		// function ( $schedules ) {
+		// $schedules['yptemp'] = array(
+		// 'interval' => 30,
+		// 'display'  => __( 'Once Per 30 seconds' ),
+		// );
+		// return $schedules;
+		// }
+		// );
 
 		// Register AJAX actions
 		add_action( 'wp_ajax_versatile_get_temp_login_list', array( $this, 'get_temp_login_list' ) );
 		add_action( 'wp_ajax_versatile_create_temp_login', array( $this, 'create_temp_login' ) );
+		add_action( 'wp_ajax_versatile_update_temp_login', array( $this, 'update_temp_login' ) );
+		add_action( 'wp_ajax_versatile_extend_temp_login_time', array( $this, 'extend_temp_login_time' ) );
 		add_action( 'wp_ajax_versatile_delete_temp_login', array( $this, 'delete_temp_login' ) );
 		add_action( 'wp_ajax_versatile_toggle_temp_login_status', array( $this, 'toggle_temp_login_status' ) );
 		add_action( 'wp_ajax_versatile_get_available_roles', array( $this, 'get_available_roles' ) );
@@ -73,7 +76,7 @@ class Templogin {
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
 
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
-			wp_schedule_event( time(), 'yptemp', 'versatile_cleanup_expired_temp_logins' );
+			wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
 		}
 	}
 
@@ -307,6 +310,206 @@ class Templogin {
 	}
 
 	/**
+	 * Update temporary login
+	 */
+	public function update_temp_login() {
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'id',
+						'value'    => isset( $_POST['id'] ) ? $_POST['id'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+					array(
+						'name'     => 'display_name',
+						'value'    => isset( $_POST['display_name'] ) ? $_POST['display_name'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+					array(
+						'name'     => 'email',
+						'value'    => isset( $_POST['email'] ) ? $_POST['email'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_email',
+						'rules'    => 'required|email',
+					),
+					array(
+						'name'     => 'role',
+						'value'    => isset( $_POST['role'] ) ? $_POST['role'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+					array(
+						'name'     => 'expires_at',
+						'value'    => isset( $_POST['expires_at'] ) ? $_POST['expires_at'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required',
+					),
+					array(
+						'name'     => 'redirect_url',
+						'value'    => isset( $_POST['redirect_url'] ) ? $_POST['redirect_url'] : '', // phpcs:ignore
+						'sanitize' => 'esc_url_raw',
+						'rules'    => 'required',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data['success'] ) {
+				$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
+				return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
+			}
+
+			$verify_request = versatile_verify_request( $sanitized_data );
+
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
+			}
+
+			$verified_data = (object) $verify_request['data'];
+
+			// Find the existing temp login
+			$temp_login = TempLoginModel::find( $verified_data->id );
+			if ( ! $temp_login ) {
+				return $this->json_response( __( 'Error: Temporary login not found', 'versatile-toolkit' ), array(), 404 );
+			}
+
+			// Check if email is being changed and if it already exists
+			if ( ! empty( $verified_data->email ) && $verified_data->email !== $temp_login->email ) {
+				$existing_temp_login = TempLoginModel::where( 'email', 'LIKE', '%' . $verified_data->email . '%' )
+													->where( 'id', '!=', $verified_data->id )
+													->first();
+
+				if ( $existing_temp_login && $existing_temp_login->is_active ) {
+					return $this->json_response( __( 'Error: Email already exists', 'versatile-toolkit' ), array(), 400 );
+				}
+			}
+
+			// Validate role if provided
+			if ( ! empty( $verified_data->role ) ) {
+				$available_roles = get_editable_roles();
+				if ( ! array_key_exists( $verified_data->role, $available_roles ) ) {
+					return $this->json_response( __( 'Error: Invalid role specified', 'versatile-toolkit' ), array(), 400 );
+				}
+			}
+
+			// Prepare update data
+			$update_data = array();
+
+			if ( ! empty( $verified_data->display_name ) ) {
+				$update_data['display_name'] = $verified_data->display_name;
+			}
+
+			if ( ! empty( $verified_data->email ) ) {
+				$update_data['email'] = $verified_data->email;
+			}
+
+			if ( ! empty( $verified_data->role ) ) {
+				$update_data['role'] = $verified_data->role;
+			}
+
+			if ( ! empty( $verified_data->expires_at ) ) {
+				$expires_at_timestamp = $this->parse_datetime( $verified_data->expires_at );
+				if ( ! $expires_at_timestamp ) {
+					return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
+				}
+				$update_data['expires_at'] = $expires_at_timestamp;
+			}
+
+			if ( ! empty( $verified_data->redirect_url ) ) {
+				$update_data['redirect_url'] = $verified_data->redirect_url;
+			}
+
+			if ( ! empty( $verified_data->ip_address ) ) {
+				$update_data['ip_address'] = $verified_data->ip_address;
+			}
+
+			// Update the record
+			foreach ( $update_data as $key => $value ) {
+				$temp_login->$key = $value;
+			}
+
+			$result = $temp_login->save();
+
+			if ( false === $result ) {
+				return $this->json_response( __( 'Error: Failed to update temporary login', 'versatile-toolkit' ), array(), 500 );
+			}
+
+			// Log activity
+			// $this->log_activity( $verified_data->id, 'updated', 'Temporary login updated' );
+
+			// $response_data = $temp_login->as_array();
+
+			return $this->json_response( __( 'Temporary login updated successfully', 'versatile-toolkit' ), array(), 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( __( 'Error: Failed to update temporary login', 'versatile-toolkit' ), array(), 500 );
+		}
+	}
+
+	/**
+	 * Extend temporary login expiration time
+	 */
+	public function extend_temp_login_time() {
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'id',
+						'value'    => isset( $_POST['id'] ) ? $_POST['id'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|numeric',
+					),
+					array(
+						'name'     => 'extend_by',
+						'value'    => isset( $_POST['extend_by'] ) ? $_POST['extend_by'] : '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required', // date_format
+					),
+				)
+			);
+
+			if ( ! $sanitized_data['success'] ) {
+				$error_message = versatile_grab_error_message( $sanitized_data['errors'] );
+				return $this->json_response( $error_message ?? 'Error: Invalid parameters!', $sanitized_data['errors'], 400 );
+			}
+
+			$verify_request = versatile_verify_request( $sanitized_data );
+
+			if ( ! $verify_request['success'] ) {
+				return $this->json_response( $verify_request['message'] ?? 'Error: Request verification failed', array(), $verify_request['code'] );
+			}
+
+			$verified_data = (object) $verify_request['data'];
+
+			// Find the existing temp login
+			$temp_login = TempLoginModel::find( $verified_data->id );
+			if ( ! $temp_login ) {
+				return $this->json_response( __( 'Error: Temporary login not found', 'versatile-toolkit' ), array(), 404 );
+			}
+
+			// Process expires_at datetime
+			$expires_at_timestamp = $this->parse_datetime( $verified_data->extend_by );
+			if ( ! $expires_at_timestamp ) {
+				return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
+			}
+
+			// Update the expiration time
+			$temp_login->expires_at = $expires_at_timestamp;
+			$result                 = $temp_login->save();
+
+			if ( false === $result ) {
+				return $this->json_response( __( 'Error: Failed to extend temporary login time', 'versatile-toolkit' ), array(), 500 );
+			}
+
+			$response_data = $temp_login->as_array();
+
+			return $this->json_response( __( 'Temporary login time extended successfully', 'versatile-toolkit' ), array(), 200 );
+		} catch ( \Throwable $th ) {
+			return $this->json_response( __( 'Error: Failed to extend temporary login time', 'versatile-toolkit' ), array(), 500 );
+		}
+	}
+
+	/**
 	 * Delete temporary login
 	 */
 	public function delete_temp_login() {
@@ -347,6 +550,8 @@ class Templogin {
 			if ( ! $is_temp_login_deleted ) {
 				return $this->json_response( __( 'Error: Failed to delete temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
+
+			$this->delete_user_by_temp_login( $has_temp_login->id );
 
 			return $this->json_response( __( 'Temporary login deleted successfully', 'versatile-toolkit' ), array(), 200 );
 		} catch ( \Throwable $th ) {
@@ -393,25 +598,29 @@ class Templogin {
 
 			$is_active = filter_var( $verified_data->is_active, FILTER_VALIDATE_BOOLEAN );
 
-			$query            = TempLoginModel::find( $verified_data->id );
-			$query->is_active = $is_active ? 1 : 0;
-			$result           = $query->save();
+			$temp_login            = TempLoginModel::find( $verified_data->id );
+			$temp_login->is_active = $is_active ? 1 : 0;
+			$result                = $temp_login->save();
 
 			if ( false === $result ) {
 				return $this->json_response( __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
 			}
 
+			if ( ! $is_active ) {
+				// delete user & user_meta associated with this temp login
+				$this->delete_user_by_temp_login( $temp_login->id );
+			}
 			// Log activity
-			$action = $is_active ? 'activated' : 'deactivated';
-			$this->log_activity( $verified_data->id, $action, "Temporary login {$action}" );
+			// $action = $is_active ? 'activated' : 'deactivated';
+			// $this->log_activity( $verified_data->id, $action, "Temporary login {$action}" );
 
 			// Get updated record
-			$temp_login    = TempLoginModel::find( $verified_data->id );
-			$response_data = $temp_login->to_array();
+			// $temp_login    = TempLoginModel::find( $verified_data->id );
+			// $response_data = $temp_login->to_array();
 
-			return $this->json_response( __( 'Temporary login status updated successfully', 'versatile-toolkit' ), $response_data, 200 );
+			return $this->json_response( __( 'Temporary login status updated successfully', 'versatile-toolkit' ), array(), 200 );
 		} catch ( \Throwable $th ) {
-			return $this->json_response( __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
+			return $this->json_response( $th->getMessage() ?? __( 'Error: Failed to update temporary login status', 'versatile-toolkit' ), array(), 500 );
 		}
 	}
 
@@ -447,8 +656,20 @@ class Templogin {
 	 */
 	public function handle_temp_login() {
 		global $wpdb;
-
 		if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
+			$current_user  = wp_get_current_user();
+			$temp_login_id = get_user_meta( $current_user->ID, 'versatile_temp_login_id', true );
+			$update_login  = false;
+			if ( $temp_login_id ) {
+				$temp_login = TempLoginModel::where( 'id', $temp_login_id )->where( 'expires_at', '<', 'NOW()' )->first();
+				if ( property_exists( $temp_login, 'id' ) && $temp_login->id === $temp_login_id ) {
+					$temp_login->is_active = 0;
+					$update_login          = $temp_login->save();
+				}
+			}
+			if ( $update_login ) {
+				$this->delete_user_by_temp_login( $temp_login_id );
+			}
 			return;
 		}
 
@@ -490,7 +711,7 @@ class Templogin {
 		);
 
 		// Log activity
-		$this->log_activity( $temp_login->id, 'login', 'User logged in via temporary login' );
+		// $this->log_activity( $temp_login->id, 'login', 'User logged in via temporary login' );
 
 		// Redirect to specified URL or admin dashboard
 		$redirect_url = ! empty( $temp_login->redirect_url ) ? $temp_login->redirect_url : admin_url();
@@ -621,6 +842,11 @@ class Templogin {
 							'%d',
 						)
 					);
+					if ( $user_deleted ) {
+						// Delete user meta
+						delete_user_meta( $user->ID, 'versatile_temp_user' );
+						delete_user_meta( $user->ID, 'versatile_temp_login_id' );
+					}
 					++$cleaned_users;
 				}
 			}
@@ -660,6 +886,50 @@ class Templogin {
 				return gmdate( 'Y-m-d H:i:s', $timestamp );
 			}
 			return false;
+		}
+	}
+
+	/**
+	 * Delete user associated with temporary login
+	 *
+	 * This method finds and deletes WordPress users that are associated with a specific
+	 * temporary login ID. It also cleans up the associated user meta data.
+	 *
+	 * @since 1.0.0
+	 * @param Int $temp_login_id The temporary login object containing the ID to match against.
+	 * @return bool True on success, false on failure.
+	 * @throws \Throwable Re-throws any exceptions that occur during execution.
+	 */
+	public function delete_user_by_temp_login( $temp_login_id ) {
+		try {
+			global $wpdb;
+			// $temp_login_id = $temp_login->id;
+			$get_user_meta = get_users(
+				array(
+					'meta_key'   => 'versatile_temp_login_id',
+					'meta_value' => $temp_login_id,
+				)
+			);
+			foreach ( $get_user_meta as $key => $user ) {
+				$id           = $user->ID;
+				$user_deleted = $wpdb->delete(
+					$wpdb->users,
+					array(
+						'id' => $user->ID,
+					),
+					array(
+						'%d',
+					)
+				);
+				if ( $user_deleted ) {
+					// Delete user meta
+					delete_user_meta( $user->ID, 'versatile_temp_user' );
+					delete_user_meta( $user->ID, 'versatile_temp_login_id' );
+				}
+			}
+			return true;
+		} catch ( \Throwable $th ) {
+			throw $th;
 		}
 	}
 

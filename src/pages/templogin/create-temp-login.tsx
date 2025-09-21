@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import config from '@/config'
 import { useAvailableRoles, useCreateTempLogin } from '@/services/temp-login-services'
 import { InlineLoader } from '@/components/loader'
+import { expiresAtOptions } from '@/services/temp-login-services';
 
 export const rolesOptions = [
 	{ value: 'administrator', label: __('Administrator', 'versatile-toolkit') },
@@ -20,21 +21,6 @@ export const rolesOptions = [
 	{ value: 'contributor', label: __('Contributor', 'versatile-toolkit') },
 	{ value: 'subscriber', label: __('Subscriber', 'versatile-toolkit') },
 ]
-
-export const expiresAtOptions = [
-	{ value: '1_hour', label: __('1 Hour', 'versatile-toolkit') },
-	{ value: '3_hours', label: __('3 Hours', 'versatile-toolkit') },
-	{ value: '6_hours', label: __('6 Hours', 'versatile-toolkit') },
-	{ value: '12_hours', label: __('12 Hours', 'versatile-toolkit') },
-	{ value: '1_day', label: __('1 Day', 'versatile-toolkit') },
-	{ value: '3_days', label: __('3 Days', 'versatile-toolkit') },
-	{ value: '1_week', label: __('1 Week', 'versatile-toolkit') },
-	{ value: '2_weeks', label: __('2 Weeks', 'versatile-toolkit') },
-	{ value: '1_month', label: __('1 Month', 'versatile-toolkit') },
-	{ value: '3_months', label: __('3 Months', 'versatile-toolkit') },
-	{ value: '6_months', label: __('6 Months', 'versatile-toolkit') },
-	{ value: '1_year', label: __('1 Year', 'versatile-toolkit') },
-];
 
 const CreateTempLogin = () => {
 
