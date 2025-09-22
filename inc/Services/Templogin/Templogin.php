@@ -341,12 +341,6 @@ class Templogin {
 						'rules'    => 'required',
 					),
 					array(
-						'name'     => 'expires_at',
-						'value'    => isset( $_POST['expires_at'] ) ? $_POST['expires_at'] : '', // phpcs:ignore
-						'sanitize' => 'sanitize_text_field',
-						'rules'    => 'required',
-					),
-					array(
 						'name'     => 'redirect_url',
 						'value'    => isset( $_POST['redirect_url'] ) ? $_POST['redirect_url'] : '', // phpcs:ignore
 						'sanitize' => 'esc_url_raw',
@@ -380,7 +374,7 @@ class Templogin {
 													->where( 'id', '!=', $verified_data->id )
 													->first();
 
-				if ( $existing_temp_login && $existing_temp_login->is_active ) {
+				if ( $existing_temp_login ) {
 					return $this->json_response( __( 'Error: Email already exists', 'versatile-toolkit' ), array(), 400 );
 				}
 			}
@@ -408,20 +402,8 @@ class Templogin {
 				$update_data['role'] = $verified_data->role;
 			}
 
-			if ( ! empty( $verified_data->expires_at ) ) {
-				$expires_at_timestamp = $this->parse_datetime( $verified_data->expires_at );
-				if ( ! $expires_at_timestamp ) {
-					return $this->json_response( __( 'Error: Invalid expiration date format', 'versatile-toolkit' ), array(), 400 );
-				}
-				$update_data['expires_at'] = $expires_at_timestamp;
-			}
-
 			if ( ! empty( $verified_data->redirect_url ) ) {
 				$update_data['redirect_url'] = $verified_data->redirect_url;
-			}
-
-			if ( ! empty( $verified_data->ip_address ) ) {
-				$update_data['ip_address'] = $verified_data->ip_address;
 			}
 
 			// Update the record
@@ -434,11 +416,6 @@ class Templogin {
 			if ( false === $result ) {
 				return $this->json_response( __( 'Error: Failed to update temporary login', 'versatile-toolkit' ), array(), 500 );
 			}
-
-			// Log activity
-			// $this->log_activity( $verified_data->id, 'updated', 'Temporary login updated' );
-
-			// $response_data = $temp_login->as_array();
 
 			return $this->json_response( __( 'Temporary login updated successfully', 'versatile-toolkit' ), array(), 200 );
 		} catch ( \Throwable $th ) {
@@ -495,13 +472,14 @@ class Templogin {
 
 			// Update the expiration time
 			$temp_login->expires_at = $expires_at_timestamp;
+			$temp_login->is_active  = 1;
 			$result                 = $temp_login->save();
 
 			if ( false === $result ) {
 				return $this->json_response( __( 'Error: Failed to extend temporary login time', 'versatile-toolkit' ), array(), 500 );
 			}
 
-			$response_data = $temp_login->as_array();
+			// $response_data = $temp_login->as_array();
 
 			return $this->json_response( __( 'Temporary login time extended successfully', 'versatile-toolkit' ), array(), 200 );
 		} catch ( \Throwable $th ) {
@@ -662,7 +640,7 @@ class Templogin {
 			$update_login  = false;
 			if ( $temp_login_id ) {
 				$temp_login = TempLoginModel::where( 'id', $temp_login_id )->where( 'expires_at', '<', 'NOW()' )->first();
-				if ( property_exists( $temp_login, 'id' ) && $temp_login->id === $temp_login_id ) {
+				if ( ! $temp_login && is_object( $temp_login ) && property_exists( $temp_login, 'id' ) && $temp_login->id === $temp_login_id ) {
 					$temp_login->is_active = 0;
 					$update_login          = $temp_login->save();
 				}
