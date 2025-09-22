@@ -265,7 +265,7 @@ class Templogin {
 
 			$existing_temp_login = TempLoginModel::where( 'email', 'LIKE', '%' . $verified_data->email . '%' )->first();
 
-			if ( $existing_temp_login && $existing_temp_login->is_active ) {
+			if ( $existing_temp_login ) {
 				return $this->json_response( __( 'Error: Email already exists', 'versatile-toolkit' ), array(), 400 );
 			}
 
