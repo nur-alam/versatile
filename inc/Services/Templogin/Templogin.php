@@ -74,7 +74,6 @@ class Templogin {
 
 		// Clean up expired logins
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
-
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
 			wp_schedule_event( time(), 'hourly', 'versatile_cleanup_expired_temp_logins' );
 		}
@@ -633,68 +632,72 @@ class Templogin {
 	 * Handle temporary login authentication
 	 */
 	public function handle_temp_login() {
-		global $wpdb;
-		if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
-			$current_user  = wp_get_current_user();
-			$temp_login_id = get_user_meta( $current_user->ID, 'versatile_temp_login_id', true );
-			$update_login  = false;
-			if ( $temp_login_id ) {
-				$temp_login = TempLoginModel::where( 'id', $temp_login_id )->where( 'expires_at', '<', 'NOW()' )->first();
-				if ( ! $temp_login && is_object( $temp_login ) && property_exists( $temp_login, 'id' ) && $temp_login->id === $temp_login_id ) {
-					$temp_login->is_active = 0;
-					$update_login          = $temp_login->save();
+		try {
+			global $wpdb;
+			if ( ! isset( $_GET['versatile_temp_login'] ) || is_user_logged_in() ) {
+				$current_user  = wp_get_current_user();
+				$temp_login_id = get_user_meta( $current_user->ID, 'versatile_temp_login_id', true );
+				$update_login  = false;
+				if ( $temp_login_id ) {
+					$expired_temp_login = TempLoginModel::where( 'id', $temp_login_id )->where( 'expires_at', '<', 'NOW()' )->first();
+					if ( ! $expired_temp_login && is_object( $expired_temp_login ) && property_exists( $expired_temp_login, 'id' ) && $expired_temp_login->id === $temp_login_id ) {
+						$expired_temp_login->is_active = 0;
+						$update_login                  = $expired_temp_login->save();
+					}
 				}
+				if ( $update_login ) {
+					$this->delete_user_by_temp_login( $temp_login_id );
+				}
+				return;
 			}
-			if ( $update_login ) {
-				$this->delete_user_by_temp_login( $temp_login_id );
+
+			$token = sanitize_text_field( $_GET['versatile_temp_login'] ); // phpcs:ignore
+
+			// Get temporary login by token
+			$temp_login = TempLoginModel::where( array( array( 'token', $token ), array( 'is_active', 1 ), array( 'expires_at', '>', 'NOW()' ) ) )->first()->to_object();
+			// $temp_login = TempLoginModel::where( 'token', $token )->where( 'is_active', 1 )->where( 'expires_at', '>', 'NOW()' )->first()->to_object();
+
+			if ( ! $temp_login ) {
+				return true;
 			}
-			return;
+
+			// Create temporary user
+			$user_id = $this->create_temp_user( $temp_login );
+
+			if ( is_wp_error( $user_id ) ) {
+				return true;
+			}
+
+			// Log the user in
+			wp_set_current_user( $user_id );
+			wp_set_auth_cookie( $user_id, true );
+
+			// Update login statistics
+			TempLoginModel::where( 'id', $temp_login->id )->update(
+				array(
+					'last_login'  => current_time( 'mysql', true ),
+					'login_count' => $temp_login->login_count + 1,
+				)
+			);
+
+			// $wpdb->update(
+			// "{$this->table_name}",
+			// array(
+			// 'last_login'  => current_time( 'mysql', true ),
+			// 'login_count' => $temp_login->login_count + 1,
+			// ),
+			// array( 'id' => $temp_login->id ),
+			// array( '%s', '%d' ),
+			// array( '%d' )
+			// );
+
+			// Redirect to specified URL or admin dashboard
+			$redirect_url = ! empty( $temp_login->redirect_url ) ? $temp_login->redirect_url : admin_url();
+			wp_safe_redirect( $redirect_url );
+			exit;
+		} catch ( \Throwable $th ) {
+			return true;
 		}
-
-		$token = sanitize_text_field( $_GET['versatile_temp_login'] ); // phpcs:ignore
-
-		// Get temporary login by token
-		$temp_login = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$this->table_name} WHERE token = %s AND is_active = 1 AND expires_at > NOW()",
-				$token
-			)
-		);
-
-		if ( ! $temp_login ) {
-			wp_die( esc_html__( 'Invalid or expired temporary login link.', 'versatile-toolkit' ) );
-		}
-
-		// Create temporary user
-		$user_id = $this->create_temp_user( $temp_login );
-
-		if ( is_wp_error( $user_id ) ) {
-			wp_die( esc_html__( 'Failed to create temporary user session.', 'versatile-toolkit' ) );
-		}
-
-		// Log the user in
-		wp_set_current_user( $user_id );
-		wp_set_auth_cookie( $user_id, true );
-
-		// Update login statistics
-		$wpdb->update(
-			"{$this->table_name}",
-			array(
-				'last_login'  => current_time( 'mysql', true ),
-				'login_count' => $temp_login->login_count + 1,
-			),
-			array( 'id' => $temp_login->id ),
-			array( '%s', '%d' ),
-			array( '%d' )
-		);
-
-		// Log activity
-		// $this->log_activity( $temp_login->id, 'login', 'User logged in via temporary login' );
-
-		// Redirect to specified URL or admin dashboard
-		$redirect_url = ! empty( $temp_login->redirect_url ) ? $temp_login->redirect_url : admin_url();
-		wp_safe_redirect( $redirect_url );
-		exit;
 	}
 
 	/**

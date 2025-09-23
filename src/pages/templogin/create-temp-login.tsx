@@ -29,12 +29,11 @@ const CreateTempLogin = () => {
 	const createTemploginForm = useForm<CreateTemploginFormValues>({
 		resolver: zodResolver(createTemploginFormSchema),
 		defaultValues: {
-			display_name: 'Nur',
-			email: 'nuralam862@gmail.com',
-			role: 'administrator',
+			display_name: '',
+			email: '',
+			role: '',
 			expires_at: '3_hours' as const,
-			redirect_url: config.admin_url,
-			ip_address: '127.0.0.1'
+			redirect_url: config.admin_url
 		}
 	})
 

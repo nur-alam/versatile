@@ -938,6 +938,18 @@ video {
 .w-full {
   width: 100%;
 }
+.w-\[60\%\] {
+  width: 60%;
+}
+.\!w-\[60\%\] {
+  width: 60% !important;
+}
+.w-96 {
+  width: 24rem;
+}
+.w-auto {
+  width: auto;
+}
 .min-w-\[40px\] {
   min-width: 40px;
 }

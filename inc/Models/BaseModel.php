@@ -512,4 +512,13 @@ abstract class BaseModel {
 	public function to_array() {
 		return $this->attributes;
 	}
+
+	/**
+	 * Get the model as a stdClass object
+	 *
+	 * @return stdClass
+	 */
+	public function to_object() {
+		return (object) $this->to_array();
+	}
 }

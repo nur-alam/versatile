@@ -26,7 +26,7 @@ const columns = [
 	{ key: 'expires_at', label: 'Expires At' },
 	{ key: 'login_count', label: 'Login Count' },
 	{ key: 'last_login', label: 'Last Login' },
-	{ key: 'ip_address', label: 'Allowed IP' },
+	// { key: 'ip_address', label: 'Allowed IP' },
 	{ key: 'actions', label: 'Actions' },
 ];
 

@@ -40,7 +40,7 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 					</DialogDescription>
 				</DialogHeader>
 				<div className="max-h-[70vh] overflow-auto bg-[#e5e5e5] p-3 my-2">
-					<pre className="whitespace-pre-wrap font-mono text-sm">{raw_line}</pre>
+					<pre className="whitespace-pre-wrap font-mono text-base">{raw_line}</pre>
 				</div>
 				<DialogFooter className="sm:justify-end">
 					<DialogClose asChild>

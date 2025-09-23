@@ -113,7 +113,7 @@ class QueryBuilder {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array|object[] Array of model instances or raw results.
+	 * @return array Array of model instances or raw results.
 	 */
 	public function get() {
 		global $wpdb;
@@ -232,15 +232,15 @@ class QueryBuilder {
 		}
 
 		if ( is_array( $column ) ) {
-			foreach ( $column as $col => $val ) {
+			foreach ( $column as $key => $val ) {
 				if ( count( $val ) === 3 ) {
 					$col      = $val[0];
 					$operator = $val[1];
 					$value    = $val[2];
 				} elseif ( count( $val ) === 2 ) {
-					$col      = $val;
+					$col      = $val[0];
 					$operator = '=';
-					$value    = $val;
+					$value    = $val[1];
 				} else {
 					continue;
 				}
