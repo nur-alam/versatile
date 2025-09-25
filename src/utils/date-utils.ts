@@ -69,4 +69,4 @@ export const getTimeAgo = (date: string) => {
 	} else {
 		return `${minutes}m ago`;
 	}
-}
+};
