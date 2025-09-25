@@ -1,10 +1,10 @@
 <?php
 /**
- * The Migration class creates and drops tables of products
+ * Database Migration
  *
  * @package Versatile\Database
  * @subpackage Versatile\Database\Migration
- * @author  Versatile<versatile@gmail.com>
+ * @author  Versatile<Versatile@gmail.com>
  * @since 1.0.0
  */
 
@@ -15,37 +15,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * The Migrate class creates and drops tables for a database
+ * Migration description
  */
 class Migration {
 
 	/**
-	 * The function returns an array of tables
+	 * Get tables
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array of tables
+	 * @return array
 	 */
 	public static function tables() {
 		$tables = array(
-			// new DemoTable(),
+			new TempLoginTable(),
 		);
-
 		return $tables;
 	}
 
 	/**
-	 * Create all the tables
+	 * Run migration
 	 *
 	 * @since 1.0.0
 	 *
-	 * @throws \Throwable If there is an error while creating the tables.
-	 *
-	 * @return void
+	 * @return void | Throwable
+	 * @throws \Throwable When table creation fails.
 	 */
 	public static function migrate() {
 		$tables = self::tables();
-
 		foreach ( $tables as $table ) {
 			try {
 				$table->create_table();
@@ -56,48 +53,44 @@ class Migration {
 	}
 
 	/**
-	 * Drop all the tables
+	 * Drop all tables
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return void | Throwable
+	 * @throws \Throwable When table creation fails.
 	 */
 	public static function drop_tables() {
 		// Command: Versatile\Database\Migration::drop_tables();
 		global $wpdb;
-
 		$wpdb->query( 'SET foreign_key_checks = 0' );
-
-		// Reorganized tables to prevent parent child issue.
 		$tables = self::tables();
-
 		foreach ( $tables as $table ) {
-			$table->drop_table();
+			try {
+				$table->drop_table();
+			} catch ( \Throwable $th ) {
+				throw $th;
+			}
 		}
-
 		$wpdb->query( 'SET foreign_key_checks = 1' );
 	}
 
 	/**
-	 * Delete all data from database
+	 * Clear all data
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return void | Throwable
+	 * @throws \Throwable When table creation fails.
 	 */
-	public static function clear_data() {
+	public function clear_data() {
+		// Command: Versatile\Database\Migration::clear_data();
 		global $wpdb;
-
 		$wpdb->query( 'SET foreign_key_checks = 0' );
-
-		// Reorganized tables to prevent parent child issue.
 		$tables = self::tables();
-
 		foreach ( $tables as $table ) {
-			// $wpdb->query( "DELETE FROM {$table->get_table_name()}" );
-			$wpdb->query( $wpdb->prepare( 'DELETE FROM %s', $table->get_table_name() ) );
+			$wpdb->query( 'DELETE FROM %s', $table->get_table_name() );
 		}
-
 		$wpdb->query( 'SET foreign_key_checks = 1' );
 	}
 }

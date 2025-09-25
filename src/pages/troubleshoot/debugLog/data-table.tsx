@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { __ } from "@wordpress/i18n";
 import { TableSkeleton, type TableSkeletonColumn } from "@/components/loader";
+import { EmptyStateIcon } from "@/icons";
+import TableRowEmptyState from "@/components/loader/TableRowEmptyState";
 
 /**
  * Server-side DataTable
@@ -126,8 +128,6 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
       .finally(() => setLoading(false));
   }, [page, perPage, query, sort]);
 
-  console.log(rows);
-
   function toggleSort(key: string) {
     setSort((prev) => {
       if (prev.key !== key) return { key, order: "asc" };
@@ -182,16 +182,12 @@ export function ServerDataTable<TData extends { id: React.Key }, TFetchData exte
                 <TableSkeleton
                   columns={columns.map(col => ({
                     key: String(col.key),
-                    type: String(col.key) as TableSkeletonColumn['type']
+                    label: String(col.key)
                   }))}
                   rows={perPage}
                 />
               ) : rows.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length} className="px-4 py-10 text-center text-slate-500">
-                    {__('No results found.', 'versatile-toolkit')}
-                  </td>
-                </tr>
+                <TableRowEmptyState />
               ) : (
 
                 rows.map((row: TData, index: number) => (

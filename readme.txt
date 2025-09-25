@@ -1,10 +1,10 @@
-=== Versatile - Troubleshoot, Maintenance & Comingsoon Mode  ===
+=== Versatile - Troubleshoot, Temporary Login, Maintenance & Comingsoon Mode  ===
 Contributors: nurwp
-Tags: troubleshooting, maintenance mode, coming soon, IP control, WordPress toolkit
+Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP control, WordPress toolkit
 Requires at least: 5.3
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,11 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 Source code link : https://github.com/nur-alam/versatile
 
 == Changelog ==
+
+= 1.0.3 =
+* Added temporary login feature for secure remote access
+* Implemented time-limited access tokens for remote login
+* Added role-based access control
 
 = 1.0.2 =
 = Debug log pagination numbering issue fixed

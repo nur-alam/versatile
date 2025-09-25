@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Versatile Toolkit
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://wptriggermail.com/
@@ -49,7 +49,7 @@ if ( ! class_exists( 'Versatile' ) ) {
 		 *
 		 * @return void
 		 */
-		public function __construct() {
+		private function __construct() {
 			require_once 'constants.php';
 
 			// Load Composer autoloader only if not already loaded

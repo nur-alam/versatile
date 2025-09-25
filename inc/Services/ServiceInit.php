@@ -18,6 +18,8 @@ use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
 use Versatile\Services\QuickPick\QuickPick;
+use Versatile\Services\Templogin\Templogin;
+use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -34,6 +36,9 @@ class ServiceInit {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+		// new TempLoginTable();
+		$new_table = new TempLoginTable();
+		$new_table->create_table();
 
 		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
@@ -48,6 +53,11 @@ class ServiceInit {
 		}
 		if ( $versatile_service_list['comingsoon']['enable'] ) {
 			new ComingsoonMood();
+		}
+
+		// Templogin service
+		if ( $versatile_service_list['templogin']['enable'] ) {
+			new Templogin();
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
