@@ -16,7 +16,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import toast from 'react-hot-toast';
-import { isDateExpired } from '@/utils/date-utils';
+import { getTimeAgo, isDateExpired } from '@/utils/date-utils';
+import { getTimeRemaining } from '@/utils/date-utils';
 
 const columns = [
 	{ key: 'name', label: 'Name' },
@@ -26,7 +27,6 @@ const columns = [
 	{ key: 'expires_at', label: 'Expires At' },
 	{ key: 'login_count', label: 'Login Count' },
 	{ key: 'last_login', label: 'Last Login' },
-	// { key: 'ip_address', label: 'Allowed IP' },
 	{ key: 'actions', label: 'Actions' },
 ];
 
@@ -179,11 +179,8 @@ const TempLoginTable = () => {
 	}, [debouncedSearchTerm]);
 
 	const handleFilterChange = (key: keyof TempLoginListQueryParams, value: string) => {
-		console.log('key', key, 'value', value);
 		setSearchParams(prev => ({ ...prev, [key]: value }));
 	};
-
-	console.log('tempLoginList', tempLoginList);
 
 	const onPageChange = (page: number) => {
 		setSearchParams(prev => ({ ...prev, page }));
@@ -192,9 +189,6 @@ const TempLoginTable = () => {
 	return <>
 		<Card>
 			<CardHeader>
-				{/* <CardTitle className='text-2xl font-bold'>
-					{__('Temporary Logins', 'versatile-toolkit')}
-				</CardTitle> */}
 				<div className="flex flex-wrap gap-4 justify-end">
 					<div className="w-[300px]">
 						<div className="relative">
@@ -242,7 +236,7 @@ const TempLoginTable = () => {
 					</TableHeader>
 					<TableBody>
 						{isLoadingList ? (
-							// Loading state
+							// Loading state.
 							<TableSkeleton
 								columns={columns.map(col => ({
 									key: String(col.key),
@@ -265,8 +259,8 @@ const TempLoginTable = () => {
 										{getStatusBadge(tempLogin)}
 									</TableCell>
 									<TableCell>
-										{/* {tempLogin.expires_at} */}
-										{new Date(tempLogin.expires_at).toLocaleString('en-BD', {
+										{getTimeRemaining(tempLogin.expires_at)}
+										{/* {new Date(tempLogin.expires_at).toLocaleString('en-BD', {
 											timeZone: 'Asia/Dhaka',
 											hour12: true,
 											year: 'numeric',
@@ -274,16 +268,13 @@ const TempLoginTable = () => {
 											day: 'numeric',
 											hour: '2-digit',
 											minute: '2-digit',
-										})}
+										})} */}
 									</TableCell>
 									<TableCell>
 										{tempLogin.login_count}
 									</TableCell>
 									<TableCell>
-										{tempLogin.last_login}
-									</TableCell>
-									<TableCell>
-										{tempLogin.ip_address}
+										{tempLogin.last_login ? getTimeAgo(tempLogin.last_login) : '-'}
 									</TableCell>
 									<TableCell>
 										<Popover>

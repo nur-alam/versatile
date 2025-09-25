@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Versatile Toolkit
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://wptriggermail.com/

@@ -72,6 +72,8 @@ class Templogin {
 		// Handle temporary login authentication
 		add_action( 'init', array( $this, 'handle_temp_login' ) );
 
+		$next_scheduled = wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' );
+
 		// Clean up expired logins
 		add_action( 'versatile_cleanup_expired_temp_logins', array( $this, 'cleanup_expired_logins' ) );
 		if ( ! wp_next_scheduled( 'versatile_cleanup_expired_temp_logins' ) ) {
@@ -640,7 +642,7 @@ class Templogin {
 				$update_login  = false;
 				if ( $temp_login_id ) {
 					$expired_temp_login = TempLoginModel::where( 'id', $temp_login_id )->where( 'expires_at', '<', 'NOW()' )->first();
-					if ( ! $expired_temp_login && is_object( $expired_temp_login ) && property_exists( $expired_temp_login, 'id' ) && $expired_temp_login->id === $temp_login_id ) {
+					if ( $expired_temp_login && is_object( $expired_temp_login ) && $expired_temp_login->id === $temp_login_id ) {
 						$expired_temp_login->is_active = 0;
 						$update_login                  = $expired_temp_login->save();
 					}
@@ -679,17 +681,6 @@ class Templogin {
 					'login_count' => $temp_login->login_count + 1,
 				)
 			);
-
-			// $wpdb->update(
-			// "{$this->table_name}",
-			// array(
-			// 'last_login'  => current_time( 'mysql', true ),
-			// 'login_count' => $temp_login->login_count + 1,
-			// ),
-			// array( 'id' => $temp_login->id ),
-			// array( '%s', '%d' ),
-			// array( '%d' )
-			// );
 
 			// Redirect to specified URL or admin dashboard
 			$redirect_url = ! empty( $temp_login->redirect_url ) ? $temp_login->redirect_url : admin_url();
@@ -849,6 +840,7 @@ class Templogin {
 		}
 
 		try {
+			// $wp_timezone = wp_timezone_string();
 			// First, try to parse with specific format for dd/mm/yyyy, HH:mm:ss
 			$datetime = \DateTime::createFromFormat( 'd/m/Y, H:i:s', $datetime_string );
 			// If that fails, try the standard DateTime constructor

@@ -16,6 +16,7 @@
 *.py
 \*.zip
 phpcs.xml
+readme
 readme.md
 composer.lock
 node_modules
