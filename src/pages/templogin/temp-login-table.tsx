@@ -276,6 +276,7 @@ const TempLoginTable = () => {
 										{tempLogin.login_count}
 									</TableCell>
 									<TableCell>
+										{/* {tempLogin.last_login} */}
 										{tempLogin.last_login ? getTimeAgo(tempLogin.last_login) : '-'}
 									</TableCell>
 									<TableCell>

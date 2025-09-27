@@ -14,6 +14,7 @@ use Exception;
 use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
 use Versatile\Database\TempLoginActivityTable;
+use Versatile\Helpers\VersatileHelper;
 use Versatile\Models\TempLoginModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -674,10 +675,12 @@ class Templogin {
 			wp_set_current_user( $user_id );
 			wp_set_auth_cookie( $user_id, true );
 
+			$current_time = VersatileHelper::convert_to_wp_timezone( current_time( 'mysql', true ) );
+
 			// Update login statistics
 			TempLoginModel::where( 'id', $temp_login->id )->update(
 				array(
-					'last_login'  => current_time( 'mysql', true ),
+					'last_login'  => $current_time,
 					'login_count' => $temp_login->login_count + 1,
 				)
 			);
