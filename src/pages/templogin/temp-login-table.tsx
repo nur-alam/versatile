@@ -259,7 +259,7 @@ const TempLoginTable = () => {
 										{getStatusBadge(tempLogin)}
 									</TableCell>
 									<TableCell>
-										<span className={`${isDateExpired(tempLogin.expires_at) ? 'text-red-500' : ''}`}>
+										<span className={`${isDateExpired(tempLogin.expires_at) ? 'text-red-500 font-semibold' : ''}`}>
 											{getTimeRemaining(tempLogin.expires_at)}
 										</span>
 										{/* {new Date(tempLogin.expires_at).toLocaleString('en-BD', {

@@ -53,6 +53,7 @@ const MaintenanceSettings = () => {
 
 	// Fetching saved form data
 	const { data: moodInfo, isLoading } = useGetMoodInfo();
+
 	const maintenanceMoodInfo: MaintenanceMoodFormValues = moodInfo?.data['maintenance'];
 
 	useEffect(() => {

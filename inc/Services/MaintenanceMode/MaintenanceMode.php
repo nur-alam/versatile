@@ -124,10 +124,10 @@ class MaintenanceMode {
 
 			$verified_data = (object) $verify_request['data'];
 
-			$verified_data->enable_maintenance      = filter_var( $verified_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
-			$verified_data->show_subscribers_only   = filter_var( $verified_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
-			$current_mood_info                       = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
-			$current_mood_info['enable_maintenance'] = $verified_data->enable_maintenance ?? false;
+			$verified_data->enable_maintenance          = filter_var( $verified_data->enable_maintenance, FILTER_VALIDATE_BOOLEAN );
+			$verified_data->show_subscribers_only       = filter_var( $verified_data->show_subscribers_only, FILTER_VALIDATE_BOOLEAN );
+			$current_mood_info                          = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+			$current_mood_info['enable_maintenance']    = $verified_data->enable_maintenance ?? false;
 			$current_mood_info['show_subscribers_only'] = $verified_data->show_subscribers_only ?? false;
 			if ( $current_mood_info['enable_maintenance'] ) {
 				$current_mood_info['enable_comingsoon'] = false;
