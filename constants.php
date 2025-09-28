@@ -97,6 +97,13 @@ define(
 			),
 			'icon'        => 'dashicons-admin-tools',
 		),
+		'templogin'    => array(
+			'label'       => 'Temporary Login',
+			'enable'      => true,
+			'path'        => 'templogin',
+			'description' => 'Create and manage temporary login access for users without sharing permanent credentials.',
+			'icon'        => 'dashicons-admin-users',
+		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
 			'enable'      => true,
@@ -110,13 +117,6 @@ define(
 			'path'        => 'comingsoon',
 			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
 			'icon'        => 'dashicons-admin-tools',
-		),
-		'templogin'    => array(
-			'label'       => 'Temporary Login',
-			'enable'      => true,
-			'path'        => 'templogin',
-			'description' => 'Create and manage temporary login access for users without sharing permanent credentials.',
-			'icon'        => 'dashicons-admin-users',
 		),
 	)
 );
