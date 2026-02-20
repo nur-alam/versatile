@@ -10,9 +10,7 @@
 
 namespace Versatile\Helpers;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Mood Helper class.

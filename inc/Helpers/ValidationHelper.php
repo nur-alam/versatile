@@ -12,9 +12,7 @@
 
 namespace Versatile\Helpers;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Validation class contains static methods

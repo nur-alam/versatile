@@ -10,9 +10,7 @@
 
 namespace Versatile\Models;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Demo database model

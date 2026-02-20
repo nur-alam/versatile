@@ -146,7 +146,7 @@ class VersatileInput {
 	}
 
 	/**
-	 * Dynamically get value from specific superglobal key
+	 * Dynamically get value from specific super global key
 	 *
 	 * @since 1.0.0
 	 *
