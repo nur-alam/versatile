@@ -1,4 +1,4 @@
-=== Versatile Toolkit - Troubleshoot, Temporary Login, Maintenance & Comingsoon Mode  ===
+=== Versatile Toolkit  ===
 Contributors: nurwp
 Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP control
 Requires at least: 5.3
