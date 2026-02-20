@@ -13,9 +13,7 @@ namespace Versatile\Services\Troubleshoot;
 use Versatile\Services\Troubleshoot\DebugLog;
 use Versatile\Traits\JsonResponse;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Troubleshoot init

@@ -10,6 +10,8 @@
 use Versatile\Helpers\ValidationHelper;
 use Versatile\Helpers\VersatileInput;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Authentication checking.
  *

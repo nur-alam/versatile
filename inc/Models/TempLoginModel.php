@@ -12,9 +12,7 @@ namespace Versatile\Models;
 
 use Versatile\Database\TempLoginTable;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Temp Login Model Class

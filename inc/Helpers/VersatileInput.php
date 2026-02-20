@@ -10,9 +10,7 @@
 
 namespace Versatile\Helpers;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 /**
  * Input class
  *

@@ -9,9 +9,7 @@
 
 namespace Versatile;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Versatile Toolkit Class

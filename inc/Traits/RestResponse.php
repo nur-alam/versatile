@@ -14,9 +14,7 @@ namespace Versatile\Traits;
 
 use WP_REST_Response;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 trait RestResponse {
 

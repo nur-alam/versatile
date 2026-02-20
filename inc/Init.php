@@ -10,9 +10,7 @@
 
 namespace Versatile;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 use Versatile\Admin\Init as AdminInit;
 use Versatile\Core\Enqueue;

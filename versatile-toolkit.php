@@ -17,6 +17,8 @@
 use Versatile\Init;
 use Versatile\Database\Migration;
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( 'Versatile' ) ) {
 
 	/**

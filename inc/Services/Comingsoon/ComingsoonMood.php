@@ -13,9 +13,7 @@ namespace Versatile\Services\Comingsoon;
 use Versatile\Helpers\MoodHelper;
 use Versatile\Traits\JsonResponse;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Comingsoon init
