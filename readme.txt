@@ -2,7 +2,7 @@
 Contributors: nurwp
 Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP control
 Requires at least: 5.3
-Tested up to: 6.9
+Tested up to: 6.9.1
 Requires PHP: 7.4
 Stable tag: 1.0.5
 License: GPLv3 or later

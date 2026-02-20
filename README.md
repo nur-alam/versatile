@@ -7,7 +7,7 @@ Versatile Toolkit is a WordPress plugin that allows you to selectively disable p
 ## System Requirements
 
 -   Requires WordPress: 6.0
--   Tested up to: 6.9
+-   Tested up to: 6.9.1
 -   Requires PHP: 7.4
 ## Source Code link
 Source code link : https://github.com/nur-alam/versatile
