@@ -12,9 +12,7 @@
 
 namespace Versatile\Helpers;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Do the common db operations through helper

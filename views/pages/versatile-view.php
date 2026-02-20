@@ -7,5 +7,6 @@
  * @since 1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 <div id="versatile-root" class="p-7 bg-background"></div>

@@ -10,11 +10,7 @@
 
 namespace Versatile\Helpers;
 
-use SampleTest;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Versatile Helper class.

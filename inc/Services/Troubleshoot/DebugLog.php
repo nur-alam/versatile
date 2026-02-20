@@ -12,6 +12,8 @@ namespace Versatile\Services\Troubleshoot;
 
 use Versatile\Traits\JsonResponse;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Debug Log class for handling debug logging functionality.
  *

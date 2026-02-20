@@ -13,6 +13,8 @@ namespace Versatile\Core;
 use Versatile;
 use Versatile\RestAPI\Routes;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Enqueue styles & scripts
  */

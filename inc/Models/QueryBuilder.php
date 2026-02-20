@@ -10,9 +10,7 @@
 
 namespace Versatile\Models;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Query Builder Class

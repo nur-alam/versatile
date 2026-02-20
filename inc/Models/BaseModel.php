@@ -12,9 +12,7 @@ namespace Versatile\Models;
 
 use Versatile\Models\QueryBuilder;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Base Model Class

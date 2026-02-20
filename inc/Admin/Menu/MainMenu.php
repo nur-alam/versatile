@@ -12,9 +12,7 @@ namespace Versatile\Admin\Menu;
 
 use Versatile;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Admin main menu & sub-menu management

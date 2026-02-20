@@ -17,9 +17,7 @@ use Versatile\Database\TempLoginActivityTable;
 use Versatile\Helpers\VersatileHelper;
 use Versatile\Models\TempLoginModel;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Templogin Service Class
@@ -610,7 +608,7 @@ class Templogin {
 	public function get_available_roles() {
 		try {
 			// Simple nonce check without full validation since this is just returning static data
-			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( $_REQUEST['versatile_nonce'], 'versatile' ) ) {  // phpcs:ignore
+			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['versatile_nonce'] ) ), 'versatile' ) ) {  // phpcs:ignore
 				return $this->json_response( __( 'Security check failed', 'versatile-toolkit' ), array(), 403 );
 			}
 
@@ -915,7 +913,7 @@ class Templogin {
 	public function manual_cleanup_temp_logins() {
 		try {
 			// Simple nonce check
-			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( $_REQUEST['versatile_nonce'], 'versatile' ) ) {  // phpcs:ignore
+			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['versatile_nonce'] ) ), 'versatile' ) ) {  // phpcs:ignore
 				return $this->json_response( __( 'Security check failed', 'versatile-toolkit' ), array(), 403 );
 			}
 

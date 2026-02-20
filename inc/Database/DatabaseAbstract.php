@@ -12,9 +12,7 @@
 
 namespace Versatile\Database;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class DatabaseAbstract

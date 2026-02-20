@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Versatile Toolkit
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://wptriggermail.com/
@@ -16,6 +16,8 @@
 
 use Versatile\Init;
 use Versatile\Database\Migration;
+
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Versatile' ) ) {
 

@@ -10,9 +10,7 @@
 
 namespace Versatile\RestAPI;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 /**
  * Register supported routes
  */

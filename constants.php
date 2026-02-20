@@ -7,9 +7,7 @@
  * @since 1.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+defined( 'ABSPATH' ) || exit;
 
 define( 'VERSATILE_VERSION', '1.0.0' );
 define( 'VERSATILE_PLUGIN_NAME', 'versatile-toolkit' );
@@ -19,9 +17,9 @@ define( 'VERSATILE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 // Define mu-plugins directory path - compatible with all WordPress setups
 if ( ! defined( 'VERSATILE_MU_PLUGIN_DIR' ) ) {
-	$upload_dir  = wp_get_upload_dir();
-	$content_dir = dirname( $upload_dir['basedir'] );
-	define( 'VERSATILE_MU_PLUGIN_DIR', $content_dir . '/mu-plugins' );
+	$versatile_upload_dir  = wp_get_upload_dir();
+	$versatile_content_dir = dirname( $versatile_upload_dir['basedir'] );
+	define( 'VERSATILE_MU_PLUGIN_DIR', $versatile_content_dir . '/mu-plugins' );
 }
 
 define( 'VERSATILE_REDIRECT_URI', admin_url( 'admin.php?page=versatile' ) );

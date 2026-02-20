@@ -10,9 +10,7 @@
 
 namespace Versatile\Classes;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Singleton Class

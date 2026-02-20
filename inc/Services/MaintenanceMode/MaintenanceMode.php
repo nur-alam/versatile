@@ -13,9 +13,7 @@ namespace Versatile\Services\MaintenanceMode;
 use Versatile\Traits\JsonResponse;
 use Versatile\Helpers\MoodHelper;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * MaintenanceMode init

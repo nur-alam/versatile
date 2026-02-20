@@ -10,9 +10,7 @@
 
 namespace Versatile\Services\QuickPick;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 use Versatile\Traits\JsonResponse;
 
