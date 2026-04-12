@@ -119,7 +119,7 @@ define(
 			'icon'        => 'dashicons-admin-tools',
 		),
 		'quickact'     => array(
-			'label'       => 'Quick Act',
+			'label'       => 'Quick Action',
 			'enable'      => true,
 			'path'        => 'quickact',
 			'description' => 'Quick actions for plugins, themes, and common settings from the admin bar.',

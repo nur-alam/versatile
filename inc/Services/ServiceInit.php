@@ -10,9 +10,7 @@
 
 namespace Versatile\Services;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
@@ -93,7 +91,7 @@ class ServiceInit {
 			}
 
 			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
-			// $addon_list = VERSATILE_DEFAULT_SERVICE_LIST;
+
 			return $this->json_response( __( 'Service list retrieved successfully!', 'versatile-toolkit' ), $addon_list, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: while retrieving service list', 'versatile-toolkit' ), array(), 400 );

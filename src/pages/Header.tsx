@@ -34,18 +34,21 @@ const Header = () => {
 
     const updateServiceMutation = useUpdateServiceStatus();
 
-    const toggleService = async (serviceKey: string, service: ServiceItem) => {
-        updateServiceMutation.mutateAsync(
+    const toggleService = (serviceKey: string, service: ServiceItem) => {
+        updateServiceMutation.mutate(
             {
                 service_key: serviceKey,
                 enable: !service.enable,
             },
             {
                 onSuccess: () => {
-                    // Invalidate and refetch both service lists
+                    if (serviceKey === 'quickact') {
+                        window.location.reload();
+                        return;
+                    }
                     queryClient.invalidateQueries({ queryKey: ['getServiceList'] });
                     queryClient.invalidateQueries({ queryKey: ['getEnableServiceList'] });
-                }
+                },
             }
         );
     };

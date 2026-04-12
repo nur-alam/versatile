@@ -5,14 +5,12 @@
  * @package Versatile\Services
  * @subpackage Versatile\Services\QuickAct
  * @author  Versatile<versatile@gmail.com>
- * @since 1.0.0
+ * @since 1.0.6
  */
 
 namespace Versatile\Services\QuickAct;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 use Versatile\Traits\JsonResponse;
 

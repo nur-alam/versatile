@@ -2,7 +2,7 @@
 Contributors: nurwp
 Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP control, WordPress toolkit
 Requires at least: 5.3
-Tested up to: 6.8
+Tested up to: 6.9.4
 Requires PHP: 7.4
 Stable tag: 1.0.4
 License: GPLv3 or later
@@ -90,6 +90,9 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 Source code link : https://github.com/nur-alam/versatile
 
 == Changelog ==
+
+= 1.0.6 =
+* Added "Quick Action" feature for one-click permalink reset, plugin & themes activation and deactivation
 
 = 1.0.4 =
 * Added temporary login feature for secure remote access

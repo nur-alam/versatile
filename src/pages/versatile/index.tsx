@@ -17,7 +17,10 @@ const Dashboard = () => {
 				{
 					isLoading ? <SkeletonLoader lines={3} height="h-[100px]" width="w-[900px]" /> :
 						serviceList && Object.entries(serviceList)
-							.filter(([key, addon]) => addon.enable) // Only show enabled services
+							.filter(
+								([key, addon]) =>
+									addon.enable && key !== 'quickact'
+							)
 							.map(([key, addon]) => (
 								<Card key={key} className='hover:bg-gray-100 rounded-sm'>
 									<Link to={`/${addon.path}`} className='block p-3'>
