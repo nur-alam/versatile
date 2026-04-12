@@ -36,7 +36,6 @@ class ServiceInit {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		// new TempLoginTable();
 		$new_table = new TempLoginTable();
 		$new_table->create_table();
 
@@ -58,6 +57,11 @@ class ServiceInit {
 		// Templogin service
 		if ( $versatile_service_list['templogin']['enable'] ) {
 			new Templogin();
+		}
+
+		// QuickPick service
+		if ( $versatile_service_list['quickpick']['enable'] ) {
+			new QuickPick();
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
@@ -87,6 +91,7 @@ class ServiceInit {
 			}
 
 			$addon_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
+			// $addon_list = VERSATILE_DEFAULT_SERVICE_LIST;
 			return $this->json_response( __( 'Service list retrieved successfully!', 'versatile-toolkit' ), $addon_list, 200 );
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: while retrieving service list', 'versatile-toolkit' ), array(), 400 );

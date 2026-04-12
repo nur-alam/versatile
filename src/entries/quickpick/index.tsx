@@ -28,7 +28,7 @@ root.render(
 			<Toaster
 				position="bottom-right"
 				// position="bottom-center"
-				containerClassName="!z-[9999999]"
+				containerClassName="versatile-quickpick-toaster"
 				toastOptions={{
 					duration: 5000,
 					style: {
