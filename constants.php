@@ -118,11 +118,11 @@ define(
 			'description' => 'Show a beautiful coming soon page to build anticipation before your site launch.',
 			'icon'        => 'dashicons-admin-tools',
 		),
-		'quickpick'    => array(
-			'label'       => 'Quick Pick',
+		'quickact'     => array(
+			'label'       => 'Quick Act',
 			'enable'      => true,
-			'path'        => 'quickpick',
-			'description' => 'Quickly pick and install plugins and themes from the WordPress repository.',
+			'path'        => 'quickact',
+			'description' => 'Quick actions for plugins, themes, and common settings from the admin bar.',
 			'icon'        => 'dashicons-admin-tools',
 		),
 	)

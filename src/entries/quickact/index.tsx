@@ -2,11 +2,10 @@ import ReactDOM from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import Quickpick from '@/entries/quickpick/Quickpick';
+import Quickact from '@/entries/quickact/Quickact';
 
-const root = ReactDOM.createRoot(document.getElementById('versatile-quickpick-container') as HTMLElement);
+const root = ReactDOM.createRoot(document.getElementById('versatile-quickact-container') as HTMLElement);
 
-// QueryClient instance
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
@@ -19,16 +18,14 @@ const queryClient = new QueryClient({
 root.render(
 	<ErrorBoundary
 		onError={(error, errorInfo) => {
-			// Log to WordPress admin or external service
 			console.error('Versatile Plugin Root Error:', error, errorInfo);
 		}}
 	>
 		<QueryClientProvider client={queryClient}>
-			<Quickpick />
+			<Quickact />
 			<Toaster
 				position="bottom-right"
-				// position="bottom-center"
-				containerClassName="versatile-quickpick-toaster"
+				containerClassName="versatile-quickact-toaster"
 				toastOptions={{
 					duration: 5000,
 					style: {

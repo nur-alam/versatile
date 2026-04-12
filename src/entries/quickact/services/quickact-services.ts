@@ -6,43 +6,43 @@ import config from '@/config';
 import { VersatileResponseType } from '@/utils/versatile-declaration';
 import { AnyObject } from '@/utils/utils';
 
-export type QuickpickPluginItem = {
+export type QuickactPluginItem = {
 	file: string;
 	name: string;
 	version: string;
 	is_active: boolean;
 };
 
-export type QuickpickThemeItem = {
+export type QuickactThemeItem = {
 	stylesheet: string;
 	name: string;
 	version: string;
 	is_active: boolean;
 };
 
-const quickpickRequest = async <T = any>(payload: AnyObject) => {
+const quickactRequest = async <T = any>(payload: AnyObject) => {
 	const res = await fetchUtil<T>(config.ajax_url, { body: payload });
 	return res;
 };
 
-export const getQuickpickPlugins = async () => {
-	const response = await quickpickRequest<QuickpickPluginItem[]>({
-		action: 'versatile_quickpick_plugins_list',
+export const getQuickactPlugins = async () => {
+	const response = await quickactRequest<QuickactPluginItem[]>({
+		action: 'versatile_quickact_plugins_list',
 	});
 	return response.data || [];
 };
 
-export const getQuickpickThemes = async () => {
-	const response = await quickpickRequest<QuickpickThemeItem[]>({
-		action: 'versatile_quickpick_themes_list',
+export const getQuickactThemes = async () => {
+	const response = await quickactRequest<QuickactThemeItem[]>({
+		action: 'versatile_quickact_themes_list',
 	});
 	return response.data || [];
 };
 
-export const useQuickpickServices = () => {
+export const useQuickactServices = () => {
 	return useMutation({
 		mutationFn: async (payload: AnyObject) => {
-			const res = await quickpickRequest(payload);
+			const res = await quickactRequest(payload);
 			return res;
 		},
 		onSuccess: (response: VersatileResponseType) => {

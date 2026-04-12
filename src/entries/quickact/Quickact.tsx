@@ -1,27 +1,27 @@
 import {
-	getQuickpickPlugins,
-	getQuickpickThemes,
-	QuickpickPluginItem,
-	QuickpickThemeItem,
-	useQuickpickServices
-} from '@/entries/quickpick/services/quickpick-services'
+	getQuickactPlugins,
+	getQuickactThemes,
+	QuickactPluginItem,
+	QuickactThemeItem,
+	useQuickactServices
+} from '@/entries/quickact/services/quickact-services'
 import { __ } from '@wordpress/i18n'
 import React, { useEffect, useState } from 'react'
 
 type SidebarSection = 'plugins' | 'themes' | 'settings'
 
-const Quickpick = () => {
+const Quickact = () => {
 	const [activeSection, setActiveSection] = useState<SidebarSection>('plugins')
-	const [plugins, setPlugins] = useState<QuickpickPluginItem[]>([])
-	const [themes, setThemes] = useState<QuickpickThemeItem[]>([])
+	const [plugins, setPlugins] = useState<QuickactPluginItem[]>([])
+	const [themes, setThemes] = useState<QuickactThemeItem[]>([])
 	const [isPluginsLoading, setIsPluginsLoading] = useState(false)
 	const [isThemesLoading, setIsThemesLoading] = useState(false)
-	const { mutateAsync, isPending } = useQuickpickServices()
+	const { mutateAsync, isPending } = useQuickactServices()
 
 	const loadPlugins = async () => {
 		setIsPluginsLoading(true)
 		try {
-			const list = await getQuickpickPlugins()
+			const list = await getQuickactPlugins()
 			setPlugins(list)
 		} finally {
 			setIsPluginsLoading(false)
@@ -31,7 +31,7 @@ const Quickpick = () => {
 	const loadThemes = async () => {
 		setIsThemesLoading(true)
 		try {
-			const list = await getQuickpickThemes()
+			const list = await getQuickactThemes()
 			setThemes(list)
 		} finally {
 			setIsThemesLoading(false)
@@ -40,7 +40,7 @@ const Quickpick = () => {
 
 	const handlePluginToggle = async (pluginFile: string, shouldActivate: boolean) => {
 		await mutateAsync({
-			action: shouldActivate ? 'versatile_quickpick_plugin_activate' : 'versatile_quickpick_plugin_deactivate',
+			action: shouldActivate ? 'versatile_quickact_plugin_activate' : 'versatile_quickact_plugin_deactivate',
 			plugin_file: pluginFile,
 		})
 		await loadPlugins()
@@ -48,7 +48,7 @@ const Quickpick = () => {
 
 	const handleThemeToggle = async (stylesheet: string, shouldActivate: boolean) => {
 		await mutateAsync({
-			action: shouldActivate ? 'versatile_quickpick_theme_activate' : 'versatile_quickpick_theme_deactivate',
+			action: shouldActivate ? 'versatile_quickact_theme_activate' : 'versatile_quickact_theme_deactivate',
 			stylesheet,
 		})
 		await loadThemes()
@@ -72,7 +72,7 @@ const Quickpick = () => {
 
 	return (
 		<div
-			className='versatile-quickpick-trigger'
+			className='versatile-quickact-trigger'
 			onClick={(event) => {
 				event.preventDefault()
 				event.stopPropagation()
@@ -84,50 +84,50 @@ const Quickpick = () => {
 		>
 			<div>
 				{__('Quick Actions', 'versatile-toolkit')}
-				<span className='versatile-quickpick-arrow' aria-hidden="true">▼</span>
+				<span className='versatile-quickact-arrow' aria-hidden="true">▼</span>
 			</div>
-			<div className='versatile-quickpick-menu'>
-				<div className='versatile-quickpick-sidebar'>
+			<div className='versatile-quickact-menu'>
+				<div className='versatile-quickact-sidebar'>
 					<button
 						type='button'
-						className={`versatile-quickpick-nav-btn${activeSection === 'plugins' ? ' versatile-quickpick-nav-btn-active' : ''}`}
+						className={`versatile-quickact-nav-btn${activeSection === 'plugins' ? ' versatile-quickact-nav-btn-active' : ''}`}
 						onClick={() => setActiveSection('plugins')}
 					>
 						{__('Plugins', 'versatile-toolkit')}
 					</button>
 					<button
 						type='button'
-						className={`versatile-quickpick-nav-btn${activeSection === 'themes' ? ' versatile-quickpick-nav-btn-active' : ''}`}
+						className={`versatile-quickact-nav-btn${activeSection === 'themes' ? ' versatile-quickact-nav-btn-active' : ''}`}
 						onClick={() => setActiveSection('themes')}
 					>
 						{__('Themes', 'versatile-toolkit')}
 					</button>
 					<button
 						type='button'
-						className={`versatile-quickpick-nav-btn${activeSection === 'settings' ? ' versatile-quickpick-nav-btn-active' : ''}`}
+						className={`versatile-quickact-nav-btn${activeSection === 'settings' ? ' versatile-quickact-nav-btn-active' : ''}`}
 						onClick={() => setActiveSection('settings')}
 					>
 						{__('Settings', 'versatile-toolkit')}
 					</button>
 				</div>
 
-				<div className='versatile-quickpick-content'>
+				<div className='versatile-quickact-content'>
 					{activeSection === 'plugins' && (
-						<div className='versatile-quickpick-section'>
-							<div className='versatile-quickpick-section-title'>{__('Plugin List', 'versatile-toolkit')}</div>
+						<div className='versatile-quickact-section'>
+							<div className='versatile-quickact-section-title'>{__('Plugin List', 'versatile-toolkit')}</div>
 							{isPluginsLoading && <div>{__('Loading plugins...', 'versatile-toolkit')}</div>}
 							{!isPluginsLoading && plugins.length === 0 && <div>{__('No plugins found.', 'versatile-toolkit')}</div>}
 							{plugins.map((plugin) => (
-								<div key={plugin.file} className='versatile-quickpick-row'>
-									<div className='versatile-quickpick-row-body'>
-										<div className='versatile-quickpick-row-title'>{plugin.name}</div>
-										<div className='versatile-quickpick-row-meta'>
+								<div key={plugin.file} className='versatile-quickact-row'>
+									<div className='versatile-quickact-row-body'>
+										<div className='versatile-quickact-row-title'>{plugin.name}</div>
+										<div className='versatile-quickact-row-meta'>
 											{plugin.file} {plugin.version ? `(${plugin.version})` : ''}
 										</div>
 									</div>
 									<button
 										type='button'
-										className='versatile-quickpick-btn'
+										className='versatile-quickact-btn'
 										disabled={isPending}
 										onClick={() => handlePluginToggle(plugin.file, !plugin.is_active)}
 									>
@@ -141,21 +141,21 @@ const Quickpick = () => {
 					)}
 
 					{activeSection === 'themes' && (
-						<div className='versatile-quickpick-section'>
-							<div className='versatile-quickpick-section-title'>{__('Theme List', 'versatile-toolkit')}</div>
+						<div className='versatile-quickact-section'>
+							<div className='versatile-quickact-section-title'>{__('Theme List', 'versatile-toolkit')}</div>
 							{isThemesLoading && <div>{__('Loading themes...', 'versatile-toolkit')}</div>}
 							{!isThemesLoading && themes.length === 0 && <div>{__('No themes found.', 'versatile-toolkit')}</div>}
 							{themes.map((theme) => (
-								<div key={theme.stylesheet} className='versatile-quickpick-row'>
-									<div className='versatile-quickpick-row-body'>
-										<div className='versatile-quickpick-row-title'>{theme.name}</div>
-										<div className='versatile-quickpick-row-meta'>
+								<div key={theme.stylesheet} className='versatile-quickact-row'>
+									<div className='versatile-quickact-row-body'>
+										<div className='versatile-quickact-row-title'>{theme.name}</div>
+										<div className='versatile-quickact-row-meta'>
 											{theme.stylesheet} {theme.version ? `(${theme.version})` : ''}
 										</div>
 									</div>
 									<button
 										type='button'
-										className='versatile-quickpick-btn'
+										className='versatile-quickact-btn'
 										disabled={isPending}
 										onClick={() => handleThemeToggle(theme.stylesheet, !theme.is_active)}
 									>
@@ -169,16 +169,16 @@ const Quickpick = () => {
 					)}
 
 					{activeSection === 'settings' && (
-						<div className='versatile-quickpick-section'>
-							<div className='versatile-quickpick-section-title'>{__('Settings', 'versatile-toolkit')}</div>
-							<div className='versatile-quickpick-row versatile-quickpick-row-comfortable'>
-								<div className='versatile-quickpick-row-body'>
-									<div className='versatile-quickpick-row-title'>{__('Permalink Reset', 'versatile-toolkit')}</div>
-									<div className='versatile-quickpick-row-meta'>{__('Flush and regenerate rewrite rules.', 'versatile-toolkit')}</div>
+						<div className='versatile-quickact-section'>
+							<div className='versatile-quickact-section-title'>{__('Settings', 'versatile-toolkit')}</div>
+							<div className='versatile-quickact-row versatile-quickact-row-comfortable'>
+								<div className='versatile-quickact-row-body'>
+									<div className='versatile-quickact-row-title'>{__('Permalink Reset', 'versatile-toolkit')}</div>
+									<div className='versatile-quickact-row-meta'>{__('Flush and regenerate rewrite rules.', 'versatile-toolkit')}</div>
 								</div>
 								<button
 									type='button'
-									className='versatile-quickpick-btn'
+									className='versatile-quickact-btn'
 									disabled={isPending}
 									onClick={handlePermalinkReset}
 								>
@@ -193,4 +193,4 @@ const Quickpick = () => {
 	)
 }
 
-export default Quickpick
+export default Quickact

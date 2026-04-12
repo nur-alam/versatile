@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Versatile\Services\MaintenanceMode\MaintenanceMode;
 use Versatile\Services\Troubleshoot\TroubleshootInit;
 use Versatile\Services\Comingsoon\ComingsoonMood;
-use Versatile\Services\QuickPick\QuickPick;
+use Versatile\Services\QuickAct\QuickAct;
 use Versatile\Services\Templogin\Templogin;
 use Versatile\Database\TempLoginTable;
 use Versatile\Traits\JsonResponse;
@@ -39,6 +39,8 @@ class ServiceInit {
 		$new_table = new TempLoginTable();
 		$new_table->create_table();
 
+		self::migrate_quickpick_to_quickact();
+
 		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
 		// Troubleshoot enable_troubleshoot
@@ -59,9 +61,9 @@ class ServiceInit {
 			new Templogin();
 		}
 
-		// QuickPick service
-		if ( $versatile_service_list['quickpick']['enable'] ) {
-			new QuickPick();
+		// Quick Act service (formerly Quick Pick).
+		if ( ! empty( $versatile_service_list['quickact']['enable'] ) ) {
+			new QuickAct();
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
@@ -229,5 +231,25 @@ class ServiceInit {
 		} catch ( \Throwable $th ) {
 			return $this->json_response( __( 'Error: while retrieving maintenance mood info', 'versatile-toolkit' ), array(), 400 );
 		}
+	}
+
+	/**
+	 * Rename saved service option key quickpick → quickact (one-time migration).
+	 *
+	 * @return void
+	 */
+	private static function migrate_quickpick_to_quickact(): void {
+		$list = get_option( VERSATILE_SERVICE_LIST, array() );
+		if ( ! is_array( $list ) || ! isset( $list['quickpick'] ) || isset( $list['quickact'] ) ) {
+			return;
+		}
+
+		$list['quickact'] = $list['quickpick'];
+		$list['quickact']['path'] = 'quickact';
+		if ( isset( $list['quickact']['label'] ) && 'Quick Pick' === $list['quickact']['label'] ) {
+			$list['quickact']['label'] = 'Quick Act';
+		}
+		unset( $list['quickpick'] );
+		update_option( VERSATILE_SERVICE_LIST, $list );
 	}
 }

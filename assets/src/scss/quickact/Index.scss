@@ -1,9 +1,9 @@
 /**
- * QuickPick admin-bar UI — plain SCSS (no Tailwind) so the bundle stays small.
+ * Quick Act admin-bar UI — plain SCSS (no Tailwind) so the bundle stays small.
  * Scoped to the React mount node to avoid affecting the rest of wp-admin.
  */
 
-#versatile-quickpick-container {
+#versatile-quickact-container {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -11,7 +11,7 @@
 	line-height: 1.4;
 	color: #f0f0f1;
 
-	.versatile-quickpick-trigger {
+	.versatile-quickact-trigger {
 		position: relative;
 		cursor: pointer;
 		user-select: none;
@@ -19,13 +19,13 @@
 		padding: 0px 0;
 	}
 
-	.versatile-quickpick-arrow {
+	.versatile-quickact-arrow {
 		margin-left: 0.5rem;
 		font-size: 10px;
 		opacity: 0.85;
 	}
 
-	.versatile-quickpick-menu {
+	.versatile-quickact-menu {
 		min-height: 300px;
 		display: none;
 		position: absolute;
@@ -46,12 +46,12 @@
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 	}
 
-	.versatile-quickpick-trigger:hover .versatile-quickpick-menu,
-	.versatile-quickpick-trigger:focus-within .versatile-quickpick-menu {
+	.versatile-quickact-trigger:hover .versatile-quickact-menu,
+	.versatile-quickact-trigger:focus-within .versatile-quickact-menu {
 		display: flex;
 	}
 
-	.versatile-quickpick-sidebar {
+	.versatile-quickact-sidebar {
 		width: 170px;
 		flex-shrink: 0;
 		padding-right: 8px;
@@ -61,7 +61,7 @@
 		gap: 4px;
 	}
 
-	.versatile-quickpick-nav-btn {
+	.versatile-quickact-nav-btn {
 		text-align: left;
 		padding: 0px 10px;
 		border: none;
@@ -72,15 +72,15 @@
 		cursor: pointer;
 	}
 
-	.versatile-quickpick-nav-btn:hover {
+	.versatile-quickact-nav-btn:hover {
 		background: #f0f0f1;
 	}
 
-	.versatile-quickpick-nav-btn-active {
+	.versatile-quickact-nav-btn-active {
 		background: #e8e8e8;
 	}
 
-	.versatile-quickpick-content {
+	.versatile-quickact-content {
 		width: 500px;
 		max-width: calc(100vw - 120px);
 		min-height: 300px;
@@ -90,17 +90,17 @@
 		min-width: 0;
 	}
 
-	.versatile-quickpick-section {
+	.versatile-quickact-section {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
 	}
 
-	.versatile-quickpick-section-title {
+	.versatile-quickact-section-title {
 		font-weight: 600;
 	}
 
-	.versatile-quickpick-row {
+	.versatile-quickact-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -110,20 +110,20 @@
 		border-radius: 4px;
 	}
 
-	.versatile-quickpick-row-comfortable {
+	.versatile-quickact-row-comfortable {
 		padding-top: 10px;
 		padding-bottom: 10px;
 	}
 
-	.versatile-quickpick-row-body {
+	.versatile-quickact-row-body {
 		min-width: 0;
 	}
 
-	.versatile-quickpick-row-title {
+	.versatile-quickact-row-title {
 		font-weight: 600;
 	}
 
-	.versatile-quickpick-row-meta {
+	.versatile-quickact-row-meta {
 		font-size: 11px;
 		line-height: 1.4;
 		color: #646970;
@@ -131,7 +131,7 @@
 		white-space: break-spaces;
 	}
 
-	.versatile-quickpick-btn {
+	.versatile-quickact-btn {
 		flex-shrink: 0;
 		padding: 4px 8px;
 		border: 1px solid #c3c4c7;
@@ -143,18 +143,18 @@
 		cursor: pointer;
 	}
 
-	.versatile-quickpick-btn:hover:not(:disabled) {
+	.versatile-quickact-btn:hover:not(:disabled) {
 		background: #f0f0f1;
 		border-color: #8c8f94;
 	}
 
-	.versatile-quickpick-btn:disabled {
+	.versatile-quickact-btn:disabled {
 		opacity: 0.55;
 		cursor: not-allowed;
 	}
 }
 
 /* react-hot-toast mounts in a portal — keep it above the admin bar */
-.versatile-quickpick-toaster {
+.versatile-quickact-toaster {
 	z-index: 9999999 !important;
 }

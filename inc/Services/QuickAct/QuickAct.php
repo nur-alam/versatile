@@ -1,14 +1,14 @@
 <?php
 /**
- * Initialize the plugin
+ * Admin bar Quick Act UI and AJAX handlers.
  *
  * @package Versatile\Services
- * @subpackage Versatile\Services\QuickPick
+ * @subpackage Versatile\Services\QuickAct
  * @author  Versatile<versatile@gmail.com>
  * @since 1.0.0
  */
 
-namespace Versatile\Services\QuickPick;
+namespace Versatile\Services\QuickAct;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,88 +17,79 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Versatile\Traits\JsonResponse;
 
 /**
- * The Init class initializes plugin dependencies by creating instances
- * of the classes
+ * Quick Act: admin-bar tools for plugins, themes, and quick settings.
  */
-class QuickPick {
+class QuickAct {
 
 	use JsonResponse;
 
 	/**
-	 * Initialize the plugin
+	 * Initialize hooks.
 	 *
 	 * @return void
 	 */
 	public function __construct() {
 		add_action( 'admin_bar_menu', array( $this, 'add_parent_and_child_links' ), 100 );
 
-		// Enqueue AJAX script for admin bar
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_permalink_reset_script' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_permalink_reset_script' ) );
 
-		// Handle AJAX quickpick requests.
-		add_action( 'wp_ajax_versatile_quickpick_plugins_list', array( $this, 'versatile_get_plugins_list' ) );
-		add_action( 'wp_ajax_versatile_quickpick_plugin_activate', array( $this, 'versatile_activate_plugin' ) );
-		add_action( 'wp_ajax_versatile_quickpick_plugin_deactivate', array( $this, 'versatile_deactivate_plugin' ) );
-		add_action( 'wp_ajax_versatile_quickpick_themes_list', array( $this, 'versatile_get_themes_list' ) );
-		add_action( 'wp_ajax_versatile_quickpick_theme_activate', array( $this, 'versatile_activate_theme' ) );
-		add_action( 'wp_ajax_versatile_quickpick_theme_deactivate', array( $this, 'versatile_deactivate_theme' ) );
+		add_action( 'wp_ajax_versatile_quickact_plugins_list', array( $this, 'versatile_get_plugins_list' ) );
+		add_action( 'wp_ajax_versatile_quickact_plugin_activate', array( $this, 'versatile_activate_plugin' ) );
+		add_action( 'wp_ajax_versatile_quickact_plugin_deactivate', array( $this, 'versatile_deactivate_plugin' ) );
+		add_action( 'wp_ajax_versatile_quickact_themes_list', array( $this, 'versatile_get_themes_list' ) );
+		add_action( 'wp_ajax_versatile_quickact_theme_activate', array( $this, 'versatile_activate_theme' ) );
+		add_action( 'wp_ajax_versatile_quickact_theme_deactivate', array( $this, 'versatile_deactivate_theme' ) );
 		add_action( 'wp_ajax_versatile_reset_permalinks', array( $this, 'versatile_reset_permalinks' ) );
 	}
 
 	/**
-	 * Add parent and child links to admin bar
+	 * Add admin bar node that mounts the React app.
 	 *
-	 * @param   WP_Admin_Bar $admin_bar  WordPress admin bar object to add nodes to.
-	 *
-	 * @return  void
+	 * @param \WP_Admin_Bar $admin_bar WordPress admin bar.
+	 * @return void
 	 */
 	public function add_parent_and_child_links( $admin_bar ) {
-		// Parent node
 		$admin_bar->add_node(
 			array(
-				'id'    => 'versatile-quickpick-tools',
-				'title' => '<div id="versatile-quickpick-container"></div>',
+				'id'    => 'versatile-quickact-tools',
+				'title' => '<div id="versatile-quickact-container"></div>',
 				'href'  => false,
 			)
 		);
 	}
 
 	/**
-	 * Enqueue JavaScript for AJAX permalink reset
+	 * Enqueue Quick Act assets for the admin bar.
 	 *
-	 * @param string $page Current page.
-	 *
+	 * @param string $page Current admin page (admin only).
 	 * @return void
 	 */
 	public function enqueue_permalink_reset_script( $page ) {
-		// Only load if admin bar is showing
 		if ( ! is_admin_bar_showing() ) {
 			return;
 		}
 
-		$quickpick_style = VERSATILE_PLUGIN_URL . 'assets/dist/css/quickpick.min.css';
+		$quickact_style = VERSATILE_PLUGIN_URL . 'assets/dist/css/quickact.min.css';
 
 		wp_register_style(
-			'versatile-quickpick-style',
-			$quickpick_style,
+			'versatile-quickact-style',
+			$quickact_style,
 			array(),
 			VERSATILE_VERSION,
 			'all'
 		);
 
-		wp_enqueue_style( 'versatile-quickpick-style' );
+		wp_enqueue_style( 'versatile-quickact-style' );
 
-		// Enqueue your built React bundle
 		wp_enqueue_script(
-			'versatile-quickpick',
-			VERSATILE_PLUGIN_URL . 'assets/dist/js/versatile-quickpick.min.js',
+			'versatile-quickact',
+			VERSATILE_PLUGIN_URL . 'assets/dist/js/versatile-quickact.min.js',
 			array( 'wp-element', 'wp-i18n' ),
 			'1.0.0',
 			true
 		);
 
-		// Add the versatile object data for AJAX requests
 		$plugin_data    = versatile_get_plugin_data();
 		$user_id        = get_current_user_id();
 		$versatile_data = array(
@@ -111,10 +102,9 @@ class QuickPick {
 			'wp_rest_nonce' => wp_create_nonce( 'wp_rest' ),
 		);
 
-		// Add inline script with data
 		if ( 'toplevel_page_versatile' !== $page ) {
 			wp_add_inline_script(
-				'versatile-quickpick',
+				'versatile-quickact',
 				'const _versatileObject = ' . wp_json_encode( $versatile_data ) . ';window._versatileObject=_versatileObject;',
 				'before'
 			);
@@ -122,13 +112,12 @@ class QuickPick {
 	}
 
 	/**
-	 * Handle AJAX quickpick request
+	 * AJAX: flush rewrite rules.
 	 *
 	 * @return void
 	 */
 	public function versatile_reset_permalinks() {
 		try {
-			// Verify nonce for security
 			$sanitized_data = versatile_sanitization_validation();
 			if ( ! $sanitized_data['success'] ) {
 				$this->json_response( $sanitized_data['message'], null, $sanitized_data['code'] ?? 400, $sanitized_data['errors'] ?? null );
@@ -140,10 +129,8 @@ class QuickPick {
 				$this->json_response( $verify_request['message'], null, $verify_request['code'] ?? 403 );
 			}
 
-			// Reset permalinks
 			flush_rewrite_rules();
 
-			// Send success response
 			$this->json_response( 'Permalinks have been reset successfully!', null, 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), null, 500 );
@@ -151,7 +138,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Fetch installed plugins with active status.
+	 * AJAX: list plugins.
 	 *
 	 * @return void
 	 */
@@ -190,7 +177,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Activate a plugin by plugin file.
+	 * AJAX: activate plugin.
 	 *
 	 * @return void
 	 */
@@ -234,7 +221,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Deactivate a plugin by plugin file.
+	 * AJAX: deactivate plugin.
 	 *
 	 * @return void
 	 */
@@ -274,7 +261,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Fetch installed themes with active status.
+	 * AJAX: list themes.
 	 *
 	 * @return void
 	 */
@@ -310,7 +297,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Activate a theme.
+	 * AJAX: activate theme.
 	 *
 	 * @return void
 	 */
@@ -351,7 +338,7 @@ class QuickPick {
 	}
 
 	/**
-	 * Deactivate an active theme by switching to default/fallback.
+	 * AJAX: deactivate active theme via fallback switch.
 	 *
 	 * @return void
 	 */
