@@ -287,7 +287,6 @@ class ServiceInit {
 	 * @return void
 	 */
 	private static function sync_service_list_with_defaults(): void {
-
 		$stored = get_option( VERSATILE_SERVICE_LIST, array() );
 		if ( ! is_array( $stored ) ) {
 			$stored = array();
