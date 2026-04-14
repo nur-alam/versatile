@@ -37,8 +37,6 @@ class ServiceInit {
 		$new_table = new TempLoginTable();
 		$new_table->create_table();
 
-		self::migrate_quickpick_to_quickact();
-
 		$versatile_service_list = get_option( VERSATILE_SERVICE_LIST, VERSATILE_DEFAULT_SERVICE_LIST );
 
 		// Troubleshoot enable_troubleshoot
@@ -68,6 +66,11 @@ class ServiceInit {
 		add_action( 'wp_ajax_versatile_get_enable_service_list', array( $this, 'versatile_get_enable_service_list' ) );
 		add_action( 'wp_ajax_versatile_update_service_status', array( $this, 'versatile_update_service_status' ) );
 		add_action( 'wp_ajax_versatile_get_mood_info', array( $this, 'get_mood_info' ) );
+
+		// TODO: uncomment this when we have a way to migrate the data from the old version to the new version
+		// add_action( 'load-plugins.php', array( __CLASS__, 'sync_on_plugin_admin_pages' ), 1 );
+		// add_action( 'load-update-core.php', array( __CLASS__, 'sync_on_plugin_admin_pages' ), 1 );
+		// add_action( 'upgrader_process_complete', array( __CLASS__, 'sync_after_plugin_upgrade' ), 10, 2 );
 	}
 
 	/**
@@ -232,22 +235,72 @@ class ServiceInit {
 	}
 
 	/**
-	 * Rename saved service option key quickpick → quickact (one-time migration).
+	 * Merge defaults into the stored service list when it differs; may update the option.
+	 *
+	 * Invoked at most once per request (unless forced) from the daily check, Plugins /
+	 * Updates admin screens, or after this plugin updates.
+	 *
+	 * @param bool $force When true, run even if this request already ran a non-forced sync (e.g. after upgrader).
+	 * @return void
+	 */
+	public static function run_service_list_sync( bool $force = false ): void {
+		static $synced = false;
+		if ( $synced && ! $force ) {
+			return;
+		}
+		$synced = true;
+
+		self::sync_service_list_with_defaults();
+		// update_option( VERSATILE_SERVICE_LIST_LAST_SYNC_OPTION, time(), false );
+	}
+
+	/**
+	 * Plugins or Dashboard → Updates screen: refresh merged service list.
 	 *
 	 * @return void
 	 */
-	private static function migrate_quickpick_to_quickact(): void {
-		$list = get_option( VERSATILE_SERVICE_LIST, array() );
-		if ( ! is_array( $list ) || ! isset( $list['quickpick'] ) || isset( $list['quickact'] ) ) {
+	public static function sync_on_plugin_admin_pages(): void {
+		self::run_service_list_sync();
+	}
+
+	/**
+	 * After any plugin update: re-merge when this plugin was in the set.
+	 *
+	 * @param \WP_Upgrader $upgrader_object Upgrader instance.
+	 * @param array        $options         Hook payload.
+	 * @return void
+	 */
+	public static function sync_after_plugin_upgrade( $upgrader_object, array $options ): void {
+		if ( ! isset( $options['action'], $options['type'] ) || 'update' !== $options['action'] || 'plugin' !== $options['type'] ) {
 			return;
 		}
-
-		$list['quickact'] = $list['quickpick'];
-		$list['quickact']['path'] = 'quickact';
-		if ( isset( $list['quickact']['label'] ) && 'Quick Pick' === $list['quickact']['label'] ) {
-			$list['quickact']['label'] = 'Quick Act';
+		$plugins = isset( $options['plugins'] ) ? (array) $options['plugins'] : array();
+		if ( ! in_array( VERSATILE_PLUGIN_BASENAME, $plugins, true ) ) {
+			return;
 		}
-		unset( $list['quickpick'] );
-		update_option( VERSATILE_SERVICE_LIST, $list );
+		self::run_service_list_sync( true );
+	}
+
+	/**
+	 * Merge stored service list with code defaults; update the option when it changed.
+	 *
+	 * @return void
+	 */
+	private static function sync_service_list_with_defaults(): void {
+
+		$stored = get_option( VERSATILE_SERVICE_LIST, array() );
+		if ( ! is_array( $stored ) ) {
+			$stored = array();
+		}
+
+		$defaults = VERSATILE_DEFAULT_SERVICE_LIST;
+		// Drop non-array values so a corrupt option row cannot replace a whole default branch.
+		$stored = array_filter( $stored, 'is_array' );
+		// Defaults first, then stored: saved settings win; new keys from defaults appear; keys only in DB are kept.
+		$merged = array_replace_recursive( $defaults, $stored );
+
+		if ( serialize( $merged ) !== serialize( $stored ) ) { // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+			update_option( VERSATILE_SERVICE_LIST, $merged );
+		}
 	}
 }

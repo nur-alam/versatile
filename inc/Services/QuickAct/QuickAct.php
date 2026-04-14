@@ -110,7 +110,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: flush rewrite rules.
+	 * Flush rewrite rules.
 	 *
 	 * @return void
 	 */
@@ -136,7 +136,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: list plugins.
+	 * List plugins.
 	 *
 	 * @return void
 	 */
@@ -175,7 +175,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: activate plugin.
+	 * Activate plugin.
 	 *
 	 * @return void
 	 */
@@ -219,7 +219,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: deactivate plugin.
+	 * Deactivate plugin.
 	 *
 	 * @return void
 	 */
@@ -259,7 +259,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: list themes.
+	 * List themes.
 	 *
 	 * @return void
 	 */
@@ -295,7 +295,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: activate theme.
+	 * Activate theme.
 	 *
 	 * @return void
 	 */
@@ -336,7 +336,7 @@ class QuickAct {
 	}
 
 	/**
-	 * AJAX: deactivate active theme via fallback switch.
+	 * Deactivate active theme via fallback switch.
 	 *
 	 * @return void
 	 */

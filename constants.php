@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'VERSATILE_VERSION', '1.0.0' );
+define( 'VERSATILE_VERSION', '1.0.6' );
 define( 'VERSATILE_PLUGIN_NAME', 'versatile-toolkit' );
 define( 'VERSATILE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VERSATILE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -73,6 +73,8 @@ define(
 );
 
 define( 'VERSATILE_SERVICE_LIST', 'versatile_service_list' );
+/** Option name: unix time of last service-list merge (see ServiceInit). */
+define( 'VERSATILE_SERVICE_LIST_LAST_SYNC_OPTION', 'versatile_service_list_last_sync' );
 define(
 	'VERSATILE_DEFAULT_SERVICE_LIST',
 	array(

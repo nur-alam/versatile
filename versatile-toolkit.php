@@ -4,7 +4,7 @@
  * Version: 1.0.6
  * Requires at least: 5.3
  * Requires PHP: 7.4
- * Plugin URI: https://wptriggermail.com/
+ * Plugin URI: https://verspark.com/
  * Description: Versatile plugin allows you to selectively disable plugins by IP address, enable maintenance mode, set up coming soon pages, and implement various troubleshooting features.
  * Author: nurwp
  * License: GPLv3 or later
