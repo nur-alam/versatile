@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-define( 'VERSATILE_VERSION', '1.0.6' );
+define( 'VERSATILE_VERSION', '1.0.7' );
 define( 'VERSATILE_PLUGIN_NAME', 'versatile-toolkit' );
 define( 'VERSATILE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VERSATILE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
