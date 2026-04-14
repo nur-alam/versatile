@@ -1,0 +1,161 @@
+/**
+ * Quick Act admin-bar UI — plain SCSS (no Tailwind) so the bundle stays small.
+ * Scoped to the React mount node to avoid affecting the rest of wp-admin.
+ */
+
+#versatile-quickact-container {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #f0f0f1;
+
+	.versatile-quickact-trigger {
+		position: relative;
+		cursor: pointer;
+		user-select: none;
+		white-space: nowrap;
+		padding: 0px 0;
+	}
+
+	.versatile-quickact-arrow {
+		margin-left: 0.5rem;
+		font-size: 10px;
+		opacity: 0.85;
+	}
+
+	.versatile-quickact-menu {
+		min-height: 300px;
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 100000;
+		min-width: 700px;
+		margin-top: 0px;
+		padding: 10px;
+		gap: 10px;
+		box-sizing: border-box;
+		flex-direction: row;
+		align-items: stretch;
+		background: #fff;
+		color: #1d2327;
+		border: 1px solid #c3c4c7;
+		border-radius: 4px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	}
+
+	.versatile-quickact-trigger:hover .versatile-quickact-menu,
+	.versatile-quickact-trigger:focus-within .versatile-quickact-menu {
+		display: flex;
+	}
+
+	.versatile-quickact-sidebar {
+		width: 170px;
+		flex-shrink: 0;
+		padding-right: 8px;
+		border-right: 1px solid #dcdcde;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.versatile-quickact-nav-btn {
+		text-align: left;
+		padding: 0px 10px;
+		border: none;
+		border-radius: 4px;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.versatile-quickact-nav-btn:hover {
+		background: #f0f0f1;
+	}
+
+	.versatile-quickact-nav-btn-active {
+		background: #e8e8e8;
+	}
+
+	.versatile-quickact-content {
+		width: 500px;
+		max-width: calc(100vw - 120px);
+		min-height: 300px;
+		max-height: 380px;
+		overflow: auto;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.versatile-quickact-section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.versatile-quickact-section-title {
+		font-weight: 600;
+	}
+
+	.versatile-quickact-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 8px;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+	}
+
+	.versatile-quickact-row-comfortable {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.versatile-quickact-row-body {
+		min-width: 0;
+	}
+
+	.versatile-quickact-row-title {
+		font-weight: 600;
+	}
+
+	.versatile-quickact-row-meta {
+		font-size: 11px;
+		line-height: 1.4;
+		color: #646970;
+		word-break: break-all;
+		white-space: break-spaces;
+	}
+
+	.versatile-quickact-btn {
+		flex-shrink: 0;
+		padding: 4px 8px;
+		border: 1px solid #c3c4c7;
+		border-radius: 4px;
+		background: #f6f7f7;
+		color: #1d2327;
+		font-size: 11px;
+		line-height: 1.4;
+		cursor: pointer;
+		min-width: 60px;
+	}
+
+	.versatile-quickact-btn:hover:not(:disabled) {
+		background: #f0f0f1;
+		border-color: #8c8f94;
+	}
+
+	.versatile-quickact-btn:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+}
+
+/* react-hot-toast mounts in a portal — keep it above the admin bar */
+.versatile-quickact-toaster {
+	z-index: 9999999 !important;
+}

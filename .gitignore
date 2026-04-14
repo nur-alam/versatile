@@ -23,7 +23,7 @@ Thumbs.db
 *.log
 *.map
 .phpunit.cache
-assets/dist/*
-assets/dist/mix-manifest.json
+# Ignore entire build output (trailing slash = directory and all contents).
+assets/dist/
 languages
 package-lock.json

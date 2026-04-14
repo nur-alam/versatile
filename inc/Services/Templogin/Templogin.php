@@ -164,15 +164,15 @@ class Templogin {
 			$offset   = ( $page - 1 ) * $per_page;
 
 			// Build the base query for both data retrieval and counting
-			$base_query = TempLoginModel::where( 'role', '=', $verified_data->role )
-									->where(
-										function ( $query ) use ( $verified_data ) {
-											if ( ! empty( $verified_data->search ) ) {
-												$query->where( 'display_name', 'like', '%' . $verified_data->search . '%' )
-												->or_where( 'email', 'like', '%' . $verified_data->search . '%' );
-											}
-										}
-									);
+			$base_query = TempLoginModel::where( 'role', '=', $verified_data->role )->where(
+				function ( $query ) use ( $verified_data ) {
+					if ( ! empty( $verified_data->search ) ) {
+						$query->where( 'display_name', 'like', '%' . $verified_data->search . '%' )
+						->or_where( 'email', 'like', '%' . $verified_data->search . '%' );
+					}
+				}
+			);
+
 			if ( 'expired' === $verified_data->status ) {
 				$base_query->where_raw( 'expires_at <= NOW()' );
 			} else {
@@ -610,7 +610,7 @@ class Templogin {
 	public function get_available_roles() {
 		try {
 			// Simple nonce check without full validation since this is just returning static data
-			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( $_REQUEST['versatile_nonce'], 'versatile' ) ) {  // phpcs:ignore
+			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['versatile_nonce'] ) ), 'versatile' ) ) {  // phpcs:ignore
 				return $this->json_response( __( 'Security check failed', 'versatile-toolkit' ), array(), 403 );
 			}
 
@@ -915,7 +915,7 @@ class Templogin {
 	public function manual_cleanup_temp_logins() {
 		try {
 			// Simple nonce check
-			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( $_REQUEST['versatile_nonce'], 'versatile' ) ) {  // phpcs:ignore
+			if ( ! isset( $_REQUEST['versatile_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['versatile_nonce'] ) ), 'versatile' ) ) {  // phpcs:ignore
 				return $this->json_response( __( 'Security check failed', 'versatile-toolkit' ), array(), 403 );
 			}
 
