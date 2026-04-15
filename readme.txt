@@ -1,4 +1,4 @@
-=== Versatile - Troubleshoot, Temporary Login, Maintenance & Comingsoon Mode  ===
+=== Versatile - Troubleshoot, Temporary Login, Quick Action, Maintenance & Comingsoon Mode  ===
 Contributors: nurwp
 Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP control, WordPress toolkit
 Requires at least: 5.3
