@@ -1,0 +1,85 @@
+.dark {
+	// =============================================================================
+	// SURFACE COLORS
+	// =============================================================================
+	--vers-surface-base: #{$versatile-gray-900};
+	--vers-surface-l1: #{$versatile-gray-800};
+	--vers-surface-l1-hover: #{$versatile-gray-750};
+	--vers-surface-l2: #{$versatile-gray-700};
+	--vers-surface-l2-hover: #{$versatile-gray-800};
+	--vers-surface-brand-dark: #{$versatile-brand-950};
+	--vers-surface-brand-primary: #{$versatile-brand-600};
+	--vers-surface-brand-primary-2: #{$versatile-brand-800};
+	--vers-surface-brand-secondary: #{$versatile-brand-300};
+	--vers-surface-brand-tertiary: #{$versatile-gray-750};
+	--vers-surface-brand-quaternary: #{$versatile-brand-900};
+	--vers-surface-sidebar-l1: #{$versatile-gray-950};
+	--vers-surface-exception2-secondary: #{$versatile-exception-2-tertiary};
+	--vers-surface-exception3-highlight: #{$versatile-exception-3};
+	--vers-surface-dark: #{$versatile-gray-800};
+	--vers-surface-exception6: #{$versatile-exception-6};
+	--vers-surface-exception7: #{$versatile-brand-900};
+	--vers-surface-warning: #{$versatile-gray-750};
+	--vers-surface-warning-hover: #{$versatile-warning-900};
+	--vers-surface-success: #{$versatile-success-950};
+	--vers-surface-critical: #{$versatile-error-950};
+
+	// =============================================================================
+	// TEXT COLORS
+	// =============================================================================
+	--vers-text-primary: #{$versatile-gray-100};
+	--vers-text-primary-inverse: #{$versatile-gray-1};
+	--vers-text-secondary: #{$versatile-gray-300};
+	--vers-text-subdued: #{$versatile-gray-500};
+	--vers-text-disabled: #{$versatile-gray-600};
+	--vers-text-brand: #{$versatile-brand-500};
+	--vers-text-brand-hover: #{$versatile-brand-700};
+	--vers-text-brand-secondary: #{$versatile-brand-400};
+	--vers-text-light: #{$versatile-gray-25};
+	--vers-text-success: #{$versatile-success-600};
+	--vers-text-critical: #{$versatile-error-600};
+	--vers-text-critical-hover: #{$versatile-error-700};
+	--vers-text-warning: #{$versatile-warning-600};
+	--vers-text-caution: #{$versatile-yellow-600};
+	--vers-text-exception1: #{$versatile-exception-1};
+	--vers-text-exception2: #{$versatile-exception-2};
+	--vers-text-exception4: #{$versatile-warning-400};
+	--vers-text-exception5: #{$versatile-exception-5};
+	--vers-text-highlighted-hover: #{$versatile-gray-700};
+
+	// =============================================================================
+	// BORDER COLORS
+	// =============================================================================
+	--vers-border-idle: #{$versatile-gray-750};
+	--vers-border-hover: #{$versatile-gray-600};
+	--vers-border-active: #{$versatile-gray-500};
+	--vers-border-selected: #{$versatile-gray-400};
+	--vers-border-disabled: #{$versatile-gray-200};
+	--vers-border-inverted: #{$versatile-gray-1};
+	--vers-border-overlay: #{$versatile-gray-200};
+	--vers-border-accent: #{$versatile-gray-300};
+	--vers-border-accent-hover: #{$versatile-gray-400};
+	--vers-border-accent-active: #{$versatile-gray-500};
+	--vers-border-accent-selected: #{$versatile-gray-600};
+
+	// =============================================================================
+	// BORDER COLORS
+	// =============================================================================
+	--vers-border-idle: #{$versatile-gray-750};
+	--vers-border-hover: #{$versatile-gray-700};
+	--vers-border-tertiary: #{$versatile-gray-600};
+	--vers-border-inverse: #{$versatile-gray-700};
+	--vers-border-brand: #{$versatile-brand-600};
+	--vers-border-brand-secondary: #{$versatile-gray-750};
+	--vers-border-brand-tertiary: #{$versatile-brand-700};
+	--vers-border-dark: #{$versatile-gray-700};
+	--vers-border-success: #{$versatile-success-300};
+	--vers-border-success-secondary: #{$versatile-success-600};
+	--vers-border-warning: #{$versatile-warning-200};
+	--vers-border-warning-secondary: #{$versatile-warning-600};
+	--vers-border-warning-tertiary: #{$versatile-warning-400};
+	--vers-border-error: #{$versatile-error-300};
+	--vers-border-error-secondary: #{$versatile-error-600};
+	--vers-border-error-tertiary: #{$versatile-error-400};
+	--vers-border-exception6: #{$versatile-exception-5};
+}

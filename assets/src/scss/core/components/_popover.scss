@@ -1,0 +1,22 @@
+.versatile-popover {
+	position: absolute;
+	min-width: 14rem;
+	padding: 0.75rem;
+	border: 1px solid hsl(var(--border));
+	border-radius: var(--radius, 0.5rem);
+	background-color: hsl(var(--popover));
+	color: hsl(var(--popover-foreground));
+	box-shadow: 0 12px 25px rgba(2, 6, 23, 0.18);
+	z-index: 60;
+}
+
+.versatile-popover-title {
+	margin: 0 0 0.375rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.versatile-popover-content {
+	color: hsl(var(--muted-foreground));
+	font-size: 0.875rem;
+}

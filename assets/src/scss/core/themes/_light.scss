@@ -1,0 +1,40 @@
+:root {
+	--vers-surface-base: #{$versatile-gray-1};
+	--vers-surface-elevated: #{$versatile-gray-10};
+	--vers-surface-inverted: #{$versatile-gray-1};
+	--vers-surface-overlay: #{$versatile-gray-10};
+	--vers-surface-accent: #{$versatile-gray-100};
+	--vers-surface-accent-hover: #{$versatile-gray-200};
+	--vers-surface-accent-active: #{$versatile-gray-300};
+	--vers-surface-accent-selected: #{$versatile-gray-400};
+	--vers-surface-accent-disabled: #{$versatile-gray-500};
+	--vers-surface-border: #{$versatile-gray-600};
+	--vers-surface-border-hover: #{$versatile-gray-700};
+	--vers-surface-border-active: #{$versatile-gray-800};
+	--vers-surface-border-selected: #{$versatile-gray-900};
+	--vers-surface-border-disabled: #{$versatile-gray-1000};
+	--vers-surface-text-primary: #{$versatile-gray-1};
+	--vers-surface-text-secondary: #{$versatile-gray-200};
+	--vers-surface-text-tertiary: #{$versatile-gray-300};
+	--vers-surface-text-disabled: #{$versatile-gray-400};
+	--vers-surface-text-inverted: #{$versatile-gray-1};
+	--vers-surface-text-overlay: #{$versatile-gray-200};
+	--vers-surface-text-accent: #{$versatile-gray-300};
+	--vers-surface-text-accent-hover: #{$versatile-gray-400};
+	--vers-surface-text-accent-active: #{$versatile-gray-500};
+	--vers-surface-text-accent-selected: #{$versatile-gray-600};
+	// =============================================================================
+	// BORDER COLORS
+	// =============================================================================
+	--vers-border-idle: #{$versatile-gray-750};
+	--vers-border-hover: #{$versatile-gray-600};
+	--vers-border-active: #{$versatile-gray-500};
+	--vers-border-selected: #{$versatile-gray-400};
+	--vers-border-disabled: #{$versatile-gray-200};
+	--vers-border-inverted: #{$versatile-gray-1};
+	--vers-border-overlay: #{$versatile-gray-200};
+	--vers-border-accent: #{$versatile-gray-300};
+	--vers-border-accent-hover: #{$versatile-gray-400};
+	--vers-border-accent-active: #{$versatile-gray-500};
+	--vers-border-accent-selected: #{$versatile-gray-600};
+}

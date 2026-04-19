@@ -1,0 +1,16 @@
+// Color Utilities
+// Background, border, and text color utilities with theme awareness
+
+@use '../tokens' as *;
+@use '../mixins' as *;
+
+// ------------------------------------------------------------
+// Transparent / Current Color Utilities
+// ------------------------------------------------------------
+.versatile-bg-transparent {
+	background-color: transparent;
+}
+
+.versatile-bg-current {
+	background-color: currentColor;
+}

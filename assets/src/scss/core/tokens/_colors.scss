@@ -1,0 +1,257 @@
+// Design Tokens - Colors
+// Primitive color palette and semantic color maps
+
+// =============================================================================
+// PRIMITIVE COLORS
+// =============================================================================
+
+// Brand Colors
+$versatile-brand-100: #f6f8fe;
+$versatile-brand-200: #e4ebfc;
+$versatile-brand-300: #dbe4fa;
+$versatile-brand-400: #a4bcf4;
+$versatile-brand-500: #4979e8;
+$versatile-brand-600: #3e64de;
+$versatile-brand-700: #2b49ca;
+$versatile-brand-800: #293da4;
+$versatile-brand-900: #263782;
+$versatile-brand-950: #1c234f;
+
+// Gray Colors
+$versatile-gray-1: #ffffff;
+$versatile-gray-10: #fcfcfc;
+$versatile-gray-25: #fafafa;
+$versatile-gray-50: #f5f5f6;
+$versatile-gray-100: #f0f1f1;
+$versatile-gray-200: #ececed;
+$versatile-gray-300: #cecfd2;
+$versatile-gray-400: #94969c;
+$versatile-gray-500: #85888e;
+$versatile-gray-600: #61646c;
+$versatile-gray-700: #333741;
+$versatile-gray-750: #2d3039;
+$versatile-gray-800: #1f242f;
+$versatile-gray-900: #161b26;
+$versatile-gray-950: #0c111d;
+
+// Success Colors
+$versatile-success-25: #f4faf5;
+$versatile-success-50: #eaf6ec;
+$versatile-success-100: #bce4c5;
+$versatile-success-200: #9cd7a9;
+$versatile-success-300: #6fc482;
+$versatile-success-400: #53b96a;
+$versatile-success-500: #28a745;
+$versatile-success-600: #24983f;
+$versatile-success-700: #1c7731;
+$versatile-success-800: #165c26;
+$versatile-success-900: #11461d;
+$versatile-success-950: #0c3114;
+
+// Warning Colors
+$versatile-warning-25: #fffcf5;
+$versatile-warning-50: #fffaeb;
+$versatile-warning-100: #fef0c7;
+$versatile-warning-200: #fedf89;
+$versatile-warning-300: #fec84b;
+$versatile-warning-400: #fdb022;
+$versatile-warning-500: #f79009;
+$versatile-warning-600: #dc6803;
+$versatile-warning-700: #b54708;
+$versatile-warning-800: #93370d;
+$versatile-warning-900: #7a2e0e;
+$versatile-warning-950: #4e1d09;
+
+// Error Colors
+$versatile-error-25: #fffbfa;
+$versatile-error-50: #fef3f2;
+$versatile-error-100: #fee4e2;
+$versatile-error-200: #fecdca;
+$versatile-error-300: #fda29b;
+$versatile-error-400: #f97066;
+$versatile-error-500: #f04438;
+$versatile-error-600: #d92d20;
+$versatile-error-700: #b42318;
+$versatile-error-800: #912018;
+$versatile-error-900: #7a271a;
+$versatile-error-950: #55160c;
+
+// Yellow Colors
+$versatile-yellow-25: #fefdf0;
+$versatile-yellow-50: #fefbe8;
+$versatile-yellow-100: #fef7c3;
+$versatile-yellow-200: #feee95;
+$versatile-yellow-300: #fde272;
+$versatile-yellow-400: #fac515;
+$versatile-yellow-500: #eaaa08;
+$versatile-yellow-600: #ca8504;
+$versatile-yellow-700: #a15c07;
+$versatile-yellow-800: #854a0e;
+$versatile-yellow-900: #713b12;
+$versatile-yellow-950: #542c0d;
+
+// Cyan Colors (CVD accessibility - replaces green/success)
+$versatile-cyan-50: #ecfeff;
+$versatile-cyan-100: #cefafe;
+$versatile-cyan-200: #a2f4fd;
+$versatile-cyan-300: #53eafd;
+$versatile-cyan-400: #00d3f2;
+$versatile-cyan-500: #00b8db;
+$versatile-cyan-600: #0092b8;
+$versatile-cyan-700: #007595;
+$versatile-cyan-800: #005f78;
+$versatile-cyan-900: #104e64;
+$versatile-cyan-950: #053345;
+
+// Orange Colors (CVD accessibility - replaces red/error)
+$versatile-orange-50: #fefbe8;
+$versatile-orange-100: #ffedd4;
+$versatile-orange-200: #ffd6a7;
+$versatile-orange-300: #ffb86a;
+$versatile-orange-400: #ff8904;
+$versatile-orange-500: #ff6900;
+$versatile-orange-600: #f54900;
+$versatile-orange-700: #ca3500;
+$versatile-orange-800: #9f2d00;
+$versatile-orange-900: #7e2a0c;
+
+// Exception Colors
+$versatile-exception-1: #00acc2;
+$versatile-exception-2: #ee0097;
+$versatile-exception-2-secondary: #fff0f9;
+$versatile-exception-2-tertiary: #330020;
+$versatile-exception-3: #cbfd78;
+$versatile-exception-5: #9747ff;
+$versatile-exception-6: #f2e8ff;
+
+// =============================================================================
+// COLOR MAPS (for utility generation)
+// =============================================================================
+
+$versatile-brand-colors: (
+	100: $versatile-brand-100,
+	200: $versatile-brand-200,
+	300: $versatile-brand-300,
+	400: $versatile-brand-400,
+	500: $versatile-brand-500,
+	600: $versatile-brand-600,
+	700: $versatile-brand-700,
+	800: $versatile-brand-800,
+	900: $versatile-brand-900,
+	950: $versatile-brand-950,
+);
+
+$versatile-gray-colors: (
+	1: $versatile-gray-1,
+	10: $versatile-gray-10,
+	25: $versatile-gray-25,
+	50: $versatile-gray-50,
+	100: $versatile-gray-100,
+	200: $versatile-gray-200,
+	300: $versatile-gray-300,
+	400: $versatile-gray-400,
+	500: $versatile-gray-500,
+	600: $versatile-gray-600,
+	700: $versatile-gray-700,
+	750: $versatile-gray-750,
+	800: $versatile-gray-800,
+	900: $versatile-gray-900,
+	950: $versatile-gray-950,
+);
+
+$versatile-success-colors: (
+	25: $versatile-success-25,
+	50: $versatile-success-50,
+	100: $versatile-success-100,
+	200: $versatile-success-200,
+	300: $versatile-success-300,
+	400: $versatile-success-400,
+	500: $versatile-success-500,
+	600: $versatile-success-600,
+	700: $versatile-success-700,
+	800: $versatile-success-800,
+	900: $versatile-success-900,
+	950: $versatile-success-950,
+);
+
+$versatile-warning-colors: (
+	25: $versatile-warning-25,
+	50: $versatile-warning-50,
+	100: $versatile-warning-100,
+	200: $versatile-warning-200,
+	300: $versatile-warning-300,
+	400: $versatile-warning-400,
+	500: $versatile-warning-500,
+	600: $versatile-warning-600,
+	700: $versatile-warning-700,
+	800: $versatile-warning-800,
+	900: $versatile-warning-900,
+	950: $versatile-warning-950,
+);
+
+$versatile-error-colors: (
+	25: $versatile-error-25,
+	50: $versatile-error-50,
+	100: $versatile-error-100,
+	200: $versatile-error-200,
+	300: $versatile-error-300,
+	400: $versatile-error-400,
+	500: $versatile-error-500,
+	600: $versatile-error-600,
+	700: $versatile-error-700,
+	800: $versatile-error-800,
+	900: $versatile-error-900,
+	950: $versatile-error-950,
+);
+
+$versatile-yellow-colors: (
+	25: $versatile-yellow-25,
+	50: $versatile-yellow-50,
+	100: $versatile-yellow-100,
+	200: $versatile-yellow-200,
+	300: $versatile-yellow-300,
+	400: $versatile-yellow-400,
+	500: $versatile-yellow-500,
+	600: $versatile-yellow-600,
+	700: $versatile-yellow-700,
+	800: $versatile-yellow-800,
+	900: $versatile-yellow-900,
+	950: $versatile-yellow-950,
+);
+
+$versatile-exception-colors: (
+	1: $versatile-exception-1,
+	2: $versatile-exception-2,
+	2-secondary: $versatile-exception-2-secondary,
+	2-tertiary: $versatile-exception-2-tertiary,
+	3: $versatile-exception-3,
+	5: $versatile-exception-5,
+	6: $versatile-exception-6,
+);
+
+$versatile-cyan-colors: (
+	50: $versatile-cyan-50,
+	100: $versatile-cyan-100,
+	200: $versatile-cyan-200,
+	300: $versatile-cyan-300,
+	400: $versatile-cyan-400,
+	500: $versatile-cyan-500,
+	600: $versatile-cyan-600,
+	700: $versatile-cyan-700,
+	800: $versatile-cyan-800,
+	900: $versatile-cyan-900,
+	950: $versatile-cyan-950,
+);
+
+$versatile-orange-colors: (
+	50: $versatile-orange-50,
+	100: $versatile-orange-100,
+	200: $versatile-orange-200,
+	300: $versatile-orange-300,
+	400: $versatile-orange-400,
+	500: $versatile-orange-500,
+	600: $versatile-orange-600,
+	700: $versatile-orange-700,
+	800: $versatile-orange-800,
+	900: $versatile-orange-900,
+);

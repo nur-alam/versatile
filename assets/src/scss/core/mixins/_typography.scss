@@ -1,0 +1,74 @@
+@use 'sass:map';
+@use '../tokens' as *;
+
+@mixin versatile-typography($size: 'medium', $typeface: 'regular', $color: 'primary', $context: 'body') {
+	$font-size: map.get($versatile-font-sizes, 'medium');
+	$line-height: map.get($versatile-line-heights, 'medium');
+	$font-weight: map.get($versatile-font-weights, 'regular');
+	$text-color: map.get($versatile-text-colors, 'primary');
+
+	@if map.has-key($versatile-font-sizes, $size) {
+		$font-size: map.get($versatile-font-sizes, $size);
+	}
+
+	@if map.has-key($versatile-line-heights, $size) {
+		$line-height: map.get($versatile-line-heights, $size);
+	}
+
+	@if map.has-key($versatile-font-weights, $typeface) {
+		$font-weight: map.get($versatile-font-weights, $typeface);
+	}
+
+	@if map.has-key($versatile-text-colors, $color) {
+		$text-color: map.get($versatile-text-colors, $color);
+	}
+
+	@if $context =='heading' {
+		font-family: $versatile-font-family-heading;
+	} @else {
+		font-family: $versatile-font-family-body;
+	}
+	font-weight: $font-weight;
+	font-size: $font-size;
+	line-height: $line-height;
+	color: $text-color;
+	// margin: $versatile-spacing-none;
+}
+
+@mixin versatile-text-truncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@mixin versatile-text-clamp($lines: 2) {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: $lines;
+}
+
+@mixin versatile-breakpoint-down($breakpoint) {
+	@if map.has-key($versatile-responsive-breakpoints, $breakpoint) {
+		@media (max-width: map.get($versatile-responsive-breakpoints, $breakpoint)) {
+			@content;
+		}
+	}
+}
+
+@mixin versatile-text($size: 'medium') {
+	$font-size: map.get($versatile-font-sizes, 'medium');
+	$line-height: map.get($versatile-line-heights, 'medium');
+
+	@if map.has-key($versatile-font-sizes, $size) {
+		$font-size: map.get($versatile-font-sizes, $size);
+	}
+
+	@if map.has-key($versatile-line-heights, $size) {
+		$line-height: map.get($versatile-line-heights, $size);
+	}
+
+	font-size: $font-size;
+	line-height: $line-height;
+	// margin: $versatile-spacing-none;
+}

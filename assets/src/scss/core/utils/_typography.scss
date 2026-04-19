@@ -1,0 +1,230 @@
+@use 'sass:map';
+@use '../tokens' as *;
+@use '../mixins' as *;
+
+$text-align-utils: (
+	left: start,
+	right: end,
+	start: start,
+	end: end,
+	center: center,
+	justify: justify,
+);
+
+.versatile-h1 {
+	@include versatile-typography('h1', 'bold', 'primary', 'heading');
+}
+
+.versatile-h2 {
+	@include versatile-typography('h2', 'bold', 'primary', 'heading');
+}
+
+.versatile-h3 {
+	@include versatile-typography('h3', 'semibold', 'primary', 'heading');
+}
+
+.versatile-h4 {
+	@include versatile-typography('h4', 'semibold', 'primary', 'heading');
+}
+
+.versatile-h5 {
+	@include versatile-typography('h5', 'medium', 'primary', 'heading');
+}
+
+.versatile-p1 {
+	@include versatile-typography('p1');
+}
+
+.versatile-p2 {
+	@include versatile-typography('p2');
+}
+
+.versatile-p3 {
+	@include versatile-typography('p3');
+}
+
+.versatile-medium {
+	@include versatile-typography('medium');
+}
+
+.versatile-small {
+	@include versatile-typography('small');
+}
+
+.versatile-tiny {
+	@include versatile-typography('tiny');
+}
+
+.versatile-tiny-2 {
+	@include versatile-typography('tiny-2');
+}
+
+// Font size utilities
+@each $key, $value in $versatile-font-sizes {
+	.versatile-text-#{$key} {
+		font-size: $value;
+		line-height: map.get($versatile-line-heights, $key);
+	}
+}
+
+// Font weight utilities
+@each $key, $value in $versatile-font-weights {
+	.versatile-font-#{$key} {
+		font-weight: $value;
+	}
+}
+
+// Text alignment (RTL-aware)
+@each $name, $value in $text-align-utils {
+	.versatile-text-#{$name} {
+		text-align: $value;
+	}
+}
+
+// Text decoration
+.versatile-underline {
+	text-decoration: underline;
+}
+
+.versatile-line-through {
+	text-decoration: line-through;
+}
+
+.versatile-no-underline {
+	text-decoration: none;
+}
+
+// Text transform
+.versatile-uppercase {
+	text-transform: uppercase;
+}
+
+.versatile-lowercase {
+	text-transform: lowercase;
+}
+
+.versatile-capitalize {
+	text-transform: capitalize;
+}
+
+.versatile-normal-case {
+	text-transform: none;
+}
+
+// Text overflow
+.versatile-truncate {
+	@include versatile-text-truncate;
+}
+
+.versatile-text-ellipsis {
+	text-overflow: ellipsis;
+}
+
+.versatile-text-clip {
+	text-overflow: clip;
+}
+
+// Line clamp utilities
+.versatile-line-clamp-1 {
+	@include versatile-text-clamp(1);
+}
+
+.versatile-line-clamp-2 {
+	@include versatile-text-clamp(2);
+}
+
+.versatile-line-clamp-3 {
+	@include versatile-text-clamp(3);
+}
+
+.versatile-line-clamp-4 {
+	@include versatile-text-clamp(4);
+}
+
+.versatile-line-clamp-5 {
+	@include versatile-text-clamp(5);
+}
+
+.versatile-line-clamp-6 {
+	@include versatile-text-clamp(6);
+}
+
+// White space
+.versatile-whitespace-normal {
+	white-space: normal;
+}
+
+.versatile-whitespace-nowrap {
+	white-space: nowrap;
+}
+
+.versatile-whitespace-pre {
+	white-space: pre;
+}
+
+.versatile-whitespace-pre-line {
+	white-space: pre-line;
+}
+
+.versatile-whitespace-pre-wrap {
+	white-space: pre-wrap;
+}
+
+// Word break
+.versatile-break-normal {
+	overflow-wrap: normal;
+	word-break: normal;
+}
+
+.versatile-break-words {
+	overflow-wrap: break-word;
+}
+
+.versatile-break-all {
+	word-break: break-all;
+}
+
+// List styles
+.versatile-list-none {
+	list-style-type: none;
+}
+
+.versatile-list-disc {
+	list-style-type: disc;
+}
+
+.versatile-list-decimal {
+	list-style-type: decimal;
+}
+
+.versatile-list-inside {
+	list-style-position: inside;
+}
+
+.versatile-list-outside {
+	list-style-position: outside;
+}
+
+// Responsive typography utilities
+@each $breakpoint, $min-width in $versatile-responsive-breakpoints {
+	@include versatile-breakpoint-down($breakpoint) {
+		@each $size-key, $size-value in $versatile-font-sizes {
+			.versatile-#{$breakpoint}-text-#{$size-key} {
+				font-size: $size-value;
+				line-height: map.get($versatile-line-heights, $size-key);
+			}
+		}
+
+		@each $weight-key, $weight-value in $versatile-font-weights {
+			.versatile-#{$breakpoint}-font-#{$weight-key} {
+				font-weight: $weight-value;
+			}
+		}
+
+		@each $name, $align-value in $text-align-utils {
+			.versatile-#{$breakpoint}-text-#{$name} {
+				text-align: $align-value;
+			}
+		}
+	}
+}

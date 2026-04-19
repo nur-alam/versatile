@@ -1,0 +1,28 @@
+.versatile-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	padding: 1rem;
+	background-color: rgba(2, 6, 23, 0.5);
+	z-index: 80;
+}
+
+.versatile-modal {
+	width: min(100%, 32rem);
+	background-color: hsl(var(--card));
+	color: hsl(var(--card-foreground));
+	border: 1px solid hsl(var(--border));
+	border-radius: var(--radius, 0.5rem);
+	box-shadow: 0 20px 35px rgba(2, 6, 23, 0.25);
+}
+
+.versatile-modal-header,
+.versatile-modal-footer {
+	padding: 1rem 1.25rem;
+}
+
+.versatile-modal-body {
+	padding: 0 1.25rem 1.25rem;
+	color: hsl(var(--muted-foreground));
+}
