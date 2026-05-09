@@ -32,7 +32,7 @@ const PreviewButton = ({ type, disabled = false }: PreviewButtonProps) => {
       variant="outline"
       onClick={handlePreview}
       disabled={disabled}
-      className="flex items-center gap-2"
+      className="vt-flex vt-items-center vt-gap-2"
     >
       <ExternalLink size={16} />
       {__(`Preview as ${type}`, 'versatile-toolkit')} 

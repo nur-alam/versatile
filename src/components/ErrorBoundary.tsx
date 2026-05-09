@@ -86,26 +86,26 @@ class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <Card className="max-w-2xl mx-auto mt-8 border-red-200 bg-red-50">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <AlertTriangle className="h-12 w-12 text-red-500" />
+        <Card className="vt-max-w-2xl vt-mx-auto vt-mt-8 vt-border-red-200 vt-bg-red-50">
+          <CardHeader className="vt-text-center">
+            <div className="vt-flex vt-justify-center vt-mb-4">
+              <AlertTriangle className="vt-h-12 vt-w-12 vt-text-red-500" />
             </div>
-            <CardTitle className="text-red-700">
+            <CardTitle className="vt-text-red-700">
               {__('Something went wrong', 'versatile-toolkit')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-center text-gray-600">
+          <CardContent className="vt-space-y-4">
+            <p className="vt-text-center vt-text-gray-600">
               {__('We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.', 'versatile-toolkit')}
             </p>
             
-            <div className="flex justify-center gap-3">
+            <div className="vt-flex vt-justify-center vt-gap-3">
               <Button 
                 onClick={this.handleRetry}
-                className="flex items-center gap-2"
+                className="vt-flex vt-items-center vt-gap-2"
               >
-                <RefreshCw className="h-4 w-4" />
+                <RefreshCw className="vt-h-4 vt-w-4" />
                 {__('Try Again', 'versatile-toolkit')}
               </Button>
               
@@ -113,9 +113,9 @@ class ErrorBoundary extends Component<Props, State> {
                 <Button 
                   variant="outline"
                   onClick={this.toggleErrorDetails}
-                  className="flex items-center gap-2"
+                  className="vt-flex vt-items-center vt-gap-2"
                 >
-                  <Bug className="h-4 w-4" />
+                  <Bug className="vt-h-4 vt-w-4" />
                   {this.state.showErrorDetails 
                     ? __('Hide Details', 'versatile-toolkit')
                     : __('Show Details', 'versatile-toolkit')
@@ -125,21 +125,21 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {this.state.showErrorDetails && this.state.error && (
-              <div className="mt-6 p-4 bg-gray-100 rounded-lg border">
-                <h4 className="font-semibold text-sm mb-2 text-gray-700">
+              <div className="vt-mt-6 vt-p-4 vt-bg-gray-100 vt-rounded-lg vt-border">
+                <h4 className="vt-font-semibold vt-text-sm vt-mb-2 vt-text-gray-700">
                   {__('Error Details:', 'versatile-toolkit')}
                 </h4>
-                <div className="text-xs font-mono text-gray-600 space-y-2">
+                <div className="vt-text-xs vt-font-mono vt-text-gray-600 vt-space-y-2">
                   <div>
                     <strong>{__('Message:', 'versatile-toolkit')}</strong>
-                    <pre className="mt-1 whitespace-pre-wrap break-words">
+                    <pre className="vt-mt-1 vt-whitespace-pre-wrap vt-break-words">
                       {this.state.error.message}
                     </pre>
                   </div>
                   {this.state.error.stack && (
                     <div>
                       <strong>{__('Stack Trace:', 'versatile-toolkit')}</strong>
-                      <pre className="mt-1 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
+                      <pre className="vt-mt-1 vt-whitespace-pre-wrap vt-break-words vt-max-h-32 vt-overflow-y-auto">
                         {this.state.error.stack}
                       </pre>
                     </div>
@@ -147,7 +147,7 @@ class ErrorBoundary extends Component<Props, State> {
                   {this.state.errorInfo?.componentStack && (
                     <div>
                       <strong>{__('Component Stack:', 'versatile-toolkit')}</strong>
-                      <pre className="mt-1 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
+                      <pre className="vt-mt-1 vt-whitespace-pre-wrap vt-break-words vt-max-h-32 vt-overflow-y-auto">
                         {this.state.errorInfo.componentStack}
                       </pre>
                     </div>

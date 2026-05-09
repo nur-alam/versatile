@@ -59,11 +59,11 @@ const CreateTempLogin = () => {
 			<Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
 				<DialogTrigger asChild>
 					<Button>
-						<Plus className="w-4 h-4 mr-2" />
+						<Plus className="vt-w-4 vt-h-4 vt-mr-2" />
 						{__('Create Temp Login', 'versatile-toolkit')}
 					</Button>
 				</DialogTrigger>
-				<DialogContent className='max-w-lg'>
+				<DialogContent className='vt-max-w-lg'>
 					<DialogHeader>
 						<DialogTitle>{__('Create Temporary Login', 'versatile-toolkit')}</DialogTitle>
 					</DialogHeader>
@@ -71,14 +71,14 @@ const CreateTempLogin = () => {
 						<form onSubmit={handleSubmit(onCreateFormSubmit, (error) => {
 							console.log('Error', error);
 						})}
-							className='flex flex-col gap-5'
+							className='vt-flex vt-flex-col vt-gap-5'
 						>
 							<FormField
 								control={createTemploginForm.control}
 								name="display_name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-foreground'>{__('Display Name', 'versatile-toolkit')}</FormLabel>
+										<FormLabel className='vt-text-foreground'>{__('Display Name', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Input placeholder={__('Display Name', 'versatile-toolkit')} {...field} />
 										</FormControl>
@@ -91,7 +91,7 @@ const CreateTempLogin = () => {
 								name="email"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-foreground'>{__('Email', 'versatile-toolkit')}</FormLabel>
+										<FormLabel className='vt-text-foreground'>{__('Email', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Input placeholder={__('Email', 'versatile-toolkit')} {...field} />
 										</FormControl>
@@ -104,19 +104,19 @@ const CreateTempLogin = () => {
 								name="role"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-foreground'>{__('Role', 'versatile-toolkit')}</FormLabel>
+										<FormLabel className='vt-text-foreground'>{__('Role', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value}
 											>
-												<SelectTrigger className='w-full'>
+												<SelectTrigger className='vt-w-full'>
 													<SelectValue placeholder={__('Select role', 'versatile-toolkit')} />
 												</SelectTrigger>
-												<SelectContent className='w-full max-h-60 scroll-auto'>
+												<SelectContent className='vt-w-full vt-max-h-60 vt-scroll-auto'>
 													{
 														isAvailableRolesLoading ?
-															<InlineLoader size="md" className='ml-2' text={__('Loading roles', 'versatile-toolkit')} />
+															<InlineLoader size="md" className='vt-ml-2' text={__('Loading roles', 'versatile-toolkit')} />
 															:
 															Object.entries(availableRoles ?? {}).map(([key, value]) => (
 																<SelectItem key={key} value={key}>{String(value)}</SelectItem>
@@ -134,16 +134,16 @@ const CreateTempLogin = () => {
 								name="expires_at"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-foreground'>{__('Expires At', 'versatile-toolkit')}</FormLabel>
+										<FormLabel className='vt-text-foreground'>{__('Expires At', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value}
 											>
-												<SelectTrigger className='w-full'>
+												<SelectTrigger className='vt-w-full'>
 													<SelectValue placeholder={__('Select expires at', 'versatile-toolkit')} />
 												</SelectTrigger>
-												<SelectContent className='w-full max-h-60 scroll'>
+												<SelectContent className='vt-w-full vt-max-h-60 vt-scroll'>
 													{expiresAtOptions.map((option) => (
 														<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
 													))}
@@ -159,7 +159,7 @@ const CreateTempLogin = () => {
 								name="redirect_url"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-foreground'>{__('Redirect URL', 'versatile-toolkit')}</FormLabel>
+										<FormLabel className='vt-text-foreground'>{__('Redirect URL', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Input placeholder={__('Redirect URL', 'versatile-toolkit')} {...field} />
 										</FormControl>
@@ -171,8 +171,8 @@ const CreateTempLogin = () => {
 								control={createTemploginForm.control}
 								name="ip_address"
 								render={({ field }) => (
-									<FormItem className='text-foreground'>
-										<FormLabel className='text-foreground'>{__('IP Address', 'versatile-toolkit')}</FormLabel>
+									<FormItem className='vt-text-foreground'>
+										<FormLabel className='vt-text-foreground'>{__('IP Address', 'versatile-toolkit')}</FormLabel>
 										<FormControl>
 											<Input placeholder={__('IP Address', 'versatile-toolkit')} {...field} />
 										</FormControl>
@@ -180,7 +180,7 @@ const CreateTempLogin = () => {
 									</FormItem>
 								)}
 							/> */}
-							<div className='flex justify-end'>
+							<div className='vt-flex vt-justify-end'>
 								<Button type="submit">{__('Create Temporary Login', 'versatile-toolkit')}</Button>
 							</div>
 						</form>

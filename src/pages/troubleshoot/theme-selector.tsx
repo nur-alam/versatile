@@ -1,43 +1,42 @@
-"use client"
+'use client';
 
-import React, { useEffect, useState } from "react"
-import { Check, ChevronsUpDown, ThermometerSnowflake } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useGetThemeList } from "@/services/versatile-services"
-import { __ } from "@wordpress/i18n"
-import config from "@/config"
+import { Button } from '@/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { useGetThemeList } from '@/services/versatile-services';
+import { __ } from '@wordpress/i18n';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type typeThemeList = {
-	slug: string
-	label: string
-}
+	slug: string;
+	label: string;
+};
 
 type Props = {
-	selectedTheme: string
-	onChange: (value: string) => void
-}
+	selectedTheme: string;
+	onChange: (value: string) => void;
+};
 
 export default function ThemeSelector({ selectedTheme, onChange }: Props) {
-	const [themeList, setThemeList] = useState<typeThemeList[]>([])
-	const [open, setOpen] = useState(false)
+	const [themeList, setThemeList] = useState<typeThemeList[]>([]);
+	const [open, setOpen] = useState(false);
 
-	const { data: themeListData } = useGetThemeList()
+	const { data: themeListData } = useGetThemeList();
 
 	useEffect(() => {
 		if (themeListData) {
-			setThemeList(themeListData.data)
+			setThemeList(themeListData.data);
 		}
-	}, [themeListData])
+	}, [themeListData]);
 
 	const handleSelect = (value: string) => {
-		onChange(value)
-		setOpen(false)
-	}
+		onChange(value);
+		setOpen(false);
+	};
 
-	const selectedThemeData = themeList.find((theme) => theme.slug === selectedTheme)
+	const selectedThemeData = themeList.find((theme) => theme.slug === selectedTheme);
 
 	return (
 		<div>
@@ -47,23 +46,25 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 						variant="outline"
 						role="combobox"
 						aria-expanded={open}
-						className="w-full justify-between min-h-[2.5rem] h-auto p-3 bg-transparent"
+						className="vt-w-full vt-justify-between min-h-[2.5rem] vt-h-auto vt-p-3 vt-bg-transparent"
 					>
-						<div className="flex flex-wrap gap-1 flex-1 text-left">
+						<div className="vt-flex vt-flex-wrap vt-gap-1 vt-flex-1 vt-text-left">
 							{selectedThemeData ? (
-								<span className="font-medium">{selectedThemeData.label}</span>
+								<span className="vt-font-medium">{selectedThemeData.label}</span>
 							) : (
-								<span className="text-muted-foreground">{__('Select a theme...', 'versatile-toolkit')}</span>
+								<span className="vt-text-muted-foreground">
+									{__('Select a theme...', 'versatile-toolkit')}
+								</span>
 							)}
 						</div>
-						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+						<ChevronsUpDown className="vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-full p-0" align="start">
+				<PopoverContent className="vt-w-full vt-p-0" align="start">
 					<Command>
-						<CommandInput placeholder="Search theme..." />
+						<CommandInput placeholder={__('Search theme...', 'versatile-toolkit')} />
 						<CommandList>
-							<CommandEmpty>No theme found.</CommandEmpty>
+							<CommandEmpty>{__('No theme found.', 'versatile-toolkit')}</CommandEmpty>
 							<CommandGroup>
 								{themeList.map((theme) => (
 									<CommandItem
@@ -73,8 +74,8 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 									>
 										<Check
 											className={cn(
-												"mr-2 h-4 w-4",
-												selectedTheme === theme.slug ? "opacity-100" : "opacity-0"
+												'vt-mr-2 vt-h-4 vt-w-4',
+												selectedTheme === theme.slug ? 'vt-opacity-100' : 'vt-opacity-0',
 											)}
 										/>
 										{theme.label}
@@ -86,5 +87,5 @@ export default function ThemeSelector({ selectedTheme, onChange }: Props) {
 				</PopoverContent>
 			</Popover>
 		</div>
-	)
+	);
 }

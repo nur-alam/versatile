@@ -48,7 +48,7 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
         variant="outline"
         onClick={handlePreview}
         disabled={disabled}
-        className="flex items-center gap-2 border-gray-400"
+        className="vt-flex vt-items-center vt-gap-2 vt-border-gray-400"
       >
         <Eye size={16} />
         {type === 'maintenance'
@@ -59,37 +59,32 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
 
       {isOpen && (
         <div
-          className="fixed inset-x-0 bottom-0 -top-[15px] z-[999999] flex items-center justify-center bg-black bg-opacity-85"
+          className="vt-fixed vt-inset-x-0 vt-bottom-0 vt--top-[15px] vt-z-[999999] vt-flex vt-items-center vt-justify-center vt-bg-black vt-bg-opacity-85"
           onClick={handleBackdropClick}
         >
-          <div className="bg-white rounded-lg shadow-xl w-11/12 h-5/6 max-w-6xl flex flex-col">
+          <div className="vt-bg-white vt-rounded-lg vt-shadow-xl vt-w-11/12 vt-h-5/6 vt-max-w-6xl vt-flex vt-flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">
+            <div className="vt-flex vt-items-center vt-justify-between vt-p-4 vt-border-b">
+              <h3 className="vt-text-lg vt-font-semibold">
                 {type === 'maintenance'
                   ? __('Maintenance Page Preview', 'versatile-toolkit')
                   : __('Coming Soon Page Preview', 'versatile-toolkit')
                 }
               </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClose}
-                className="h-8 w-8 p-0"
-              >
-                <X size={16} />
+							<Button type="button" variant="ghost" size="sm" onClick={handleClose}>
+								<X size={16} />
               </Button>
             </div>
 
             {/* Content */}
-            <div className="flex-1 p-4">
-              <div className="w-full h-full border rounded-lg overflow-hidden bg-gray-50">
+            <div className="vt-flex-1 vt-p-4">
+              <div className="vt-w-full vt-h-full vt-border vt-rounded-lg vt-overflow-hidden vt-bg-gray-50">
                 {isLoading && (
                   <TemplateLoader />
                 )}
                 <iframe
                   src={getPreviewUrl()}
-                  className="w-full h-full border-0"
+                  className="vt-w-full vt-h-full vt-border-0"
                   title={type === 'maintenance' ? __('Maintenance Preview', 'versatile-toolkit') : __('Coming Soon Preview', 'versatile-toolkit')}
                   onLoad={() => setIsLoading(false)}
                   style={{ display: isLoading ? 'none' : 'block' }}
@@ -98,9 +93,9 @@ const PreviewModal = ({ type, disabled = false, getFormData }: PreviewModalProps
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t bg-gray-50 rounded-b-lg">
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">
+            <div className="vt-p-4 vt-border-t vt-bg-gray-50 vt-rounded-b-lg">
+              <div className="vt-flex vt-justify-between vt-items-center">
+                <p className="vt-text-sm vt-text-gray-600">
                   {__('This is how your page will look to visitors.', 'versatile-toolkit')}
                 </p>
                 <Button onClick={handleClose} variant="outline">

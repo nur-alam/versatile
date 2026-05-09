@@ -1,72 +1,61 @@
-import { __ } from '@wordpress/i18n';
 import { cn } from '@/lib/utils';
+import { __ } from '@wordpress/i18n';
 import { PageLoaderProps } from './types';
 
 const sizeClasses = {
-  xs: 'w-6 h-6 text-xs',
-  sm: 'w-8 h-8 text-sm',
-  md: 'w-10 h-10 text-base',
-  lg: 'w-12 h-12 text-lg',
-  xl: 'w-16 h-16 text-xl',
+	xs: 'vt-w-6 vt-h-6 vt-text-xs',
+	sm: 'vt-w-8 vt-h-8 vt-text-sm',
+	md: 'vt-w-10 vt-h-10 vt-text-base',
+	lg: 'vt-w-12 vt-h-12 vt-text-lg',
+	xl: 'vt-w-16 vt-h-16 vt-text-xl',
 };
 
-const PageLoader = ({ 
-  text, 
-  size = 'lg', 
-  fullScreen = false, 
-  className 
-}: PageLoaderProps) => {
-  const loadingText = text || __('Loading', 'versatile-toolkit');
+const PageLoader = ({ text, size = 'lg', fullScreen = false, className }: PageLoaderProps) => {
+	const loadingText = text || __('Loading', 'versatile-toolkit');
 
-  const containerClasses = fullScreen 
-    ? 'fixed inset-0 bg-background/80 backdrop-blur-sm z-50' 
-    : 'w-full py-12';
+	const containerClasses = fullScreen
+		? 'vt-fixed vt-inset-0 vt-bg-background/80 vt-backdrop-blur-sm vt-z-50'
+		: 'vt-w-full vt-py-12';
 
-  return (
-    <div className={cn(
-      containerClasses,
-      'flex flex-col items-center justify-center gap-4',
-      className
-    )}>
-      <div className={cn(sizeClasses[size], 'animate-spin text-primary')}>
-        <svg
-          className="w-full h-full"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="31.416"
-            strokeDashoffset="31.416"
-            className="opacity-25"
-          />
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="31.416"
-            strokeDashoffset="23.562"
-            className="opacity-75"
-          />
-        </svg>
-      </div>
-      <p className={cn(
-        sizeClasses[size].split(' ')[2],
-        'text-muted-foreground font-medium'
-      )}>
-        {loadingText}...
-      </p>
-    </div>
-  );
+	return (
+		<div
+			className={cn(
+				containerClasses,
+				'vt-flex vt-flex-col vt-items-center vt-justify-center vt-gap-4',
+				className,
+			)}
+		>
+			<div className={cn(sizeClasses[size], 'vt-animate-spin vt-text-primary')}>
+				<svg className="vt-w-full vt-h-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<circle
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						strokeWidth="2"
+						strokeLinecap="round"
+						strokeDasharray="31.416"
+						strokeDashoffset="31.416"
+						className="vt-opacity-25"
+					/>
+					<circle
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						strokeWidth="2"
+						strokeLinecap="round"
+						strokeDasharray="31.416"
+						strokeDashoffset="23.562"
+						className="vt-opacity-75"
+					/>
+				</svg>
+			</div>
+			<p className={cn(sizeClasses[size].split(' ')[2], 'vt-text-muted-foreground vt-font-medium')}>
+				{loadingText}...
+			</p>
+		</div>
+	);
 };
 
 export default PageLoader;

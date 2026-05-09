@@ -3,7 +3,7 @@ import MaintenanceSettings from './maintenance-settings'
 
 const Maintenance = () => {
 	return (
-		<div className="p-4 space-y-6">
+		<div className="vt-p-4 vt-space-y-6">
 			<MaintenanceSettings />
 		</div>
 	)
