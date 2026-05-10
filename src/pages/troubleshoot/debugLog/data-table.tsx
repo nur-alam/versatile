@@ -1,5 +1,6 @@
 import { TableSkeleton } from '@/components/loader';
 import TableRowEmptyState from '@/components/loader/TableRowEmptyState';
+import { Button } from '@/components/ui/button';
 import { __ } from '@wordpress/i18n';
 import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUpAZ } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -264,8 +265,10 @@ export function ServerDataTable<
 
 					<div className="vt-flex vt-items-center vt-gap-1">
 						{/* Previous Button */}
-						<button
-							className="vt-flex vt-items-center vt-gap-1 vt-rounded-lg vt-px-3 vt-py-2 vt-text-sm vt-text-slate-600 hover:vt-bg-slate-100 disabled:vt-opacity-40 disabled:vt-cursor-not-allowed"
+						<Button
+							type='button'
+							size='sm'
+							variant='secondary'
 							onClick={() => {
 								const prevPage = Math.max(1, page - 1);
 								setPage(prevPage);
@@ -275,7 +278,7 @@ export function ServerDataTable<
 						>
 							<ArrowLeft className="vt-h-4 vt-w-4" />
 							Previous
-						</button>
+						</Button>
 
 						{/* Page Numbers */}
 						<div className="vt-flex vt-items-center vt-gap-1 vt-mx-2">
@@ -283,9 +286,7 @@ export function ServerDataTable<
 								const pages = [];
 								const maxVisiblePages = 3;
 								let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
-								2;
 								let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-								4;
 
 								// Adjust start if we're near the end
 								if (endPage - startPage + 1 < maxVisiblePages) {
@@ -295,13 +296,12 @@ export function ServerDataTable<
 								// First page + ellipsis if needed
 								if (startPage > 1) {
 									pages.push(
-										<button
+										<Button
 											key={1}
-											className={` vt-min-w-[40px] vt-h-10 vt-rounded-lg vt-text-sm vt-font-medium vt-bg-blue-600 vt-text-white vt-shadow-sm ${
-												1 === page
-													? 'vt-bg-blue-600 vt-text-white vt-shadow-sm'
-													: 'vt-text-slate-600 hover:vt-bg-slate-100'
-											}`}
+											type='button'
+											size='sm'
+											variant={1 === page ? 'default' : 'outline'}
+											aria-label={__('Go to first page', 'versatile-toolkit')}
 											onClick={() => {
 												setPage(1);
 												navigate(
@@ -310,7 +310,7 @@ export function ServerDataTable<
 											}}
 										>
 											1
-										</button>,
+										</Button>,
 									);
 
 									if (startPage > 2) {
@@ -325,13 +325,12 @@ export function ServerDataTable<
 								// Visible page range
 								for (let i = startPage; i <= endPage; i++) {
 									pages.push(
-										<button
+										<Button
 											key={i}
-											className={` vt-min-w-[40px] vt-h-10 vt-rounded-lg vt-text-sm vt-font-medium vt-bg-blue-600 vt-text-white vt-shadow-sm ${
-												i === page
-													? 'vt-bg-blue-600 vt-text-white vt-shadow-sm'
-													: 'vt-text-slate-600 hover:vt-bg-slate-100'
-											}`}
+											size='sm'
+											variant={i === page ? 'default' : 'outline'}
+											type='button'
+											aria-label={__('Go to page', 'versatile-toolkit')}
 											onClick={() => {
 												setPage(i);
 												navigate(
@@ -340,7 +339,7 @@ export function ServerDataTable<
 											}}
 										>
 											{i}
-										</button>,
+										</Button>,
 									);
 								}
 
@@ -355,13 +354,12 @@ export function ServerDataTable<
 									}
 
 									pages.push(
-										<button
+										<Button
 											key={totalPages}
-											className={` vt-min-w-[40px] vt-h-10 vt-rounded-lg vt-text-sm vt-font-medium vt-bg-blue-600 vt-text-white vt-shadow-sm ${
-												totalPages === page
-													? 'vt-bg-blue-600 vt-text-white vt-shadow-sm'
-													: 'vt-text-slate-600 hover:vt-bg-slate-100'
-											}`}
+											size='sm'
+											variant={totalPages === page ? 'default' : 'outline'}
+											type='button'
+											aria-label={__('Go to last page', 'versatile-toolkit')}
 											onClick={() => {
 												setPage(totalPages);
 												navigate(
@@ -376,7 +374,7 @@ export function ServerDataTable<
 											}}
 										>
 											{totalPages}
-										</button>,
+										</Button>,
 									);
 								}
 
@@ -385,8 +383,10 @@ export function ServerDataTable<
 						</div>
 
 						{/* Next Button */}
-						<button
-							className="vt-flex vt-items-center vt-gap-1 vt-rounded-lg vt-px-3 vt-py-2 vt-text-sm vt-text-slate-600 hover:vt-bg-slate-100 disabled:vt-opacity-40 disabled:vt-cursor-not-allowed"
+						<Button
+							type='button'
+							size='sm'
+							variant='secondary'
 							onClick={() => {
 								const nextPage = Math.min(totalPages, page + 1);
 								setPage(nextPage);
@@ -394,58 +394,10 @@ export function ServerDataTable<
 							}}
 							disabled={page === totalPages}
 						>
-							Next
+							{__('Next', 'versatile-toolkit')}
 							<ArrowRight className="vt-h-4 vt-w-4" />
-						</button>
+						</Button>
 					</div>
-
-					{/* pagination */}
-					{/* <div className="vt-flex vt-items-center vt-gap-1">
-            <button
-              className="vt-rounded-xl vt-px-3 py-1.5 vt-text-sm vt-shadow-sm vt-border vt-border-slate-200 disabled:vt-opacity-40"
-              onClick={() => {
-                setPage(1);
-                navigate(buildNavigationParams(1, perPage, query, sort.key, sort.order));
-              }}
-              disabled={page === 1}
-            >
-              « First
-            </button>
-            <button
-              className="vt-rounded-xl vt-px-3 py-1.5 vt-text-sm vt-shadow-sm vt-border vt-border-slate-200 disabled:vt-opacity-40"
-              onClick={() => {
-                const prevPage = Math.max(1, page - 1);
-                setPage(prevPage);
-                navigate(buildNavigationParams(prevPage, perPage, query, sort.key, sort.order));
-              }}
-              disabled={page === 1}
-            >
-              <ArrowLeft className="vt-inline vt-h-4 vt-w-4" /> Prev
-            </button>
-            <span className="vt-mx-2 vt-text-sm vt-text-slate-700">Page {page} / {totalPages}</span>
-            <button
-              className="vt-rounded-xl vt-px-3 py-1.5 vt-text-sm vt-shadow-sm vt-border vt-border-slate-200 disabled:vt-opacity-40"
-              onClick={() => {
-                const nextPage = Math.min(totalPages, page + 1);
-                setPage(nextPage);
-                navigate(buildNavigationParams(nextPage, perPage, query, sort.key, sort.order));
-              }}
-              aria-label="Next page"
-              disabled={page === totalPages}
-            >
-              Next <ArrowRight className="vt-inline vt-h-4 vt-w-4" />
-            </button>
-            <button
-              className="vt-rounded-xl vt-px-3 py-1.5 vt-text-sm vt-shadow-sm vt-border vt-border-slate-200 disabled:vt-opacity-40"
-              onClick={() => {
-                setPage(totalPages);
-                navigate(buildNavigationParams(totalPages, perPage, query, sort.key, sort.order));
-              }}
-              disabled={page === totalPages}
-            >
-              Last »
-            </button>
-          </div> */}
 				</div>
 			</div>
 		</div>

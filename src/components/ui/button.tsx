@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 const buttonVariants = cva(
-	'vt-inline-flex vt-items-center vt-justify-center vt-whitespace-nowrap vt-rounded-md vt-text-sm vt-font-medium vt-transition-colors focus-visible:vt-outline-none focus-visible:vt-ring-1 focus-visible:vt-ring-ring disabled:vt-pointer-events-none disabled:vt-opacity-50',
+	'vt-inline-flex vt-items-center vt-justify-center vt-whitespace-nowrap vt-rounded-md vt-text-sm vt-font-medium vt-transition-colors focus-visible:vt-outline-none focus-visible:vt-ring-1 focus-visible:vt-ring-ring disabled:vt-pointer-events-none disabled:vt-opacity-70',
 	{
 		variants: {
 			variant: {
@@ -14,6 +14,8 @@ const buttonVariants = cva(
 					'vt-border vt-border-input vt-bg-background vt-shadow-sm hover:vt-bg-accent hover:vt-text-accent-foreground',
 				secondary: 'vt-bg-secondary vt-text-secondary-foreground vt-shadow-sm hover:vt-bg-slate-200',
 				ghost: 'hover:vt-bg-accent hover:vt-text-accent-foreground',
+				softBlue:
+					'vt-border vt-border-blue-200 vt-bg-blue-50 vt-text-blue-700 hover:vt-bg-blue-100',
 				link: 'vt-text-primary vt-underline-offset-4 hover:vt-vt-underline',
 			},
 			size: {
@@ -21,7 +23,8 @@ const buttonVariants = cva(
 				xs: 'vt-h-6 vt-rounded-sm vt-px-3 vt-text-xs',
 				sm: 'vt-h-8 vt-rounded-md vt-px-3 vt-text-xs',
 				lg: 'vt-h-10 vt-rounded-md vt-px-8',
-				icon: 'vt-h-9 vt-w-9',
+				icon: 'vt-h-8 vt-w-8',
+				softBlue: 'vt-h-6 vt-rounded-sm vt-px-2 vt-text-xs',
 			},
 		},
 		defaultVariants: {

@@ -9,6 +9,7 @@ import {
 } from '@/entries/quickact/services/quickact-services';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import TopActions from './TopActions';
 
 type SidebarSection = 'plugins' | 'themes' | 'settings';
 
@@ -117,132 +118,147 @@ const Quickact = () => {
 					▼
 				</span>
 			</div>
-			<div className="vt-quickact-menu">
-				<div className="vt-quickact-sidebar">
-					<button
-						type="button"
-						className={`vt-quickact-nav-btn${activeSection === 'plugins' ? ' vt-quickact-nav-btn-active' : ''}`}
-						onClick={() => setActiveSection('plugins')}
-					>
-						{__('Plugins', 'versatile-toolkit')}
-					</button>
-					<button
-						type="button"
-						className={`vt-quickact-nav-btn${activeSection === 'themes' ? ' vt-quickact-nav-btn-active' : ''}`}
-						onClick={() => setActiveSection('themes')}
-					>
-						{__('Themes', 'versatile-toolkit')}
-					</button>
-					<button
-						type="button"
-						className={`vt-quickact-nav-btn${activeSection === 'settings' ? ' vt-quickact-nav-btn-active' : ''}`}
-						onClick={() => setActiveSection('settings')}
-					>
-						{__('Settings', 'versatile-toolkit')}
-					</button>
-				</div>
+			<div className="vt-quickact-menu-wrapper">
+				<TopActions />
+				<div className="vt-quickact-menu vt-pt-3">
+					<div className="vt-quickact-sidebar vt-border-r">
+						<button
+							type="button"
+							className={`vt-quickact-nav-btn${activeSection === 'plugins' ? ' vt-quickact-nav-btn-active' : ''}`}
+							onClick={() => setActiveSection('plugins')}
+						>
+							{__('Plugins', 'versatile-toolkit')}
+						</button>
+						<button
+							type="button"
+							className={`vt-quickact-nav-btn${activeSection === 'themes' ? ' vt-quickact-nav-btn-active' : ''}`}
+							onClick={() => setActiveSection('themes')}
+						>
+							{__('Themes', 'versatile-toolkit')}
+						</button>
+						<button
+							type="button"
+							className={`vt-quickact-nav-btn${activeSection === 'settings' ? ' vt-quickact-nav-btn-active' : ''}`}
+							onClick={() => setActiveSection('settings')}
+						>
+							{__('Settings', 'versatile-toolkit')}
+						</button>
+					</div>
 
-				<div className="vt-quickact-content">
-					{activeSection === 'plugins' && (
-						<div className="vt-quickact-section">
-							<div className="vt-quickact-section-title">{__('Plugin List', 'versatile-toolkit')}</div>
-							{isPluginsLoading && (
-								<div style={{ minHeight: '300px' }}>
-									{__('Loading plugins...', 'versatile-toolkit')}
-								</div>
-							)}
-							{!isPluginsLoading && plugins.length === 0 && (
-								<div style={{ minHeight: '300px' }}>{__('No plugins found.', 'versatile-toolkit')}</div>
-							)}
-							{plugins.map((plugin) => (
-								<div
-									key={plugin.file}
-									className={`vt-quickact-row ${plugin.is_active ? 'vt-quickact-row-active' : ''}`}
-								>
-									<div className="vt-quickact-row-body">
-										<div className="vt-quickact-row-title">{plugin.name}</div>
-										<div className="vt-quickact-row-meta">
-											{plugin.file} {plugin.version ? `(${plugin.version})` : ''}
+					<div className="vt-quickact-content vt-pl-3">
+						{activeSection === 'plugins' && (
+							<div className="vt-quickact-section">
+								<div className="vt-quickact-section-title">{__('Plugin List', 'versatile-toolkit')}</div>
+								{isPluginsLoading && (
+									<div style={{ minHeight: '300px' }}>
+										{__('Loading plugins...', 'versatile-toolkit')}
+									</div>
+								)}
+								{!isPluginsLoading && plugins.length === 0 && (
+									<div style={{ minHeight: '300px' }}>{__('No plugins found.', 'versatile-toolkit')}</div>
+								)}
+								{plugins.map((plugin) => (
+									<div
+										key={plugin.file}
+										className={`vt-quickact-row ${plugin.is_active ? 'vt-quickact-row-active' : ''}`}
+									>
+										<div className="vt-quickact-row-body">
+											<div className="vt-quickact-row-title">{plugin.name}</div>
+											<div className="vt-quickact-row-meta">
+												{plugin.file} {plugin.version ? `(${plugin.version})` : ''}
+											</div>
 										</div>
+										<Button
+											type="button"
+											className="vt-w-[60px]"
+											size='xs'
+											variant='secondary'
+											disabled={pendingPluginFile === plugin.file}
+											onClick={() => handlePluginToggle(plugin.file, !plugin.is_active)}
+										>
+											<ButtonLoader
+												isLoading={pendingPluginFile === plugin.file}
+												loadingText='loading'
+												size='xs'
+											>
+												{plugin.is_active
+													? __('Deactivate', 'versatile-toolkit')
+													: __('Activate', 'versatile-toolkit')}
+											</ButtonLoader>
+										</Button>
 									</div>
-									<button
-										type="button"
-										className="vt-quickact-btn"
-										disabled={pendingPluginFile === plugin.file}
-										onClick={() => handlePluginToggle(plugin.file, !plugin.is_active)}
-									>
-										{pendingPluginFile === plugin.file
-											? __('Loading...', 'versatile-toolkit')
-											: plugin.is_active
-												? __('Deactivate', 'versatile-toolkit')
-												: __('Activate', 'versatile-toolkit')}
-									</button>
-								</div>
-							))}
-						</div>
-					)}
-
-					{activeSection === 'themes' && (
-						<div className="vt-quickact-section">
-							<div className="vt-quickact-section-title">{__('Theme List', 'versatile-toolkit')}</div>
-							{isThemesLoading && (
-								<div style={{ minHeight: '300px' }}>{__('Loading themes...', 'versatile-toolkit')}</div>
-							)}
-							{!isThemesLoading && themes.length === 0 && (
-								<div style={{ minHeight: '300px' }}>{__('No themes found.', 'versatile-toolkit')}</div>
-							)}
-							{themes.map((theme) => (
-								<div
-									key={theme.stylesheet}
-									className={`vt-quickact-row${theme.is_active ? ' vt-quickact-row-active' : ''}`}
-								>
-									<div className="vt-quickact-row-body">
-										<div className="vt-quickact-row-title">{theme.name}</div>
-										<div className="vt-quickact-row-meta">
-											{theme.stylesheet} {theme.version ? `(${theme.version})` : ''}
-										</div>
-									</div>
-									<button
-										type="button"
-										className="vt-quickact-btn"
-										disabled={pendingThemeStylesheet === theme.stylesheet}
-										onClick={() => handleThemeToggle(theme.stylesheet, !theme.is_active)}
-									>
-										{pendingThemeStylesheet === theme.stylesheet
-											? __('Loading...', 'versatile-toolkit')
-											: theme.is_active
-												? __('Deactivate', 'versatile-toolkit')
-												: __('Activate', 'versatile-toolkit')}
-									</button>
-								</div>
-							))}
-						</div>
-					)}
-
-					{activeSection === 'settings' && (
-						<div className="vt-quickact-section">
-							<div className="vt-quickact-section-title">{__('Settings', 'versatile-toolkit')}</div>
-							<div className="vt-quickact-row vt-quickact-row-comfortable">
-								<div className="vt-quickact-row-body">
-									<div className="vt-quickact-row-title">
-										{__('Permalink Reset', 'versatile-toolkit')}
-									</div>
-									<div className="vt-quickact-row-meta">
-										{__('Flush and regenerate rewrite rules.', 'versatile-toolkit')}
-									</div>
-								</div>
-								<Button size="xs" type="button" disabled={isPending} onClick={handlePermalinkReset}>
-									<ButtonLoader
-										isLoading={isPending}
-										loadingText={__('Resetting...', 'versatile-toolkit')}
-										size="xs"
-									>
-										{__('Reset', 'versatile-toolkit')}
-									</ButtonLoader>
-								</Button>
+								))}
 							</div>
-						</div>
-					)}
+						)}
+
+						{activeSection === 'themes' && (
+							<div className="vt-quickact-section">
+								<div className="vt-quickact-section-title">{__('Theme List', 'versatile-toolkit')}</div>
+								{isThemesLoading && (
+									<div style={{ minHeight: '300px' }}>{__('Loading themes...', 'versatile-toolkit')}</div>
+								)}
+								{!isThemesLoading && themes.length === 0 && (
+									<div style={{ minHeight: '300px' }}>{__('No themes found.', 'versatile-toolkit')}</div>
+								)}
+								{themes.map((theme) => (
+									<div
+										key={theme.stylesheet}
+										className={`vt-quickact-row${theme.is_active ? ' vt-quickact-row-active' : ''}`}
+									>
+										<div className="vt-quickact-row-body">
+											<div className="vt-quickact-row-title">{theme.name}</div>
+											<div className="vt-quickact-row-meta">
+												{theme.stylesheet} {theme.version ? `(${theme.version})` : ''}
+											</div>
+										</div>
+										<Button
+											type="button"
+											className="vt-w-[60px]"
+											size='xs'
+											variant='secondary'
+											disabled={pendingThemeStylesheet === theme.stylesheet}
+											onClick={() => handleThemeToggle(theme.stylesheet, !theme.is_active)}
+										>
+											<ButtonLoader
+												isLoading={pendingThemeStylesheet === theme.stylesheet}
+												loadingText={'loading'}
+												size="xs"
+											>
+												{theme.is_active
+													? __('Deactivate', 'versatile-toolkit')
+													: __('Activate', 'versatile-toolkit')}
+											</ButtonLoader>
+										</Button>
+									</div>
+								))}
+							</div>
+						)}
+
+						{activeSection === 'settings' && (
+							<div className="vt-quickact-section">
+								<div className="vt-quickact-section-title">{__('Settings', 'versatile-toolkit')}</div>
+								<div className="vt-quickact-row vt-quickact-row-comfortable">
+									<div className="vt-quickact-row-body">
+										<div className="vt-quickact-row-title">
+											{__('Permalink Reset', 'versatile-toolkit')}
+										</div>
+										<div className="vt-quickact-row-meta">
+											{__('Flush and regenerate rewrite rules.', 'versatile-toolkit')}
+										</div>
+									</div>
+									<Button variant='softBlue' size='softBlue' type="button" disabled={isPending} onClick={handlePermalinkReset}>
+										<ButtonLoader
+											isLoading={isPending}
+											loadingText={__('loading', 'versatile-toolkit')}
+											size="sm"
+										>
+											{__('Reset', 'versatile-toolkit')}
+										</ButtonLoader>
+									</Button>
+								</div>
+							</div>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

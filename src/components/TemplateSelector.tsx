@@ -346,6 +346,9 @@ const TemplateSelector = <T extends TemplateType>({
 								{templates.find((t) => t.id === previewTemplate)?.description}
 							</p>
 							<div className="vt-flex vt-gap-2">
+								<Button type="button" variant="outline" onClick={onClose}>
+									{__('Close', 'versatile-toolkit')}
+								</Button>
 								<Button
 									type="button"
 									onClick={() => {
@@ -356,9 +359,6 @@ const TemplateSelector = <T extends TemplateType>({
 									}}
 								>
 									{__('Use This Template', 'versatile-toolkit')}
-								</Button>
-								<Button type="button" variant="outline" onClick={onClose}>
-									{__('Close', 'versatile-toolkit')}
 								</Button>
 							</div>
 						</div>

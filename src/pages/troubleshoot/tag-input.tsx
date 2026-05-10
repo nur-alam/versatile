@@ -1,3 +1,4 @@
+import { ButtonLoader } from '@/components/loader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,11 +80,15 @@ export default function TaggedInput({ tags, onChange }: Props) {
 				/>
 				<Button
 					type="button"
-					size="sm"
-					className="vt-absolute vt-right-1 vt-top-1/2 -vt-translate-y-1/2 vt-py-1 vt-px-2"
+					size="xs"
+					className="vt-absolute vt-right-1 vt-top-1/2 -vt-translate-y-1/2"
 					onClick={addMyIp}
 				>
-					{__('Add My IP', 'versatile-toolkit')}
+					<ButtonLoader
+						isLoading={useAddMyIpMutation.isPending}
+						loadingText={__('Add My IP', 'versatile-toolkit')}
+						size="xs"
+					>{__('Add My IP', 'versatile-toolkit')}</ButtonLoader>
 				</Button>
 			</div>
 			{inputError && <p className="vt-text-red-500 vt-text-sm vt-mt-1">{inputError}</p>}
@@ -94,11 +99,13 @@ export default function TaggedInput({ tags, onChange }: Props) {
 						<Button
 							type="button"
 							variant="ghost"
-							size="sm"
-							className="vt-h-4 vt-w-4 vt-p-0"
+							size="xs"
+							className='vt-h-min !vt-px-[1px] !vt-py-[1px]'
 							onClick={() => removeTag(tag)}
+							aria-label={__('Remove IP address', 'versatile-toolkit')}
 						>
-							<X className="vt-h-3 vt-w-3" aria-hidden />
+							<X size={12} aria-hidden />
+							<span className="vt-sr-only">{__('Remove', 'versatile-toolkit')}</span>
 						</Button>
 					</Badge>
 				))}
