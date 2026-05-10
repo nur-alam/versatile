@@ -252,7 +252,7 @@ export function ServerDataTable<
 										),
 									);
 								}}
-								className="vt-rounded-xl vt-border vt-!vt-border-slate-200 vt-bg-white vt-px-2 vt-py-1.5 vt-text-sm vt-shadow-sm"
+								className="vt-rounded-xl vt-border vt-!vt-border-slate-200 vt-bg-white vt-pl-2 vt-pr-7 vt-py-1 vt-text-sm vt-shadow-sm"
 							>
 								{[5, 10, 20, 50, 100].map((n) => (
 									<option key={n} value={n}>
@@ -263,7 +263,7 @@ export function ServerDataTable<
 						</div>
 					</div>
 
-					<div className="vt-flex vt-items-center vt-gap-1">
+					{rows.length > 0 && (<div className="vt-flex vt-items-center vt-gap-1">
 						{/* Previous Button */}
 						<Button
 							type='button'
@@ -397,9 +397,9 @@ export function ServerDataTable<
 							{__('Next', 'versatile-toolkit')}
 							<ArrowRight className="vt-h-4 vt-w-4" />
 						</Button>
-					</div>
+					</div>)}
 				</div>
 			</div>
-		</div>
+		</div >
 	);
 }
