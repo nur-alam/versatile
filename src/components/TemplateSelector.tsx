@@ -117,7 +117,7 @@ const TemplateSelector = <T extends TemplateType>({
 	// Add timeout for loading overlays
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			const loadingOverlays = document.querySelectorAll('.iframe-loading');
+			const loadingOverlays = document.querySelectorAll('.vt-iframe-loading');
 			loadingOverlays.forEach((overlay) => {
 				const htmlOverlay = overlay as HTMLElement;
 				if (htmlOverlay.style.display !== 'none') {
@@ -158,14 +158,13 @@ const TemplateSelector = <T extends TemplateType>({
 						}
 					>
 						<Card
-							className={`vt-cursor-pointer vt-transition-all vt-duration-200 hover:vt-shadow-lg vt-flex-shrink-0 vt-w-64 ${
-								selectedTemplate === template.id
+							className={`vt-cursor-pointer vt-transition-all vt-duration-200 hover:vt-shadow-lg vt-flex-shrink-0 vt-w-64 ${selectedTemplate === template.id
 									? 'vt-ring-2 vt-ring-blue-500 vt-shadow-lg'
 									: 'hover:vt-ring-1 hover:vt-ring-gray-300'
-							}`}
+								}`}
 							onClick={() => handleTemplateSelect(template.id)}
 						>
-							<CardContent className="vt-p-4">
+							<CardContent>
 								{/* Template Live Preview */}
 								<div className="vt-relative vt-mb-3">
 									<div className="vt-w-full vt-h-32 vt-rounded-md vt-bg-gray-100 vt-overflow-hidden vt-border vt-relative">
@@ -204,7 +203,7 @@ const TemplateSelector = <T extends TemplateType>({
 												console.error(`Template preview error for ${template.id}:`, error);
 												// Hide loading overlay on error
 												const loadingOverlay = document.querySelector(
-													`.template-${template.id} .iframe-loading`,
+													`.template-${template.id} .vt-iframe-loading`,
 												) as HTMLElement;
 												if (loadingOverlay) {
 													loadingOverlay.style.display = 'none';
@@ -223,17 +222,17 @@ const TemplateSelector = <T extends TemplateType>({
 													height: '400%',
 												}}
 												onLoad={(e) => {
-													// console.log(`Template ${template.id} loaded successfully - switching to iframe`);
+													console.log(`Template ${template.id} loaded successfully - switching to iframe`);
 													const iframe = e.currentTarget;
 													const staticPreview = iframe.parentElement?.querySelector(
-														'div:not(.iframe-loading)',
+														'div:not(.vt-iframe-loading)',
 													) as HTMLElement;
 													if (staticPreview && iframe) {
 														staticPreview.style.display = 'none';
-														iframe.classList.remove('hidden');
+														iframe.classList.remove('vt-hidden');
 													}
 													const loadingOverlay = iframe.parentElement?.querySelector(
-														'.iframe-loading',
+														'.vt-iframe-loading',
 													) as HTMLElement;
 													if (loadingOverlay) {
 														loadingOverlay.style.display = 'none';
@@ -244,7 +243,7 @@ const TemplateSelector = <T extends TemplateType>({
 														`Failed to load preview for template: ${template.id} - using static fallback`,
 													);
 													const loadingOverlay = e.currentTarget.parentElement?.querySelector(
-														'.iframe-loading',
+														'.vt-iframe-loading',
 													) as HTMLElement;
 													if (loadingOverlay) {
 														loadingOverlay.style.display = 'none';
