@@ -5,13 +5,11 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "webpack --mode development --watch",
-		"mix": "npx mix watch",
-		"mix-prod": "npx mix --production",
-		"watch": "concurrently \"npm run dev\" \"npm run mix\"",
+		"watch": "npm run dev",
 		"prod": "webpack --mode production",
 		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile-toolkit.pot",
 		"bundle": "version=$(grep 'Version:' versatile-toolkit.php | awk '{print $3}') && out_zip=\"$(pwd)/../versatile-${version}.zip\" && staging_dir=$(mktemp -d) && rsync -a ./ \"$staging_dir/versatile/\" --exclude-from='.distignore' && (cd \"$staging_dir\" && zip -qr \"$out_zip\" versatile) && rm -rf \"$staging_dir\"",
-		"build": "composer i --no-dev && npm run mix-prod && npm run prod && npm run make-pot && npm run bundle"
+		"build": "composer i --no-dev && npm run prod && npm run make-pot && npm run bundle"
 	},
 	"author": "nurwp",
 	"license": "ISC",
@@ -63,16 +61,17 @@
 		"@emotion/babel-preset-css-prop": "^11.12.0",
 		"@types/react": "^19.0.10",
 		"@types/react-dom": "^19.0.3",
+		"autoprefixer": "^10.5.0",
 		"babel-loader": "^9.2.1",
 		"concurrently": "^9.2.0",
 		"css-loader": "^7.1.2",
 		"dir-archiver": "^2.1.0",
 		"html-webpack-plugin": "^5.6.3",
-		"laravel-mix": "^6.0.49",
-		"laravel-mix-tailwind": "^0.1.2",
-		"mini-css-extract-plugin": "^0.11.1",
+		"mini-css-extract-plugin": "^2.10.2",
 		"path": "^0.12.7",
+		"postcss": "^8.5.14",
 		"postcss-custom-properties": "^14.0.1",
+		"postcss-loader": "^8.2.1",
 		"resolve-url-loader": "^5.0.0",
 		"sass": "^1.77.8",
 		"sass-loader": "^12.6.0",
@@ -82,6 +81,7 @@
 		"typescript": "^5.7.3",
 		"webpack": "^5.97.1",
 		"webpack-bundle-analyzer": "^4.10.2",
-		"webpack-cli": "^6.0.1"
+		"webpack-cli": "^6.0.1",
+		"webpack-remove-empty-scripts": "^1.1.1"
 	}
 }

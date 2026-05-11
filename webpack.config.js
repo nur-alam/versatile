@@ -2,6 +2,7 @@ const path = require('node:path');
 const fs = require('fs');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpack = require('webpack');
 
@@ -23,11 +24,34 @@ module.exports = (env, options) => {
 			rules: [
 				{
 					test: /\.css$/i,
-					use: ['style-loader', 'css-loader'],
+					use: [
+						MiniCssExtractPlugin.loader,
+						'css-loader',
+						{
+							loader: 'postcss-loader',
+							options: {
+								postcssOptions: {
+									plugins: [require('tailwindcss'), require('autoprefixer')],
+								},
+							},
+						},
+					],
 				},
 				{
 					test: /\.scss$/i,
-					use: ['css-loader', 'sass-loader'],
+					use: [
+						MiniCssExtractPlugin.loader,
+						'css-loader',
+						{
+							loader: 'postcss-loader',
+							options: {
+								postcssOptions: {
+									plugins: [require('tailwindcss'), require('autoprefixer')],
+								},
+							},
+						},
+						'sass-loader',
+					],
 				},
 				{
 					test: /\.(js|jsx|ts|tsx)$/,
@@ -52,7 +76,17 @@ module.exports = (env, options) => {
 				},
 			],
 		},
-		plugins: [new webpack.ProvidePlugin({ React: 'react' })],
+		plugins: [
+			new RemoveEmptyScriptsPlugin(),
+			new webpack.ProvidePlugin({ React: 'react' }),
+			new MiniCssExtractPlugin({
+				filename: (pathData) => {
+					return pathData.chunk.name.includes('style') || pathData.chunk.name.includes('quickact')
+						? '../css/[name].css'
+						: '[name].css';
+				},
+			}),
+		],
 		externals: {
 			react: 'React',
 			'react-dom': 'ReactDOM',
@@ -87,6 +121,8 @@ module.exports = (env, options) => {
 			src_files: {
 				'versatile-js.min': './src/index.tsx',
 				'versatile-quickact.min': './src/entries/quickact/index.tsx',
+				'style.min': './assets/src/scss/index.scss',
+				'quickact.min': './assets/src/scss/quickact/Index.scss',
 			},
 		},
 	];
