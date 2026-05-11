@@ -1,8 +1,8 @@
 name: Deploy to SVN 
-ON: 
+on:
   push:
     tags:
-      - 'V*'
+      - 'v*'
 
 permissions:
   contents: write
