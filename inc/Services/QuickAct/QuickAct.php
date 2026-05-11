@@ -116,7 +116,6 @@ class QuickAct {
 	 */
 	public function versatile_reset_permalinks() {
 		try {
-			sleep( 3 );
 			$sanitized_data = versatile_sanitization_validation();
 			if ( ! $sanitized_data['success'] ) {
 				$this->json_response( $sanitized_data['message'], null, $sanitized_data['code'] ?? 400, $sanitized_data['errors'] ?? null );
@@ -182,7 +181,6 @@ class QuickAct {
 	 */
 	public function versatile_activate_plugin() {
 		try {
-			sleep( 1 );
 			$sanitized_data = versatile_sanitization_validation(
 				array(
 					array(
@@ -303,7 +301,6 @@ class QuickAct {
 	 */
 	public function versatile_activate_theme() {
 		try {
-			sleep( 1 );
 			$sanitized_data = versatile_sanitization_validation(
 				array(
 					array(
