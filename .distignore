@@ -1,3 +1,4 @@
+# Development files
 .editorconfig
 .distignore
 .DS_Store
@@ -10,22 +11,30 @@
 .github
 .gitignore
 .babelrc
-.editorconfig
 .env.example
 .env
 *.py
 \*.zip
 phpcs.xml
-readme
 readme.md
 composer.lock
+.travis.yml
+circle.yml
+
+# Build tools and config
 node_modules
 package-lock.json
 package.json
 webpack.config.js
 webpack.mix.js
+tailwind.config.js
+tsconfig.json
+
+# Source files (not built assets)
 /src
 assets/src
 assets/dist/mix-manifest.json
-.travis.yml
-circle.yml
+
+# Keep built assets - these should be included
+# assets/dist/css/
+# assets/dist/js/
