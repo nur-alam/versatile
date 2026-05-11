@@ -122,7 +122,7 @@ module.exports = (env, options) => {
 				'versatile-js.min': './src/index.tsx',
 				'versatile-quickact.min': './src/entries/quickact/index.tsx',
 				'style.min': './assets/src/scss/index.scss',
-				'quickact.min': './assets/src/scss/quickact/Index.scss',
+				'quickact.min': './assets/src/scss/quickact/index.scss',
 			},
 		},
 	];
