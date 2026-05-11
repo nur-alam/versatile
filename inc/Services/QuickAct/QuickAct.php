@@ -130,7 +130,7 @@ class QuickAct {
 
 			flush_rewrite_rules();
 
-			$this->json_response( 'Permalinks have been reset successfully!', null, 200 );
+			$this->json_response( 'Permalinks have been reset.', null, 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), null, 500 );
 		}
@@ -169,7 +169,7 @@ class QuickAct {
 				);
 			}
 
-			$this->json_response( __( 'Plugins retrieved successfully!', 'versatile-toolkit' ), $items, 200 );
+			$this->json_response( __( 'Plugins retrieved successfully.', 'versatile-toolkit' ), $items, 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}
@@ -214,7 +214,7 @@ class QuickAct {
 				$this->json_response( $result->get_error_message(), array(), 400 );
 			}
 
-			$this->json_response( __( 'Plugin activated successfully!', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
+			$this->json_response( __( 'Plugin activated.', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}
@@ -254,7 +254,7 @@ class QuickAct {
 			$plugin_file = $sanitized_data['plugin_file'];
 			deactivate_plugins( $plugin_file, false, false );
 
-			$this->json_response( __( 'Plugin deactivated successfully!', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
+			$this->json_response( __( 'Plugin deactivated!', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}
@@ -290,7 +290,7 @@ class QuickAct {
 				);
 			}
 
-			$this->json_response( __( 'Themes retrieved successfully!', 'versatile-toolkit' ), $items, 200 );
+			$this->json_response( __( 'Themes retrieved.', 'versatile-toolkit' ), $items, 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}
@@ -332,7 +332,7 @@ class QuickAct {
 			}
 
 			switch_theme( $stylesheet );
-			$this->json_response( __( 'Theme activated successfully!', 'versatile-toolkit' ), array( 'stylesheet' => $stylesheet ), 200 );
+			$this->json_response( __( 'Theme activated.', 'versatile-toolkit' ), array( 'stylesheet' => $stylesheet ), 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}

@@ -136,13 +136,13 @@ const Quickact = () => {
 						>
 							{__('Themes', 'versatile-toolkit')}
 						</button>
-						<button
+						{/* <button
 							type="button"
 							className={`vt-quickact-nav-btn${activeSection === 'settings' ? ' vt-quickact-nav-btn-active' : ''}`}
 							onClick={() => setActiveSection('settings')}
 						>
 							{__('Settings', 'versatile-toolkit')}
-						</button>
+						</button> */}
 					</div>
 
 					<div className="vt-quickact-content vt-pl-3">

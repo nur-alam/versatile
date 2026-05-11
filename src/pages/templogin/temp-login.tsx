@@ -4,7 +4,7 @@ import CreateTemplogin from "@/pages/templogin/create-temp-login";
 
 const TempLogin = () => {
     return (
-        <div className="vt-p-6 vt-space-y-6">
+        <div className="vt-py-6 vt-space-y-6">
             {/* Header */}
             <div className="vt-flex vt-justify-between vt-items-center">
                 <div>

@@ -68,7 +68,7 @@ const TroubleShoot = () => {
 	}, [activeTheme, themeControl]);
 
 	return (
-		<div className="vt-p-4 vt-space-y-6 vt-max-w-[800px]">
+		<div className="vt-py-4 vt-space-y-6 vt-max-w-[800px]">
 			<h2 className='vt-flex vt-items-center vt-gap-2 vt-text-2xl'>
 				<RouteBack link={'/'} />
 				{__('Deactivate Plugins', 'versatile-toolkit')}

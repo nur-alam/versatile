@@ -302,12 +302,12 @@ const TempLoginTable = () => {
 														</span>
 													</Button>
 												</PopoverTrigger>
-												<PopoverContent className="vt-w-48 vt-p-1" align="end">
-													<div className="vt-space-y-1">
+												<PopoverContent className="vt-w-max vt-p-1 vt-flex vt-flex-col vt-align-center vt-justify-start" align='end'>
+													{/* <div className="vt-space-y-1"> */}
 														<Button
 															variant="ghost"
 															size="sm"
-															className="vt-w-full vt-justify-start"
+															className="!vt-justify-start"
 															onClick={() => handleCopyUrl(tempLogin)}
 														>
 															{copiedId === tempLogin.id ? (
@@ -320,7 +320,7 @@ const TempLoginTable = () => {
 														<Button
 															variant="ghost"
 															size="sm"
-															className="vt-w-full vt-justify-start"
+															className="!vt-justify-start"
 															onClick={() => onEdit(tempLogin)}
 														>
 															<Edit className="vt-mr-2 vt-h-4 vt-w-4" />
@@ -329,7 +329,7 @@ const TempLoginTable = () => {
 														<Button
 															variant="ghost"
 															size="sm"
-															className="vt-w-full vt-justify-start"
+															className="!vt-justify-start"
 															onClick={() => onExtendTime(tempLogin)}
 														>
 															<Clock className="vt-mr-2 vt-h-4 vt-w-4" />
@@ -338,7 +338,7 @@ const TempLoginTable = () => {
 														<Button
 															variant="ghost"
 															size="sm"
-															className="vt-w-full vt-justify-start"
+															className="!vt-justify-start"
 															onClick={() =>
 																onToggleStatus(tempLogin.id, tempLogin.is_active)
 															}
@@ -355,13 +355,13 @@ const TempLoginTable = () => {
 														<Button
 															variant="ghost"
 															size="sm"
-															className="vt-w-full vt-justify-start vt-text-red-600 hover:vt-text-red-700 hover:vt-bg-red-50"
+															className="!vt-justify-start vt-text-red-600 hover:vt-text-red-700 hover:vt-bg-red-50"
 															onClick={() => handleDeleteClick(tempLogin)}
 														>
 															<Trash2 className="vt-mr-2 vt-h-4 vt-w-4" />
 															{__('Delete', 'versatile-toolkit')}
 														</Button>
-													</div>
+													{/* </div> */}
 												</PopoverContent>
 											</Popover>
 										</TableCell>

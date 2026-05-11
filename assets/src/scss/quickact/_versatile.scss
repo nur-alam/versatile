@@ -26,6 +26,7 @@
 	}
 
 	.vt-quickact-menu-wrapper {
+		display: none;
 		background: #fff;
 		color: #1d2327;
 		border: 1px solid #c3c4c7;
@@ -49,16 +50,15 @@
 		cursor: default;
 	}
 
-	.vt-quickact-trigger:hover .vt-quickact-menu,
-	.vt-quickact-trigger:focus-within .vt-quickact-menu {
-		display: flex;
+	.vt-quickact-trigger:hover .vt-quickact-menu-wrapper,
+	.vt-quickact-trigger:focus-within .vt-quickact-menu-wrapper {
+		display: block;
 	}
 
 	.vt-quickact-sidebar {
 		width: 170px;
 		flex-shrink: 0;
 		padding-right: 8px;
-		// border-right: 1px solid #dcdcde;
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
