@@ -8,4 +8,4 @@
  */
 
 ?>
-<div id="versatile-root" class="p-7 bg-background"></div>
+<div id="versatile-root" class="vt-p-7 vt-bg-background"></div>

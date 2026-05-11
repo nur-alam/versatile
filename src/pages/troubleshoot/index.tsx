@@ -13,7 +13,7 @@ import RouteBack from '@/components/atom/route-back';
 
 const TroubleShoot = () => {
 
-	const { handleSubmit, control, formState: { errors } } = useForm<DisablePluginFormValues>({
+	const { handleSubmit, control, formState: { errors: pluginErrors } } = useForm<DisablePluginFormValues>({
 		resolver: zodResolver(disablePluginFormSchema),
 		defaultValues: {
 			chosen_plugins: [],
@@ -68,18 +68,18 @@ const TroubleShoot = () => {
 	}, [activeTheme, themeControl]);
 
 	return (
-		<div className="p-4 space-y-6 max-w-[800px]">
-			<h2 className='flex items-center gap-2 text-2xl'>
+		<div className="vt-py-4 vt-space-y-6 vt-max-w-[800px]">
+			<h2 className='vt-flex vt-items-center vt-gap-2 vt-text-2xl'>
 				<RouteBack link={'/'} />
 				{__('Deactivate Plugins', 'versatile-toolkit')}
 			</h2>
 
 			{/* Plugin Disable Section */}
-			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Disable Plugin by IP address', 'versatile-toolkit')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'versatile-toolkit')}</p>
+			<div className="vt-border vt-rounded-lg vt-p-4">
+				<h3 className="vt-text-lg vt-font-semibold vt-mb-2">{__('Disable Plugin by IP address', 'versatile-toolkit')}</h3>
+				<p className="vt-text-sm vt-text-muted-foreground vt-mb-4">{__('Select plugins to disable for specific IP addresses. This is useful for troubleshooting plugin conflicts.', 'versatile-toolkit')}</p>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className='min-h-[42px]'>
+					<div className='vt-min-h-[42px]'>
 						{
 							isFetching ? <InlineLoader size="md" text={__('Loading plugins', 'versatile-toolkit')} /> :
 								<Controller
@@ -93,13 +93,13 @@ const TroubleShoot = () => {
 									)}
 								/>
 						}
-						{errors.chosen_plugins && (
-							<p className="text-red-500 text-sm mt-1">
-								{errors?.chosen_plugins?.message}
+						{pluginErrors.chosen_plugins && (
+							<p className="vt-text-red-500 vt-text-sm vt-mt-1">
+								{pluginErrors?.chosen_plugins?.message}
 							</p>
 						)}
 					</div>
-					<div className='min-h-[64px] mt-2'>
+					<div className='vt-min-h-[42px] vt-mt-2'>
 						{
 							isFetching ? <InlineLoader size="md" text={__('Loading settings', 'versatile-toolkit')} /> :
 								<Controller
@@ -113,24 +113,24 @@ const TroubleShoot = () => {
 									)}
 								/>
 						}
-						{errors.ip_tags && (
-							<p className="text-red-500 text-sm mt-1">
-								{errors?.ip_tags?.message}
+						{pluginErrors?.ip_tags && (
+							<p className="vt-text-red-500 vt-text-sm vt-mt-1">
+								{pluginErrors?.ip_tags?.message}
 							</p>
 						)}
 					</div>
-					<Button type='submit' className='mt-6' disabled={disablePluginMutation.isPending}>
+					<Button type='submit' className='vt-mt-6' disabled={disablePluginMutation.isPending}>
 						{disablePluginMutation.isPending ? __('Saving...', 'versatile-toolkit') : __('Save List', 'versatile-toolkit')}
 					</Button>
 				</form>
 			</div>
 
 			{/* Theme Selector Section */}
-			<div className="border rounded-lg p-4">
-				<h3 className="text-lg font-semibold mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
-				<p className="text-sm text-muted-foreground mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
+			<div className="vt-border vt-rounded-lg vt-p-4">
+				<h3 className="vt-text-lg vt-font-semibold vt-mb-2">{__('Switch Theme', 'versatile-toolkit')}</h3>
+				<p className="vt-text-sm vt-text-muted-foreground vt-mb-4">{__('Select and activate a theme.', 'versatile-toolkit')}</p>
 				<form onSubmit={handleThemeSubmit(onThemeSubmit)}>
-					<div className='min-h-[42px]'>
+					<div className='vt-min-h-[42px]'>
 						{
 							isActiveThemeFetching ? <InlineLoader size="md" text={__('Loading themes', 'versatile-toolkit')} /> : <Controller
 								name='activeTheme'
@@ -143,13 +143,13 @@ const TroubleShoot = () => {
 								)}
 							/>
 						}
-						{themeErrors.activeTheme && (
-							<p className="text-red-500 text-sm mt-1">
+						{themeErrors?.activeTheme && (
+							<p className="vt-text-red-500 vt-text-sm vt-mt-1">
 								{themeErrors?.activeTheme?.message}
 							</p>
 						)}
 					</div>
-					<Button type='submit' className='mt-6' disabled={saveActiveThemeMutation.isPending}>
+					<Button type='submit' className='vt-mt-6' disabled={saveActiveThemeMutation.isPending}>
 						<ButtonLoader
 							isLoading={saveActiveThemeMutation.isPending}
 							loadingText={__('Activating', 'versatile-toolkit')}

@@ -19,8 +19,8 @@ export const RouteGuard = ({ children }: RouteGuardProps) => {
     const basePath = pathSegments[0];
 
     if (isLoading) {
-        <div className="flex items-center justify-between bg-slate-50 border animate-pulse w-full h-[1500px]">
-            <div className="w-full h-full bg-slate-200 animate-pulse"></div>
+        <div className="vt-flex vt-items-center vt-justify-between vt-bg-slate-50 vt-border vt-animate-pulse vt-w-full vt-h-[1500px]">
+            <div className="vt-w-full vt-h-full vt-bg-slate-200 vt-animate-pulse"></div>
         </div>
     }
 

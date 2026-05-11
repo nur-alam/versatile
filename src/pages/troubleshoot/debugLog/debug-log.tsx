@@ -1,21 +1,20 @@
-import { useSearchParams } from 'react-router-dom';
-import { ServerDataTable, Column, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
-import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
-import DebugLogSettings from '@/pages/troubleshoot/debugLog/debug-log-settings';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import toast from 'react-hot-toast';
-import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { Column, ServerDataTable, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
+import DebugLogSettings from '@/pages/troubleshoot/debugLog/debug-log-settings';
+import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
 import {
+	debugLogApi,
+	DebugRow,
+	formatFileInfo,
+	useClearDebugLog,
 	useDebugLogStatus,
 	useToggleDebugLog,
-	useClearDebugLog,
-	formatFileInfo,
-	debugLogApi,
-	DebugRow
 } from '@/services/debug-log-services';
 import { LogTypeDisplay } from '@/utils/log-type-utils';
-
+import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
 
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
@@ -32,11 +31,13 @@ const debugLog = () => {
 
 	// Derived state
 	const debugStatus = statusData?.enabled || false;
-	const logFileInfo = statusData ? formatFileInfo(statusData) : {
-		size: '0 KB',
-		lastModified: 'Never',
-		exists: false
-	};
+	const logFileInfo = statusData
+		? formatFileInfo(statusData)
+		: {
+				size: '0 KB',
+				lastModified: 'Never',
+				exists: false,
+			};
 	const isLoading = statusLoading || toggleMutation.isPending || clearMutation.isPending;
 
 	// Auto refresh effect
@@ -47,7 +48,7 @@ const debugLog = () => {
 			interval = setInterval(() => {
 				// Refresh both status and log content
 				// refetchStatus();
-				setRefreshTrigger(prev => prev + 1); // Trigger log content refresh
+				setRefreshTrigger((prev) => prev + 1); // Trigger log content refresh
 			}, 5000); // Refresh every 5 seconds
 		}
 
@@ -65,7 +66,7 @@ const debugLog = () => {
 
 	const handleRefreshLog = () => {
 		refetchStatus();
-		setRefreshTrigger(prev => prev + 1); // Trigger log content refresh
+		setRefreshTrigger((prev) => prev + 1); // Trigger log content refresh
 		toast.success(__('Debug log status and content refreshed', 'versatile-toolkit'));
 	};
 
@@ -83,12 +84,16 @@ const debugLog = () => {
 			return;
 		}
 
-		if (window.confirm(__('Are you sure you want to clear the debug log? This action cannot be undone.', 'versatile-toolkit'))) {
+		if (
+			window.confirm(
+				__('Are you sure you want to clear the debug log? This action cannot be undone.', 'versatile-toolkit'),
+			)
+		) {
 			clearMutation.mutate(undefined, {
 				onSuccess: () => {
 					refetchStatus();
-					setRefreshTrigger(prev => prev + 1);
-				}
+					setRefreshTrigger((prev) => prev + 1);
+				},
 			});
 		}
 	};
@@ -103,22 +108,25 @@ const debugLog = () => {
 	};
 
 	const columns = [
-		{ key: "id", header: "No" },
+		{ key: 'id', header: 'No' },
 		{
-			key: "type", header: "Type",
+			key: 'type',
+			header: 'Type',
 			render: (row) => {
 				return <LogTypeDisplay type={row['type']} />;
-			}
+			},
 		},
 		{
-			key: "message", header: "Description",
+			key: 'message',
+			header: 'Description',
 			render: (row, key?: string) => {
 				return <>{row['raw_line'].substring(0, 200)}...</>;
-			}
+			},
 		},
 		// { key: "severity", header: "Severity" },
 		{
-			key: "timestamp", header: "Timestamp",
+			key: 'timestamp',
+			header: 'Timestamp',
 			render: (row) => {
 				const timestamp = row['timestamp'];
 				if (!timestamp) return 'Invalid Date';
@@ -134,57 +142,83 @@ const debugLog = () => {
 					console.error('Error parsing timestamp:', timestamp, error);
 					return 'Invalid Date';
 				}
-			}
+			},
 		},
 		{
-			key: 'actions', header: 'Actions',
-			render: (row, key) => <ViewLog row={row} key={key} />
-		}
+			key: 'actions',
+			header: 'Actions',
+			render: (row, key) => <ViewLog row={row} key={key} />,
+		},
 	] as Column<DebugRow>[];
 
 	return (
-		<div className="mx-auto max-w-6xl p-6">
-			{statusLoading ?
-				<div className="bg-white p-6 rounded-lg border border-slate-200 mt-3">
-					<div className="flex items-center justify-between animate-pulse">
-						<div className="flex items-center space-x-4">
-							<div className="w-3 h-3 rounded-full bg-slate-300"></div>
+		<div className="vt-mx-auto vt-max-w-6xl vt-p-6">
+			{statusLoading ? (
+				<div className="vt-bg-white vt-p-6 vt-rounded-lg vt-border vt-border-slate-200 vt-mt-3">
+					<div className="vt-flex vt-items-center vt-justify-between vt-animate-pulse">
+						<div className="vt-flex vt-items-center vt-space-x-4">
+							<div className="vt-w-3 vt-h-3 vt-rounded-full vt-bg-slate-300"></div>
 							<div>
-								<div className="h-5 bg-slate-300 rounded w-32 mb-2"></div>
-								<div className="h-3 bg-slate-200 rounded w-24"></div>
+								<div className="vt-h-5 vt-bg-slate-300 vt-rounded vt-w-32 vt-mb-2"></div>
+								<div className="vt-h-3 vt-bg-slate-200 vt-rounded vt-w-24"></div>
 							</div>
 						</div>
-						<div className="h-9 bg-slate-300 rounded-lg w-20"></div>
+						<div className="vt-h-9 vt-bg-slate-300 vt-rounded-lg vt-w-20"></div>
 					</div>
 				</div>
-				:
-				<div className='bg-white p-6 rounded-lg border border-slate-200 mt-3'>
-					<div className="flex items-center justify-between">
-						<div className="flex items-center space-x-4">
-							<div className={`w-3 h-3 rounded-full ${debugStatus ? 'bg-green-500' : 'bg-red-500'}`}></div>
+			) : (
+				<div className="vt-bg-white vt-p-6 vt-rounded-lg vt-border vt-border-slate-200 vt-mt-3">
+					<div className="vt-flex vt-items-center vt-justify-between">
+						<div className="vt-flex vt-items-center vt-space-x-4">
+							<div
+								className={`vt-w-3 vt-h-3 vt-rounded-full ${debugStatus ? 'vt-bg-green-500' : 'vt-bg-red-500'}`}
+							></div>
 							<div>
-								<h3 className="font-medium text-slate-800">{__('Debug Logging', 'versatile-toolkit')}</h3>
-								<p className="text-sm text-slate-600">
-									{debugStatus ? __('Currently enabled', 'versatile-toolkit') : __('Currently disabled', 'versatile-toolkit')}
-									{isAutoRefresh && <span className="ml-2 text-blue-600">• {__('Auto refresh active', 'versatile-toolkit')}</span>}
+								<h3 className="vt-font-medium vt-text-slate-800">
+									{__('Debug Logging', 'versatile-toolkit')}
+								</h3>
+								<p className="vt-text-sm vt-text-slate-600">
+									{debugStatus
+										? __('Currently enabled', 'versatile-toolkit')
+										: __('Currently disabled', 'versatile-toolkit')}
+									{isAutoRefresh && (
+										<span className="vt-ml-2 vt-text-blue-600">
+											• {__('Auto refresh active', 'versatile-toolkit')}
+										</span>
+									)}
 								</p>
 							</div>
 						</div>
 						<Sheet>
 							<SheetTrigger asChild>
-								<button className="flex items-center space-x-2 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
-									<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+								<button className="vt-flex vt-items-center vt-space-x-2 vt-px-3 vt-py-2 vt-bg-slate-100 vt-text-slate-700 vt-rounded-lg hover:vt-bg-slate-200 vt-transition-colors">
+									<svg
+										className="vt-w-4 vt-h-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+										/>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+										/>
 									</svg>
-									<span className="text-sm">{__('Settings', 'versatile-toolkit')}</span>
+									<span className="vt-text-sm">{__('Settings', 'versatile-toolkit')}</span>
 								</button>
 							</SheetTrigger>
 							<SheetContent>
 								<SheetHeader>
 									<SheetTitle>{__('Debug Log Settings', 'versatile-toolkit')}</SheetTitle>
 								</SheetHeader>
-								<div className="mt-6">
+								<div className="vt-mt-6">
 									<DebugLogSettings
 										debugStatus={debugStatus}
 										logFileInfo={logFileInfo}
@@ -200,45 +234,62 @@ const debugLog = () => {
 						</Sheet>
 					</div>
 				</div>
-			}
-			<div className="my-8">
-				<div className=' bg-white rounded-lg border p-2 flex items-center justify-between'>
-					<h3 className="font-medium text-slate-800 text-lg">{__('Debug Log', 'versatile-toolkit')}</h3>
-					<div className="flex flex-wrap items-center gap-3">
+			)}
+			<div className="vt-my-8">
+				<div className=" vt-bg-white vt-rounded-lg vt-border vt-p-2 vt-flex vt-items-center vt-justify-between">
+					<h3 className="vt-font-medium vt-text-slate-800 vt-text-lg">
+						{__('Debug Log', 'versatile-toolkit')}
+					</h3>
+					<div className="vt-flex vt-flex-wrap vt-items-center vt-gap-3">
 						<button
 							title={__('Refresh Log', 'versatile-toolkit')}
 							onClick={handleRefreshLog}
 							disabled={isLoading}
-							className="flex items-center justify-center space-x-3 px-2 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
+							className="vt-flex vt-items-center vt-justify-center vt-space-x-3 vt-px-2 vt-py-1 vt-bg-blue-500 vt-text-white vt-rounded-lg hover:vt-bg-blue-700 disabled:vt-bg-slate-300 disabled:vt-cursor-not-allowed vt-transition-colors"
 						>
-							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+							<svg className="vt-w-4 vt-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+								/>
 							</svg>
-							{/* <span className="text-xs">{__('Refresh Log', 'versatile-toolkit')}</span> */}
+							{/* <span className="vt-text-xs">{__('Refresh Log', 'versatile-toolkit')}</span> */}
 						</button>
 
 						<button
 							title={__('Download Log', 'versatile-toolkit')}
 							onClick={handleDownloadLog}
 							disabled={!logFileInfo.exists || isLoading}
-							className="flex items-center justify-center space-x-2 px-2 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
+							className="vt-flex vt-items-center vt-justify-center vt-space-x-2 vt-px-2 vt-py-1 vt-bg-green-600 vt-text-white vt-rounded-lg hover:vt-bg-green-700 disabled:vt-bg-slate-300 disabled:vt-cursor-not-allowed vt-transition-colors"
 						>
-							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							<svg className="vt-w-4 vt-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+								/>
 							</svg>
-							{/* <span className="text-xs">{__('Download Log', 'versatile-toolkit')}</span> */}
+							{/* <span className="vt-text-xs">{__('Download Log', 'versatile-toolkit')}</span> */}
 						</button>
 
 						<button
 							title={__('Clear Log', 'versatile-toolkit')}
 							onClick={handleClearLog}
 							disabled={!logFileInfo.exists || isLoading}
-							className="flex items-center justify-center space-x-2 px-2 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
+							className="vt-flex vt-items-center vt-justify-center vt-space-x-2 vt-px-2 vt-py-1 vt-bg-yellow-600 vt-text-white vt-rounded-lg hover:vt-bg-yellow-700 disabled:vt-bg-slate-300 disabled:vt-cursor-not-allowed vt-transition-colors"
 						>
-							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							<svg className="vt-w-4 vt-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+								/>
 							</svg>
-							{/* <span className="text-xs">{__('Clear Log', 'versatile-toolkit')}</span> */}
+							{/* <span className="vt-text-xs">{__('Clear Log', 'versatile-toolkit')}</span> */}
 						</button>
 					</div>
 				</div>
@@ -251,6 +302,6 @@ const debugLog = () => {
 			</div>
 		</div>
 	);
-}
+};
 
 export default debugLog;

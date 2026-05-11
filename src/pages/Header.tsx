@@ -1,175 +1,166 @@
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useModalInteractions } from '@/hooks/useModalInteractions';
 import { useGetServiceList, useUpdateServiceStatus } from '@/services/mood-services';
 import { ServiceItem, ServiceListType } from '@/utils/versatile-declaration';
 import { useQueryClient } from '@tanstack/react-query';
+import { AlignJustify, X } from 'lucide-react';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { AlignRight } from 'lucide-react';
-
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const queryClient = useQueryClient();
-    const location = useLocation();
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const queryClient = useQueryClient();
+	const location = useLocation();
 
-    const { data: serviceListResponse, isLoading: servicesIsLoading } = useGetServiceList();
-    const services = serviceListResponse?.data as ServiceListType;
+	const { data: serviceListResponse, isLoading: servicesIsLoading } = useGetServiceList();
+	const services = serviceListResponse?.data as ServiceListType;
 
-    // Get current service based on the route
-    const getCurrentService = () => {
-        if (!services || location.pathname === '/') return null;
+	// Get current service based on the route
+	const getCurrentService = () => {
+		if (!services || location.pathname === '/') return null;
 
-        // For HashRouter, we need to handle the path differently
-        // Extract the base path (first segment after /)
-        const pathSegments = location.pathname.split('/').filter(Boolean);
-        const basePath = pathSegments[0];
+		// For HashRouter, we need to handle the path differently
+		// Extract the base path (first segment after /)
+		const pathSegments = location.pathname.split('/').filter(Boolean);
+		const basePath = pathSegments[0];
 
-        const serviceEntry = Object.entries(services).find(([key, service]) => service.path === basePath);
-        return serviceEntry ? serviceEntry[1] : null;
-    };
+		const serviceEntry = Object.entries(services).find(([key, service]) => service.path === basePath);
+		return serviceEntry ? serviceEntry[1] : null;
+	};
 
-    const currentService = getCurrentService();
+	const currentService = getCurrentService();
 
-    const updateServiceMutation = useUpdateServiceStatus();
+	const updateServiceMutation = useUpdateServiceStatus();
 
-    const toggleService = (serviceKey: string, service: ServiceItem) => {
-        updateServiceMutation.mutate(
-            {
-                service_key: serviceKey,
-                enable: !service.enable,
-            },
-            {
-                onSuccess: () => {
-                    if (serviceKey === 'quickact') {
-                        window.location.reload();
-                        return;
-                    }
-                    queryClient.invalidateQueries({ queryKey: ['getServiceList'] });
-                    queryClient.invalidateQueries({ queryKey: ['getEnableServiceList'] });
-                },
-            }
-        );
-    };
+	const toggleService = (serviceKey: string, service: ServiceItem) => {
+		updateServiceMutation.mutate(
+			{
+				service_key: serviceKey,
+				enable: !service.enable,
+			},
+			{
+				onSuccess: () => {
+					if (serviceKey === 'quickact') {
+						window.location.reload();
+						return;
+					}
+					queryClient.invalidateQueries({ queryKey: ['getServiceList'] });
+					queryClient.invalidateQueries({ queryKey: ['getEnableServiceList'] });
+				},
+			},
+		);
+	};
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+	const toggleMenu = () => {
+		setIsMenuOpen(!isMenuOpen);
+	};
 
-    const { handleBackdropClick } = useModalInteractions({
-        isOpen: isMenuOpen,
-        onClose: toggleMenu
-    });
+	const { handleBackdropClick } = useModalInteractions({
+		isOpen: isMenuOpen,
+		onClose: toggleMenu,
+	});
 
-    return (
-        <>
-            <header className="bg-white border-b border-gray-200 py-4 flex items-center justify-between relative">
-                {/* Left side - Plugin Title */}
-                <Link to="/" className="flex items-center text-blue-600 text-lg font-semibold">
-                    {__('Versatile Toolkit', 'versatile-toolkit')}
-                </Link>
+	return (
+		<>
+			<header className="vt-bg-white vt-border-b vt-border-gray-200 vt-py-4 vt-flex vt-items-center vt-justify-between vt-relative">
+				{/* Left side - Plugin Title */}
+				<Link to="/" className="vt-flex vt-items-center vt-text-blue-600 vt-text-lg vt-font-semibold">
+					{__('Versatile Toolkit', 'versatile-toolkit')}
+				</Link>
 
-                {/* Right side - Current Service and Toggle Menu Button */}
-                <div className="flex items-center gap-3">
-                    {/* Current Service Display */}
-                    {currentService && (
-                        <>
-                            {
-                                Object.keys(currentService?.menus || {}).map((menuKey) => {
-                                    let linkPath = `/${currentService?.path}/${currentService?.menus?.[menuKey]?.slug}`;
+				{/* Right side - Current Service and Toggle Menu Button */}
+				<div className="vt-flex vt-items-center vt-gap-3">
+					{/* Current Service Display */}
+					{currentService && (
+						<>
+							{Object.keys(currentService?.menus || {}).map((menuKey) => {
+								let linkPath = `/${currentService?.path}/${currentService?.menus?.[menuKey]?.slug}`;
 
-                                    if (linkPath.endsWith("/")) {
-                                        linkPath = linkPath.slice(0, -1);
-                                    }
+								if (linkPath.endsWith('/')) {
+									linkPath = linkPath.slice(0, -1);
+								}
 
-                                    return (
-                                        <Link
-                                            key={menuKey}
-                                            to={linkPath}
-                                            onClick={() => {
-                                                console.log('Link clicked, navigating to:', linkPath);
-                                            }}
-                                            className={`text-sm font-medium rounded-md px-3 py-1 transition-colors duration-200 ${location.pathname === linkPath
-                                                ? 'bg-blue-600 text-white border border-blue-700 hover:text-white focus:!text-white'
-                                                : ' bg-blue-50 border border-blue-200'
-                                                }`}
-                                        >
-                                            {currentService?.menus?.[menuKey]?.label}
-                                        </Link>
-                                    );
-                                })
-                            }
-                        </>
-                    )}
+								return (
+									<Link
+										key={menuKey}
+										to={linkPath}
+										onClick={() => {
+											console.log('Link clicked, navigating to:', linkPath);
+										}}
+										className={`vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-transition-colors vt-duration-200 ${location.pathname === linkPath
+											? 'vt-bg-blue-600 vt-text-white vt-border vt-border-blue-700 hover:vt-text-white focus:!vt-text-white'
+											: 'vt-bg-blue-50 vt-border vt-border-blue-200'
+											}`}
+									>
+										{currentService?.menus?.[menuKey]?.label}
+									</Link>
+								);
+							})}
+						</>
+					)}
 
-                    {!servicesIsLoading && services?.troubleshoot.enable && !currentService && (
-                        <>
-                            <Link to="/troubleshoot" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
-                                Deactivate Plugins
-                            </Link>
-                            <Link to="/troubleshoot/debug-log" className="text-sm font-medium rounded-md px-3 py-1 text-blue-700 bg-blue-50 border border-blue-200">
-                                Debug Log
-                            </Link>
-                        </>
-                    )}
+					{!servicesIsLoading && services?.troubleshoot.enable && !currentService && (
+						<>
+							<Link
+								to="/troubleshoot"
+								className="vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-text-blue-700 vt-bg-blue-50 vt-border vt-border-blue-200"
+							>
+								{__('Deactivate Plugins', 'versatile-toolkit')}
+							</Link>
+							<Link
+								to="/troubleshoot/debug-log"
+								className="vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-text-blue-700 vt-bg-blue-50 vt-border vt-border-blue-200"
+							>
+								{__('Debug Log', 'versatile-toolkit')}
+							</Link>
+						</>
+					)}
 
-
-                    <Sheet>
-                        {/* Toggle Menu Button */}
-                        <SheetTrigger asChild>
-                            <button
-                                // className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200"
-                                className="p-1 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-200"
-                                aria-label="Toggle menu"
-                            >
-                                {/* <AlignRight className='w-6 h-6 text-gray-600' /> */}
-                                <svg
-                                    className="w-5 h-5 text-gray-600"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                </svg>
-                            </button>
-                        </SheetTrigger>
-                        <SheetContent>
-                            <SheetHeader>
-                                <SheetTitle>{__('Services', 'versatile-toolkit')}</SheetTitle>
-                            </SheetHeader>
-                            <div className="space-y-3 mt-6">
-                                {Object.entries(services || {}).map(([key, service]) => (
-                                    <div
-                                        key={service.label}
-                                        onClick={() => toggleService(key, service)}
-                                        className="flex items-center justify-between p-3 rounded-md border border-gray-200 bg-gray-50 hover:bg-blue-100 hover:border-blue-300 hover:shadow-md transition-all duration-300 cursor-pointer"
-                                    >
-                                        <span className="text-blue-500 font-medium hover:text-blue-800 transition-colors duration-300">{service.label}</span>
-                                        <div className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                checked={service.enable}
-                                                onChange={() => { }} // Empty handler since parent div handles the click
-                                                className="sr-only peer"
-                                            />
-                                            <div className="relative w-11 h-6 bg-[#c7c6c6] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </SheetContent>
-                    </Sheet>
-
-                </div>
-            </header>
-        </>
-    );
+					<Sheet>
+						{/* Toggle Menu Button */}
+						<SheetTrigger asChild>
+							<button
+								// className="vt-p-1 vt-rounded-md vt-bg-gray-200 hover:vt-bg-gray-300 vt-transition-colors vt-duration-200"
+								className="vt-p-1 vt-rounded-md vt-bg-blue-100 hover:vt-bg-blue-200 vt-transition-colors vt-duration-200"
+								aria-label={__('Toggle menu', 'versatile-toolkit')}
+							>
+								<AlignJustify className='vt-w-5 vt-h-5 vt-text-gray-600' />
+							</button>
+						</SheetTrigger>
+						<SheetContent>
+							<SheetHeader>
+								<SheetTitle>{__('Services', 'versatile-toolkit')}</SheetTitle>
+							</SheetHeader>
+							<div className="vt-space-y-3 vt-mt-6">
+								{Object.entries(services || {}).map(([key, service]) => (
+									<div
+										key={service.label}
+										onClick={() => toggleService(key, service)}
+										className="vt-flex vt-items-center vt-justify-between vt-p-3 vt-rounded-md vt-border vt-border-gray-200 vt-bg-gray-50 hover:vt-bg-blue-100 hover:vt-border-blue-300 hover:vt-shadow-md vt-transition-all vt-duration-300 vt-cursor-pointer"
+									>
+										<span className="vt-text-blue-500 vt-font-medium hover:vt-text-blue-800 vt-transition-colors vt-duration-300">
+											{service.label}
+										</span>
+										<div className="vt-relative vt-inline-flex vt-items-center vt-cursor-pointer">
+											<input
+												type="checkbox"
+												checked={service.enable}
+												onChange={() => { }} // Empty handler since parent div handles the click
+												className="vt-sr-only vt-peer"
+											/>
+											<div className="vt-relative vt-w-11 vt-h-6 vt-bg-[#c7c6c6] peer-focus:vt-outline-none peer-focus:vt-ring-4 peer-focus:vt-ring-blue-300 vt-rounded-full vt-peer peer-checked:after:vt-translate-x-full peer-checked:after:vt-border-white after:vt-content-[''] after:vt-absolute after:vt-top-[2px] after:vt-left-[2px] after:vt-bg-white after:vt-border-gray-300 after:vt-border after:vt-rounded-full after:vt-h-5 after:vt-w-5 after:vt-transition-all peer-checked:vt-bg-blue-600"></div>
+										</div>
+									</div>
+								))}
+							</div>
+						</SheetContent>
+					</Sheet>
+				</div>
+			</header>
+		</>
+	);
 };
 
 export default Header;

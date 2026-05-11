@@ -1,23 +1,33 @@
-import { useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trash2, Copy, Eye, EyeOff, Check, Search, Edit, MoreVertical, Clock } from 'lucide-react';
-import { TempLogin, TempLoginListQueryParams, UpdateTempLoginData, useAvailableRoles, useDeleteTempLogin, useGetTempLoginList, useToggleTempLoginStatus, useUpdateTempLogin, useExtendTempLoginTime, expiresAtOptions } from '@/services/temp-login-services';
-import { copyUrl } from '@/utils/utils';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useDebounce } from '@/hooks/useDebounce';
 import { TableSkeleton } from '@/components/loader';
 import TableRowEmptyState from '@/components/loader/TableRowEmptyState';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useDebounce } from '@/hooks/useDebounce';
+import {
+	expiresAtOptions,
+	TempLogin,
+	TempLoginListQueryParams,
+	UpdateTempLoginData,
+	useAvailableRoles,
+	useDeleteTempLogin,
+	useExtendTempLoginTime,
+	useGetTempLoginList,
+	useToggleTempLoginStatus,
+	useUpdateTempLogin,
+} from '@/services/temp-login-services';
+import { getTimeAgo, getTimeRemaining, isDateExpired } from '@/utils/date-utils';
+import { copyUrl } from '@/utils/utils';
+import { __ } from '@wordpress/i18n';
+import { Check, Clock, Copy, Edit, Eye, EyeOff, MoreVertical, Search, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { getTimeAgo, isDateExpired } from '@/utils/date-utils';
-import { getTimeRemaining } from '@/utils/date-utils';
 
 const columns = [
 	{ key: 'name', label: 'Name' },
@@ -175,94 +185,99 @@ const TempLoginTable = () => {
 	};
 
 	useEffect(() => {
-		setSearchParams(prev => ({ ...prev, search: debouncedSearchTerm, page: 1 }));
+		setSearchParams((prev) => ({ ...prev, search: debouncedSearchTerm, page: 1 }));
 	}, [debouncedSearchTerm]);
 
 	const handleFilterChange = (key: keyof TempLoginListQueryParams, value: string) => {
-		setSearchParams(prev => ({ ...prev, [key]: value }));
+		setSearchParams((prev) => ({ ...prev, [key]: value }));
 	};
 
 	const onPageChange = (page: number) => {
-		setSearchParams(prev => ({ ...prev, page }));
+		setSearchParams((prev) => ({ ...prev, page }));
 	};
 
-	return <>
-		<Card>
-			<CardHeader>
-				<div className="flex flex-wrap gap-4 justify-end">
-					<div className="w-[300px]">
-						<div className="relative">
-							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+	return (
+		<>
+			<Card>
+				<CardHeader>
+					<div className="vt-flex vt-flex-row vt-items-center vt-gap-4 vt-justify-end">
+						<div className="vt-w-[300px] vt-relative">
+							<Search className="vt-absolute vt-left-3 vt-top-1/2 vt-transform -vt-translate-y-1/2 vt-text-gray-400 vt-w-4 vt-h-4" />
 							<Input
 								placeholder={__('Search by name or email...', 'versatile-toolkit')}
 								value={searchTerm}
 								onChange={(e) => handleSearch(e.target.value)}
-								className="pl-10"
+								className="vt-pl-10 vt-w-full"
 							/>
 						</div>
+						<Select
+							value={searchParams.role || 'all_roles'}
+							onValueChange={(value) => handleFilterChange('role', value === 'all_roles' ? '' : value)}
+						>
+							<SelectTrigger className="vt-w-48">
+								<SelectValue placeholder={__('All Roles', 'versatile-toolkit')} />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all_roles">{__('All Roles', 'versatile-toolkit')}</SelectItem>
+								{Object.entries(availableRoles ?? {}).map(([key, value]) => (
+									<SelectItem key={key} value={key}>
+										{String(value)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<Select
+							value={searchParams.status}
+							onValueChange={(value) => handleFilterChange('status', value)}
+						>
+							<SelectTrigger className="vt-w-48">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">{__('All Status', 'versatile-toolkit')}</SelectItem>
+								<SelectItem value="active">{__('Active', 'versatile-toolkit')}</SelectItem>
+								<SelectItem value="inactive">{__('Inactive', 'versatile-toolkit')}</SelectItem>
+								<SelectItem value="expired">{__('Expired', 'versatile-toolkit')}</SelectItem>
+							</SelectContent>
+						</Select>
 					</div>
-					<Select value={searchParams.role || 'all_roles'} onValueChange={(value) => handleFilterChange('role', value === 'all_roles' ? '' : value)}>
-						<SelectTrigger className="w-48">
-							<SelectValue placeholder={__('All Roles', 'versatile-toolkit')} />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="all_roles">{__('All Roles', 'versatile-toolkit')}</SelectItem>
-							{Object.entries(availableRoles ?? {}).map(([key, value]) => (
-								<SelectItem key={key} value={key}>{String(value)}</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-					<Select value={searchParams.status} onValueChange={(value) => handleFilterChange('status', value)}>
-						<SelectTrigger className="w-48">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="all">{__('All Status', 'versatile-toolkit')}</SelectItem>
-							<SelectItem value="active">{__('Active', 'versatile-toolkit')}</SelectItem>
-							<SelectItem value="inactive">{__('Inactive', 'versatile-toolkit')}</SelectItem>
-							<SelectItem value="expired">{__('Expired', 'versatile-toolkit')}</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-			</CardHeader>
-			<CardContent>
-				<Table>
-					<TableHeader>
-						<TableRow>
-							{columns.map((col) => (
-								<TableHead key={col.key}>{col.label}</TableHead>
-							))}
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{isLoadingList ? (
-							// Loading state.
-							<TableSkeleton
-								columns={columns.map(col => ({
-									key: String(col.key),
-									label: String(col.key)
-								}))}
-								rows={5}
-							/>
-						) : tempLoginList && tempLoginList?.temp_logins?.length > 0 ? (
-							// Data rows
-							tempLoginList.temp_logins.map((tempLogin: TempLogin) => (
-								<TableRow key={tempLogin.id}>
-									<TableCell>{tempLogin.display_name}</TableCell>
-									<TableCell>
-										{tempLogin.email}
-									</TableCell>
-									<TableCell>
-										<Badge>{tempLogin.role}</Badge>
-									</TableCell>
-									<TableCell>
-										{getStatusBadge(tempLogin)}
-									</TableCell>
-									<TableCell>
-										<span className={`${isDateExpired(tempLogin.expires_at) ? 'text-red-500 font-semibold' : ''}`}>
-											{getTimeRemaining(tempLogin.expires_at)}
-										</span>
-										{/* {new Date(tempLogin.expires_at).toLocaleString('en-BD', {
+				</CardHeader>
+				<CardContent>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								{columns.map((col) => (
+									<TableHead key={col.key}>{col.label}</TableHead>
+								))}
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{isLoadingList ? (
+								// Loading state.
+								<TableSkeleton
+									columns={columns.map((col) => ({
+										key: String(col.key),
+										label: String(col.key),
+									}))}
+									rows={5}
+								/>
+							) : tempLoginList && tempLoginList?.temp_logins?.length > 0 ? (
+								// Data rows
+								tempLoginList.temp_logins.map((tempLogin: TempLogin) => (
+									<TableRow key={tempLogin.id}>
+										<TableCell>{tempLogin.display_name}</TableCell>
+										<TableCell>{tempLogin.email}</TableCell>
+										<TableCell>
+											<Badge>{tempLogin.role}</Badge>
+										</TableCell>
+										<TableCell>{getStatusBadge(tempLogin)}</TableCell>
+										<TableCell>
+											<span
+												className={`${isDateExpired(tempLogin.expires_at) ? 'text-red-500 font-semibold' : ''}`}
+											>
+												{getTimeRemaining(tempLogin.expires_at)}
+											</span>
+											{/* {new Date(tempLogin.expires_at).toLocaleString('en-BD', {
 											timeZone: 'Asia/Dhaka',
 											hour12: true,
 											year: 'numeric',
@@ -271,275 +286,291 @@ const TempLoginTable = () => {
 											hour: '2-digit',
 											minute: '2-digit',
 										})} */}
-									</TableCell>
-									<TableCell>
-										{tempLogin.login_count}
-									</TableCell>
-									<TableCell>
-										{/* {tempLogin.last_login} */}
-										{tempLogin.last_login ? getTimeAgo(tempLogin.last_login) : '-'}
-									</TableCell>
-									<TableCell>
-										<Popover>
-											<PopoverTrigger asChild>
-												<Button
-													size="sm"
-													variant="ghost"
-													className="h-8 w-8 p-0"
-												>
-													<MoreVertical className="h-4 w-4" />
-													<span className="sr-only">{__('Open menu', 'versatile-toolkit')}</span>
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="w-48 p-1" align="end">
-												<div className="space-y-1">
-													<Button
-														variant="ghost"
-														size="sm"
-														className="w-full justify-start"
-														onClick={() => handleCopyUrl(tempLogin)}
-													>
-														{copiedId === tempLogin.id ? (
-															<Check className="mr-2 h-4 w-4 text-green-600" />
-														) : (
-															<Copy className="mr-2 h-4 w-4" />
-														)}
-														{__('Copy Login URL', 'versatile-toolkit')}
+										</TableCell>
+										<TableCell>{tempLogin.login_count}</TableCell>
+										<TableCell>
+											{/* {tempLogin.last_login} */}
+											{tempLogin.last_login ? getTimeAgo(tempLogin.last_login) : '-'}
+										</TableCell>
+										<TableCell>
+											<Popover>
+												<PopoverTrigger asChild>
+													<Button size="sm" variant="ghost" className="vt-h-8 vt-w-8 vt-p-0">
+														<MoreVertical className="vt-h-4 vt-w-4" />
+														<span className="vt-sr-only">
+															{__('Open menu', 'versatile-toolkit')}
+														</span>
 													</Button>
-													<Button
-														variant="ghost"
-														size="sm"
-														className="w-full justify-start"
-														onClick={() => onEdit(tempLogin)}
-													>
-														<Edit className="mr-2 h-4 w-4" />
-														{__('Edit', 'versatile-toolkit')}
-													</Button>
-													<Button
-														variant="ghost"
-														size="sm"
-														className="w-full justify-start"
-														onClick={() => onExtendTime(tempLogin)}
-													>
-														<Clock className="mr-2 h-4 w-4" />
-														{__('Extend Time', 'versatile-toolkit')}
-													</Button>
-													<Button
-														variant="ghost"
-														size="sm"
-														className="w-full justify-start"
-														onClick={() => onToggleStatus(tempLogin.id, tempLogin.is_active)}
-													>
-														{tempLogin.is_active ? (
-															<EyeOff className="mr-2 h-4 w-4" />
-														) : (
-															<Eye className="mr-2 h-4 w-4" />
-														)}
-														{tempLogin.is_active ? __('Deactivate', 'versatile-toolkit') : __('Activate', 'versatile-toolkit')}
-													</Button>
-													<Button
-														variant="ghost"
-														size="sm"
-														className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-														onClick={() => handleDeleteClick(tempLogin)}
-													>
-														<Trash2 className="mr-2 h-4 w-4" />
-														{__('Delete', 'versatile-toolkit')}
-													</Button>
-												</div>
-											</PopoverContent>
-										</Popover>
-									</TableCell>
-								</TableRow>
-							))
-						) : (
-							// Empty state
-							<TableRowEmptyState title="No temporary logins found" description="Try adjusting your search or filters" />
-						)}
-					</TableBody>
-				</Table>
-			</CardContent>
-
-			{/* Pagination */}
-			{tempLoginList && tempLoginList.total_pages > 1 && (
-				<CardContent className="pt-0">
-					<div className="flex justify-center space-x-2">
-						<Button
-							variant="outline"
-							disabled={tempLoginList.page === 1}
-							onClick={() => onPageChange(tempLoginList.page - 1)}
-						>
-							{__('Previous', 'versatile-toolkit')}
-						</Button>
-						<span className="flex items-center px-4">
-							{__('Page', 'versatile-toolkit')} {tempLoginList.page} {__('of', 'versatile-toolkit')} {tempLoginList.total_pages}
-						</span>
-						<Button
-							variant="outline"
-							disabled={tempLoginList.page === tempLoginList.total_pages}
-							onClick={() => onPageChange(tempLoginList.page + 1)}
-						>
-							{__('Next', 'versatile-toolkit')}
-						</Button>
-					</div>
+												</PopoverTrigger>
+												<PopoverContent className="vt-w-max vt-p-1 vt-flex vt-flex-col vt-align-center vt-justify-start" align='end'>
+													{/* <div className="vt-space-y-1"> */}
+														<Button
+															variant="ghost"
+															size="sm"
+															className="!vt-justify-start"
+															onClick={() => handleCopyUrl(tempLogin)}
+														>
+															{copiedId === tempLogin.id ? (
+																<Check className="vt-mr-2 vt-h-4 vt-w-4 vt-text-green-600" />
+															) : (
+																<Copy className="vt-mr-2 vt-h-4 vt-w-4" />
+															)}
+															{__('Copy Login URL', 'versatile-toolkit')}
+														</Button>
+														<Button
+															variant="ghost"
+															size="sm"
+															className="!vt-justify-start"
+															onClick={() => onEdit(tempLogin)}
+														>
+															<Edit className="vt-mr-2 vt-h-4 vt-w-4" />
+															{__('Edit', 'versatile-toolkit')}
+														</Button>
+														<Button
+															variant="ghost"
+															size="sm"
+															className="!vt-justify-start"
+															onClick={() => onExtendTime(tempLogin)}
+														>
+															<Clock className="vt-mr-2 vt-h-4 vt-w-4" />
+															{__('Extend Time', 'versatile-toolkit')}
+														</Button>
+														<Button
+															variant="ghost"
+															size="sm"
+															className="!vt-justify-start"
+															onClick={() =>
+																onToggleStatus(tempLogin.id, tempLogin.is_active)
+															}
+														>
+															{tempLogin.is_active ? (
+																<EyeOff className="vt-mr-2 vt-h-4 vt-w-4" />
+															) : (
+																<Eye className="vt-mr-2 vt-h-4 vt-w-4" />
+															)}
+															{tempLogin.is_active
+																? __('Deactivate', 'versatile-toolkit')
+																: __('Activate', 'versatile-toolkit')}
+														</Button>
+														<Button
+															variant="ghost"
+															size="sm"
+															className="!vt-justify-start vt-text-red-600 hover:vt-text-red-700 hover:vt-bg-red-50"
+															onClick={() => handleDeleteClick(tempLogin)}
+														>
+															<Trash2 className="vt-mr-2 vt-h-4 vt-w-4" />
+															{__('Delete', 'versatile-toolkit')}
+														</Button>
+													{/* </div> */}
+												</PopoverContent>
+											</Popover>
+										</TableCell>
+									</TableRow>
+								))
+							) : (
+								// Empty state
+								<TableRowEmptyState
+									title="No temporary logins found"
+									description="Try adjusting your search or filters"
+								/>
+							)}
+						</TableBody>
+					</Table>
 				</CardContent>
-			)}
-		</Card>
 
-		{/* Edit Modal */}
-		<Dialog open={!!editingTempLogin} onOpenChange={(open) => !open && handleEditCancel()}>
-			<DialogContent className="max-w-md">
-				<DialogHeader>
-					<DialogTitle>{__('Edit Temporary Login', 'versatile-toolkit')}</DialogTitle>
-					<p className="text-sm text-muted-foreground">
-						{__('Note: Expiration date cannot be modified after creation.', 'versatile-toolkit')}
-					</p>
-				</DialogHeader>
-
-				<div className="space-y-4">
-					<div className='d-flex flex-col gap-3'>
-						<Label htmlFor="edit-display-name">{__('Display Name', 'versatile-toolkit')}</Label>
-						<Input
-							id="edit-display-name"
-							value={editFormData.display_name || ''}
-							onChange={(e) => setEditFormData(prev => ({ ...prev, display_name: e.target.value }))}
-							placeholder={__('Enter display name', 'versatile-toolkit')}
-						/>
-					</div>
-
-					<div className='d-flex flex-col gap-3'>
-						<Label htmlFor="edit-email">{__('Email', 'versatile-toolkit')}</Label>
-						<Input
-							id="edit-email"
-							type="email"
-							value={editFormData.email || ''}
-							onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
-							placeholder={__('Enter email address', 'versatile-toolkit')}
-						/>
-					</div>
-
-					<div className='d-flex flex-col gap-3'>
-						<Label htmlFor="edit-role">{__('Role', 'versatile-toolkit')}</Label>
-						<Select
-							value={editFormData.role || ''}
-							onValueChange={(value) => setEditFormData(prev => ({ ...prev, role: value }))}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder={__('Select role', 'versatile-toolkit')} />
-							</SelectTrigger>
-							<SelectContent>
-								{Object.entries(availableRoles ?? {}).map(([key, value]) => (
-									<SelectItem key={key} value={key}>{String(value)}</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-
-					<div className='d-flex flex-col gap-3'>
-						<Label htmlFor="edit-redirect-url">{__('Redirect URL', 'versatile-toolkit')}</Label>
-						<Input
-							id="edit-redirect-url"
-							type="url"
-							value={editFormData.redirect_url || ''}
-							onChange={(e) => setEditFormData(prev => ({ ...prev, redirect_url: e.target.value }))}
-							placeholder={__('Enter redirect URL', 'versatile-toolkit')}
-						/>
-					</div>
-				</div>
-
-				<DialogFooter>
-					<Button variant="outline" onClick={handleEditCancel}>
-						{__('Cancel', 'versatile-toolkit')}
-					</Button>
-					<Button onClick={handleEditSubmit} disabled={isUpdating}>
-						{isUpdating ? __('Updating...', 'versatile-toolkit') : __('Update', 'versatile-toolkit')}
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-
-		{/* Delete Confirmation Modal */}
-		<Dialog open={!!deletingTempLogin} onOpenChange={(open) => !open && handleDeleteCancel()}>
-			<DialogContent className="max-w-md">
-				<DialogHeader>
-					<DialogTitle className="text-red-600">{__('Delete Temporary Login', 'versatile-toolkit')}</DialogTitle>
-				</DialogHeader>
-
-				<div className="space-y-4">
-					<p className="text-sm text-muted-foreground">
-						{__('Are you sure you want to delete this temporary login? This action cannot be undone.', 'versatile-toolkit')}
-					</p>
-
-					{deletingTempLogin && (
-						<div className="bg-gray-50 p-3 rounded-md">
-							<p className="font-medium">{deletingTempLogin.display_name}</p>
-							<p className="text-sm text-gray-600">{deletingTempLogin.email}</p>
-							<p className="text-sm text-gray-600">{deletingTempLogin.role}</p>
+				{/* Pagination */}
+				{tempLoginList && tempLoginList.total_pages > 1 && (
+					<CardContent className="vt-pt-0">
+						<div className="vt-flex vt-justify-center vt-space-x-2">
+							<Button
+								variant="outline"
+								disabled={tempLoginList.page === 1}
+								onClick={() => onPageChange(tempLoginList.page - 1)}
+							>
+								{__('Previous', 'versatile-toolkit')}
+							</Button>
+							<span className="vt-flex vt-items-center vt-px-4">
+								{__('Page', 'versatile-toolkit')} {tempLoginList.page} {__('of', 'versatile-toolkit')}{' '}
+								{tempLoginList.total_pages}
+							</span>
+							<Button
+								variant="outline"
+								disabled={tempLoginList.page === tempLoginList.total_pages}
+								onClick={() => onPageChange(tempLoginList.page + 1)}
+							>
+								{__('Next', 'versatile-toolkit')}
+							</Button>
 						</div>
-					)}
-				</div>
+					</CardContent>
+				)}
+			</Card>
 
-				<DialogFooter>
-					<Button variant="outline" onClick={handleDeleteCancel}>
-						{__('Cancel', 'versatile-toolkit')}
-					</Button>
-					<Button
-						variant="destructive"
-						onClick={handleDeleteConfirm}
-					>
-						{__('Delete', 'versatile-toolkit')}
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+			{/* Edit Modal */}
+			<Dialog open={!!editingTempLogin} onOpenChange={(open) => !open && handleEditCancel()}>
+				<DialogContent className="vt-max-w-md">
+					<DialogHeader>
+						<DialogTitle>{__('Edit Temporary Login', 'versatile-toolkit')}</DialogTitle>
+						<p className="vt-text-sm vt-text-muted-foreground">
+							{__('Note: Expiration date cannot be modified after creation.', 'versatile-toolkit')}
+						</p>
+					</DialogHeader>
 
-		{/* Extend Time Modal */}
-		<Dialog open={!!extendingTempLogin} onOpenChange={(open) => !open && handleExtendTimeCancel()}>
-			<DialogContent className="max-w-md">
-				<DialogHeader>
-					<DialogTitle>{__('Extend Expiration Time', 'versatile-toolkit')}</DialogTitle>
-					<p className="text-sm text-muted-foreground">
-						{__('Select how much time to add to the current expiration date.', 'versatile-toolkit')}
-					</p>
-				</DialogHeader>
-
-				<div className="space-y-4">
-					{extendingTempLogin && (
-						<div className="bg-gray-100 p-3 rounded-md">
-							<p className="font-medium">{extendingTempLogin.display_name}</p>
-							<p className="text-sm text-gray-600">{extendingTempLogin.email}</p>
-							<p className="text-sm text-gray-600">
-								{__('Current expiration:', 'versatile-toolkit')} {new Date(extendingTempLogin.expires_at).toLocaleString()}
-							</p>
+					<div className="vt-space-y-4">
+						<div className="vt-flex vt-flex-col vt-gap-3">
+							<Label htmlFor="edit-display-name">{__('Display Name', 'versatile-toolkit')}</Label>
+							<Input
+								id="edit-display-name"
+								value={editFormData.display_name || ''}
+								onChange={(e) => setEditFormData((prev) => ({ ...prev, display_name: e.target.value }))}
+								placeholder={__('Enter display name', 'versatile-toolkit')}
+							/>
 						</div>
-					)}
 
-					<div>
-						<Label htmlFor="extend-time-select" className='d-block mb-4'>{__('Extend by', 'versatile-toolkit')}</Label>
-						<Select value={extendTimeValue} onValueChange={setExtendTimeValue}>
-							<SelectTrigger className='w-full d-block'>
-								<SelectValue placeholder={__('Select expires at', 'versatile-toolkit')} />
-							</SelectTrigger>
-							<SelectContent className='w-full max-h-60 scroll'>
-								{expiresAtOptions.map((option) => (
-									<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						<div className="vt-flex vt-flex-col vt-gap-3">
+							<Label htmlFor="edit-email">{__('Email', 'versatile-toolkit')}</Label>
+							<Input
+								id="edit-email"
+								type="email"
+								value={editFormData.email || ''}
+								onChange={(e) => setEditFormData((prev) => ({ ...prev, email: e.target.value }))}
+								placeholder={__('Enter email address', 'versatile-toolkit')}
+							/>
+						</div>
+
+						<div className="vt-flex vt-flex-col vt-gap-3">
+							<Label htmlFor="edit-role">{__('Role', 'versatile-toolkit')}</Label>
+							<Select
+								value={editFormData.role || ''}
+								onValueChange={(value) => setEditFormData((prev) => ({ ...prev, role: value }))}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder={__('Select role', 'versatile-toolkit')} />
+								</SelectTrigger>
+								<SelectContent>
+									{Object.entries(availableRoles ?? {}).map(([key, value]) => (
+										<SelectItem key={key} value={key}>
+											{String(value)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="vt-flex vt-flex-col vt-gap-3">
+							<Label htmlFor="edit-redirect-url">{__('Redirect URL', 'versatile-toolkit')}</Label>
+							<Input
+								id="edit-redirect-url"
+								type="url"
+								value={editFormData.redirect_url || ''}
+								onChange={(e) => setEditFormData((prev) => ({ ...prev, redirect_url: e.target.value }))}
+								placeholder={__('Enter redirect URL', 'versatile-toolkit')}
+							/>
+						</div>
 					</div>
-				</div>
 
-				<DialogFooter className='mt-4'>
-					<Button variant="outline" onClick={handleExtendTimeCancel}>
-						{__('Cancel', 'versatile-toolkit')}
-					</Button>
-					<Button onClick={handleExtendTimeSubmit} disabled={isExtending}>
-						{isExtending ? __('Extending...', 'versatile-toolkit') : __('Extend Time', 'versatile-toolkit')}
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-	</>
-}
+					<DialogFooter>
+						<Button variant="outline" onClick={handleEditCancel}>
+							{__('Cancel', 'versatile-toolkit')}
+						</Button>
+						<Button onClick={handleEditSubmit} disabled={isUpdating}>
+							{isUpdating ? __('Updating...', 'versatile-toolkit') : __('Update', 'versatile-toolkit')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			{/* Delete Confirmation Modal */}
+			<Dialog open={!!deletingTempLogin} onOpenChange={(open) => !open && handleDeleteCancel()}>
+				<DialogContent className="vt-max-w-md">
+					<DialogHeader>
+						<DialogTitle className="vt-text-red-600">
+							{__('Delete Temporary Login', 'versatile-toolkit')}
+						</DialogTitle>
+					</DialogHeader>
+
+					<div className="vt-space-y-4">
+						<p className="vt-text-sm vt-text-muted-foreground">
+							{__(
+								'Are you sure you want to delete this temporary login? This action cannot be undone.',
+								'versatile-toolkit',
+							)}
+						</p>
+
+						{deletingTempLogin && (
+							<div className="vt-bg-gray-50 vt-p-3 vt-rounded-md">
+								<p className="vt-font-medium">{deletingTempLogin.display_name}</p>
+								<p className="vt-text-sm vt-text-gray-600">{deletingTempLogin.email}</p>
+								<p className="vt-text-sm vt-text-gray-600">{deletingTempLogin.role}</p>
+							</div>
+						)}
+					</div>
+
+					<DialogFooter>
+						<Button variant="outline" onClick={handleDeleteCancel}>
+							{__('Cancel', 'versatile-toolkit')}
+						</Button>
+						<Button variant="destructive" onClick={handleDeleteConfirm}>
+							{__('Delete', 'versatile-toolkit')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			{/* Extend Time Modal */}
+			<Dialog open={!!extendingTempLogin} onOpenChange={(open) => !open && handleExtendTimeCancel()}>
+				<DialogContent className="vt-max-w-md">
+					<DialogHeader>
+						<DialogTitle>{__('Extend Expiration Time', 'versatile-toolkit')}</DialogTitle>
+						<p className="vt-text-sm vt-text-muted-foreground">
+							{__('Select how much time to add to the current expiration date.', 'versatile-toolkit')}
+						</p>
+					</DialogHeader>
+
+					<div className="vt-space-y-4">
+						{extendingTempLogin && (
+							<div className="vt-bg-gray-100 vt-p-3 vt-rounded-md">
+								<p className="vt-font-medium">{extendingTempLogin.display_name}</p>
+								<p className="vt-text-sm vt-text-gray-600">{extendingTempLogin.email}</p>
+								<p className="vt-text-sm vt-text-gray-600">
+									{__('Current expiration:', 'versatile-toolkit')}{' '}
+									{new Date(extendingTempLogin.expires_at).toLocaleString()}
+								</p>
+							</div>
+						)}
+
+						<div>
+							<Label htmlFor="extend-time-select" className="vt-block vt-mb-4">
+								{__('Extend by', 'versatile-toolkit')}
+							</Label>
+							<Select value={extendTimeValue} onValueChange={setExtendTimeValue}>
+								<SelectTrigger className="vt-w-full vt-block">
+									<SelectValue placeholder={__('Select expires at', 'versatile-toolkit')} />
+								</SelectTrigger>
+								<SelectContent className="vt-w-full vt-max-h-60 vt-scroll">
+									{expiresAtOptions.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+					</div>
+
+					<DialogFooter className="vt-mt-4">
+						<Button variant="outline" onClick={handleExtendTimeCancel}>
+							{__('Cancel', 'versatile-toolkit')}
+						</Button>
+						<Button onClick={handleExtendTimeSubmit} disabled={isExtending}>
+							{isExtending
+								? __('Extending...', 'versatile-toolkit')
+								: __('Extend Time', 'versatile-toolkit')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+};
 
 export default TempLoginTable;

@@ -1,0 +1,142 @@
+// Button variants — use Quickact tokens from _root.scss (hsl() wrapper required)
+// :is(#vt-root, #vt-quickact-container) .transition-colors
+
+#vt-quickact-container {
+
+	// Admin-bar CSS resets all descendants under #wpadminbar, so we re-assert
+	// the primary button look for shadcn Button inside quickact.
+	// .vt-quickact-shadcn-btn {
+	button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		height: 1rem;
+		padding: 0.5rem 1rem;
+		box-sizing: border-box;
+		border: 0;
+		border-radius: calc(var(--radius) - 2px);
+		background: hsl(var(--primary));
+		color: hsl(var(--primary-foreground));
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1;
+		white-space: nowrap;
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+
+		&:hover:not(:disabled) {
+			background: hsl(var(--primary) / 0.9);
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+	}
+
+	.vt-btn {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.375rem;
+		box-sizing: border-box;
+		padding: 0.375rem 0.75rem;
+		font: inherit;
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.25;
+		border-radius: var(--radius);
+		border: 1px solid transparent;
+		cursor: pointer;
+		text-decoration: none;
+		white-space: nowrap;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease,
+			border-color 0.15s ease,
+			box-shadow 0.15s ease;
+
+		&:focus-visible {
+			outline: 2px solid hsl(var(--ring) / 0.45);
+			outline-offset: 2px;
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+	}
+
+	.vt-btn-primary {
+		background: hsl(var(--primary));
+		color: hsl(var(--primary-foreground));
+		border-color: hsl(var(--primary));
+
+		&:hover:not(:disabled) {
+			filter: brightness(0.96);
+		}
+	}
+
+	.vt-btn-secondary {
+		background: hsl(var(--secondary));
+		color: hsl(var(--secondary-foreground));
+		border-color: hsl(var(--secondary));
+
+		&:hover:not(:disabled) {
+			background: hsl(var(--secondary) / 0.88);
+		}
+	}
+
+	.vt-btn-outline {
+		background: transparent;
+		color: hsl(var(--foreground));
+		border-color: hsl(var(--border));
+
+		&:hover:not(:disabled) {
+			background: hsl(var(--accent));
+			color: hsl(var(--accent-foreground));
+		}
+	}
+
+	.vt-btn-ghost {
+		background: transparent;
+		color: hsl(var(--foreground));
+		border-color: transparent;
+
+		&:hover:not(:disabled) {
+			background: hsl(var(--accent));
+			color: hsl(var(--accent-foreground));
+		}
+	}
+
+	.vt-btn-destructive {
+		background: hsl(var(--destructive));
+		color: hsl(var(--destructive-foreground));
+		border-color: hsl(var(--destructive));
+
+		&:hover:not(:disabled) {
+			filter: brightness(0.95);
+		}
+	}
+
+	.vt-btn-link {
+		padding: 0.25rem 0.5rem;
+		background: transparent;
+		color: hsl(var(--primary));
+		border-color: transparent;
+		box-shadow: none;
+
+		&:hover:not(:disabled) {
+			text-decoration: underline;
+			filter: none;
+		}
+
+		&:focus-visible {
+			outline-color: hsl(var(--ring) / 0.45);
+		}
+	}
+}

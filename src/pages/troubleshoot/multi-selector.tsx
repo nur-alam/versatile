@@ -1,49 +1,49 @@
-import React, { useEffect, useState } from "react"
-import { Check, ChevronsUpDown, X } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useGetPluginList } from "@/services/versatile-services"
-import { __ } from "@wordpress/i18n"
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { useGetPluginList } from '@/services/versatile-services';
+import { __ } from '@wordpress/i18n';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type typePluginList = {
-	slug: string
-	label: string
-}
+	slug: string;
+	label: string;
+};
 
 type Props = {
-	selectedPlugin: string[]
-	onChange: (value: string[]) => void
-}
+	selectedPlugin: string[];
+	onChange: (value: string[]) => void;
+};
 
 export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
-	const [pluginList, setPluginList] = useState<typePluginList[]>([])
-	const [open, setOpen] = useState(false)
+	const [pluginList, setPluginList] = useState<typePluginList[]>([]);
+	const [open, setOpen] = useState(false);
 
-	const { data: pluginListData } = useGetPluginList()
+	const { data: pluginListData } = useGetPluginList();
 
 	useEffect(() => {
 		if (pluginListData) {
-			setPluginList(pluginListData.data)
+			setPluginList(pluginListData.data);
 		}
-	}, [pluginListData])
+	}, [pluginListData]);
 
 	const handleSelect = (value: string) => {
 		if (selectedPlugin.includes(value)) {
-			onChange(selectedPlugin.filter((item) => item !== value))
+			onChange(selectedPlugin.filter((item) => item !== value));
 		} else {
-			onChange([...selectedPlugin, value])
+			onChange([...selectedPlugin, value]);
 		}
-	}
+	};
 
 	const handleRemove = (value: string) => {
-		onChange(selectedPlugin.filter((item) => item !== value))
-	}
+		onChange(selectedPlugin.filter((item) => item !== value));
+	};
 
-	const chosenPlugins = pluginList.filter((plugin) => selectedPlugin.includes(plugin.slug))
-	const availablePlugins = pluginList.filter((plugin) => !selectedPlugin.includes(plugin.slug))
+	const chosenPlugins = pluginList.filter((plugin) => selectedPlugin.includes(plugin.slug));
+	const availablePlugins = pluginList.filter((plugin) => !selectedPlugin.includes(plugin.slug));
 
 	return (
 		<div>
@@ -53,48 +53,40 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 						variant="outline"
 						role="combobox"
 						aria-expanded={open}
-						className="w-full justify-between min-h-[2.5rem] h-auto p-2 bg-transparent"
+						className="vt-w-full vt-justify-between min-h-[2.5rem] vt-h-auto vt-p-2 vt-bg-transparent"
 					>
-						<div className="flex flex-wrap gap-1 flex-1">
+						<div className="vt-flex vt-flex-wrap vt-gap-2 vt-flex-1">
 							{chosenPlugins.map((item) => (
-								<Badge key={item.slug} variant="default" className="mr-1 mb-1">
+								<Badge key={item.slug} variant="default" className="vt-gap-1 vt-mb-1">
 									{item.label}
-									{/* <button
-										className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-										onClick={(e) => {
-											e.preventDefault()
-											e.stopPropagation()
-											handleRemove(item.slug)
-										}}
-									>
-										<X className="h-3 w-3 text-white/50 hover:text-white/100" />
-									</button> */}
 									<Button
 										variant="ghost"
-										size="sm"
-										className="h-4 w-4 p-0 ml-1"
+										size="xs"
+										className='vt-h-min !vt-px-[1px] !vt-py-[1px]'
 										onClick={(e) => {
-											e.preventDefault()
-											e.stopPropagation()
-											handleRemove(item.slug)
+											e.preventDefault();
+											e.stopPropagation();
+											handleRemove(item.slug);
 										}}
 									>
-										<X className="h-3 w-3" />
+										<X size={12} />
 									</Button>
 								</Badge>
 							))}
 							{chosenPlugins.length === 0 && (
-								<span className="text-muted-foreground">{__('Select plugins you like...', 'versatile-toolkit')}</span>
+								<span className="vt-text-muted-foreground">
+									{__('Select plugins you like...', 'versatile-toolkit')}
+								</span>
 							)}
 						</div>
-						<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+						<ChevronsUpDown className="vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-full p-0" align="start">
+				<PopoverContent className="vt-w-full" align="start">
 					<Command>
-						<CommandInput placeholder="Search plugin..." />
+						<CommandInput placeholder={__('Search plugin...', 'versatile-toolkit')} />
 						<CommandList>
-							<CommandEmpty>No plugin found.</CommandEmpty>
+							<CommandEmpty>{__('No plugin found.', 'versatile-toolkit')}</CommandEmpty>
 							<CommandGroup>
 								{[...availablePlugins, ...chosenPlugins].map((plugin) => (
 									<CommandItem
@@ -104,8 +96,10 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 									>
 										<Check
 											className={cn(
-												"mr-2 h-4 w-4",
-												selectedPlugin.includes(plugin.slug) ? "opacity-100" : "opacity-0"
+												'vt-mr-2 vt-h-4 vt-w-4',
+												selectedPlugin.includes(plugin.slug)
+													? 'vt-opacity-100'
+													: 'vt-opacity-0',
 											)}
 										/>
 										{plugin.label}
@@ -117,5 +111,5 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 				</PopoverContent>
 			</Popover>
 		</div>
-	)
+	);
 }

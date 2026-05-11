@@ -71,8 +71,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
+    <div className="vt-space-y-4">
+      <div className="vt-flex vt-gap-2">
         <Button 
           type="button" 
           variant="outline" 
@@ -94,15 +94,15 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       </div>
 
       {imageUrl && (
-        <div className="mt-4">
-          <div className="border rounded-lg p-2 inline-block bg-gray-50">
+        <div className="vt-mt-4">
+          <div className="vt-border vt-rounded-lg vt-p-2 vt-inline-block vt-bg-gray-50">
             <img 
               src={imageUrl} 
               alt={__('Preview', 'versatile-toolkit')} 
-              className="max-w-xs max-h-32 object-cover rounded"
+              className="vt-max-w-xs vt-max-h-32 vt-object-cover vt-rounded"
             />
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="vt-text-sm vt-text-gray-600 vt-mt-2">
             {__('Image selected', 'versatile-toolkit')}
           </p>
         </div>
