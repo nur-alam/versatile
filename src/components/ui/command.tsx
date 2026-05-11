@@ -39,12 +39,12 @@ const CommandInput = React.forwardRef<
 	React.ElementRef<typeof CommandPrimitive.Input>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-	<div className="vt-flex vt-items-center vt-border-b vt-px-3" cmdk-input-wrapper="">
-		<Search className="vt-mr-2 vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
+	<div className="vt-relative vt-flex vt-items-center vt-border-b vt-pb-2" cmdk-input-wrapper="">
+		<Search className="vt-absolute vt-left-2 vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
 		<CommandPrimitive.Input
 			ref={ref}
 			className={cn(
-				'vt-flex vt-h-10 vt-w-full vt-rounded-md vt-bg-transparent vt-py-3 vt-text-sm vt-outline-none vt-placeholder:vt-text-muted-foreground disabled:vt-cursor-not-allowed disabled:vt-opacity-50',
+				'vt-flex vt-h-10 vt-w-full vt-rounded-md vt-bg-transparent vt-py-3 vt-pl-7 vt-text-sm vt-outline-none vt-placeholder:vt-text-muted-foreground disabled:vt-cursor-not-allowed disabled:vt-opacity-50',
 				className,
 			)}
 			{...props}
@@ -60,7 +60,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.List
 		ref={ref}
-		className={cn('vt-max-h-[300px] vt-overflow-y-auto vt-overflow-x-hidden', className)}
+		className={cn('vt-max-h-[300px] vt-pt-2 vt-overflow-y-auto vt-overflow-x-hidden', className)}
 		{...props}
 	/>
 ));

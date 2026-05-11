@@ -55,31 +55,21 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 						aria-expanded={open}
 						className="vt-w-full vt-justify-between min-h-[2.5rem] vt-h-auto vt-p-2 vt-bg-transparent"
 					>
-						<div className="vt-flex vt-flex-wrap vt-gap-1 vt-flex-1">
+						<div className="vt-flex vt-flex-wrap vt-gap-2 vt-flex-1">
 							{chosenPlugins.map((item) => (
-								<Badge key={item.slug} variant="default" className="vt-mr-1 vt-mb-1">
+								<Badge key={item.slug} variant="default" className="vt-gap-1 vt-mb-1">
 									{item.label}
-									{/* <button
-										className="vt-ml-1 vt-ring-offset-background vt-rounded-full vt-outline-none focus:vt-ring-2 focus:vt-ring-ring focus:vt-ring-offset-2"
-										onClick={(e) => {
-											e.preventDefault()
-											e.stopPropagation()
-											handleRemove(item.slug)
-										}}
-									>
-										<X className="vt-h-3 vt-w-3 text-white/50 hover:text-white/100" />
-									</button> */}
 									<Button
 										variant="ghost"
-										size="sm"
-										className="vt-h-4 vt-w-4 vt-p-0 vt-ml-1"
+										size="xs"
+										className='vt-h-min !vt-px-[1px] !vt-py-[1px]'
 										onClick={(e) => {
 											e.preventDefault();
 											e.stopPropagation();
 											handleRemove(item.slug);
 										}}
 									>
-										<X className="vt-h-3 vt-w-3" />
+										<X size={12} />
 									</Button>
 								</Badge>
 							))}
@@ -92,7 +82,7 @@ export default function MultipleSelector({ selectedPlugin, onChange }: Props) {
 						<ChevronsUpDown className="vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="vt-w-full vt-p-0" align="start">
+				<PopoverContent className="vt-w-full" align="start">
 					<Command>
 						<CommandInput placeholder={__('Search plugin...', 'versatile-toolkit')} />
 						<CommandList>
