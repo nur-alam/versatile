@@ -51,7 +51,13 @@ module.exports = (env, options) => {
 								},
 							},
 						},
-						'sass-loader',
+						{
+							loader: 'sass-loader',
+							options: {
+								// Avoid Dart Sass “legacy JS API” deprecation (removed in Dart Sass 2.0).
+								api: 'modern',
+							},
+						},
 					],
 				},
 				{
