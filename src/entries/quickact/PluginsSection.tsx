@@ -70,7 +70,7 @@ const PluginsSection = () => {
 					<Input
 						type='search'
 						value={pluginSearch}
-						className="vt-pl-8 vt-h-5"
+						className="vt-w-max vt-pl-8 vt-h-5"
 						onChange={(e) => setPluginSearch(e.target.value)}
 						placeholder={__('Search plugins…', 'versatile-toolkit')}
 						autoComplete="off"

@@ -75,7 +75,7 @@ const ThemesSection = () => {
 					<Search className="vt-absolute vt-left-3 vt-top-1/2 vt-transform -vt-translate-y-1/2 vt-text-gray-400 vt-w-4 vt-h-4" />
 					<Input
 						type="search"
-						className="vt-pl-8 vt-h-5"
+						className="vt-w-max vt-pl-8 vt-h-5"
 						value={themeSearch}
 						onChange={(e) => setThemeSearch(e.target.value)}
 						placeholder={__('Search themes…', 'versatile-toolkit')}
