@@ -7,6 +7,13 @@ import TopActions from './TopActions';
 
 type SidebarSection = 'plugins' | 'themes' | 'settings';
 
+const isInsideQuickactMenu = (target: EventTarget | null) => {
+	if (!(target instanceof Element)) {
+		return false;
+	}
+	return Boolean(target.closest('.vt-quickact-menu-wrapper'));
+};
+
 const Quickact = () => {
 	const [activeSection, setActiveSection] = useState<SidebarSection>('plugins');
 
@@ -14,10 +21,16 @@ const Quickact = () => {
 		<div
 			className="vt-quickact-trigger"
 			onClick={(event) => {
+				if (isInsideQuickactMenu(event.target)) {
+					return;
+				}
 				event.preventDefault();
 				event.stopPropagation();
 			}}
 			onMouseDown={(event) => {
+				if (isInsideQuickactMenu(event.target)) {
+					return;
+				}
 				event.preventDefault();
 				event.stopPropagation();
 			}}
@@ -46,13 +59,13 @@ const Quickact = () => {
 						>
 							{__('Themes', 'versatile-toolkit')}
 						</button>
-						<button
+						{/* <button
 							type="button"
 							className={`vt-quickact-nav-btn${activeSection === 'settings' ? ' vt-quickact-nav-btn-active' : ''}`}
 							onClick={() => setActiveSection('settings')}
 						>
 							{__('Settings', 'versatile-toolkit')}
-						</button>
+						</button> */}
 					</div>
 
 					<div className="vt-quickact-content vt-pl-3">
