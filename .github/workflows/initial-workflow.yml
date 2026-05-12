@@ -72,7 +72,7 @@ jobs:
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
-				with:
+        with:
           files: ../versatile-toolkit-${{ env.VERSION_NUMBER }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
