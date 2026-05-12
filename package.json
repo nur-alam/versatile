@@ -8,7 +8,7 @@
 		"watch": "npm run dev",
 		"prod": "webpack --mode production",
 		"make-pot": "wp i18n make-pot --exclude='node_modules, vendor' . languages/versatile-toolkit.pot",
-		"bundle": "version=$(grep 'Version:' versatile-toolkit.php | awk '{print $3}') && out_zip=\"$(pwd)/../versatile-${version}.zip\" && staging_dir=$(mktemp -d) && rsync -a ./ \"$staging_dir/versatile/\" --exclude-from='.distignore' && (cd \"$staging_dir\" && zip -qr \"$out_zip\" versatile) && rm -rf \"$staging_dir\"",
+		"bundle": "version=$(grep 'Version:' versatile-toolkit.php | awk '{print $3}') && out_zip=\"$(pwd)/../versatile-toolkit-${version}.zip\" && staging_dir=$(mktemp -d) && rsync -a ./ \"$staging_dir/versatile-toolkit/\" --exclude-from='.distignore' && (cd \"$staging_dir\" && zip -qr \"$out_zip\" versatile-toolkit) && rm -rf \"$staging_dir\"",
 		"build": "composer i --no-dev && npm run prod && npm run make-pot && npm run bundle"
 	},
 	"author": "nurwp",

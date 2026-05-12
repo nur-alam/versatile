@@ -62,15 +62,17 @@ jobs:
         run: |
           find assets/dist -type f
           
-      - name: WordPress Plugin Deploy
-        id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: versatile-toolkit
+      # - name: WordPress Plugin Deploy
+      #   id: deploy
+      #   uses: 10up/action-wordpress-plugin-deploy@stable
+      #   env:
+      #     SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      #     SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      #     SLUG: versatile-toolkit
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
+				with:
+          files: ../versatile-toolkit-${{ env.VERSION_NUMBER }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
