@@ -38,6 +38,7 @@ class QuickAct {
 		add_action( 'wp_ajax_versatile_quickact_themes_list', array( $this, 'versatile_get_themes_list' ) );
 		add_action( 'wp_ajax_versatile_quickact_theme_activate', array( $this, 'versatile_activate_theme' ) );
 		add_action( 'wp_ajax_versatile_quickact_theme_deactivate', array( $this, 'versatile_deactivate_theme' ) );
+		add_action( 'wp_ajax_versatile_quickact_theme_delete', array( $this, 'versatile_delete_theme' ) );
 		add_action( 'wp_ajax_versatile_reset_permalinks', array( $this, 'versatile_reset_permalinks' ) );
 	}
 
@@ -395,6 +396,60 @@ class QuickAct {
 				),
 				200
 			);
+		} catch ( \Exception $e ) {
+			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
+		}
+	}
+
+	/**
+	 * Delete theme.
+	 *
+	 * @return void
+	 */
+	public function versatile_delete_theme() {
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'stylesheet',
+						'value'    => $_REQUEST['stylesheet'] ?? '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data['success'] ) {
+				$this->json_response( $sanitized_data['message'], array(), $sanitized_data['code'] ?? 400, $sanitized_data['errors'] ?? null );
+			}
+
+			$verify_request = versatile_verify_request( $sanitized_data );
+			if ( ! $verify_request['success'] ) {
+				$this->json_response( $verify_request['message'], array(), $verify_request['code'] ?? 403 );
+			}
+
+			$stylesheet = $sanitized_data['stylesheet'];
+			$active     = wp_get_theme()->get_stylesheet();
+
+			if ( $stylesheet === $active ) {
+				$this->json_response( __( 'Cannot delete the active theme.', 'versatile-toolkit' ), array(), 400 );
+			}
+
+			if ( ! function_exists( 'delete_theme' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/theme.php';
+			}
+
+			$result = delete_theme( $stylesheet );
+
+			if ( is_wp_error( $result ) ) {
+				$this->json_response( $result->get_error_message(), array(), 400 );
+			}
+
+			if ( ! $result ) {
+				$this->json_response( __( 'Failed to delete theme.', 'versatile-toolkit' ), array(), 400 );
+			}
+
+			$this->json_response( __( 'Theme deleted successfully.', 'versatile-toolkit' ), array( 'stylesheet' => $stylesheet ), 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}

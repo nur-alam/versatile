@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { __ } from '@wordpress/i18n';
-import { fetchUtil } from '@/utils/request-utils';
 import config from '@/config';
-import { VersatileResponseType } from '@/utils/versatile-declaration';
+import { fetchUtil } from '@/utils/request-utils';
 import { AnyObject } from '@/utils/utils';
+import { VersatileResponseType } from '@/utils/versatile-declaration';
+import { useMutation } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
+import toast from 'react-hot-toast';
 
 export type QuickactPluginItem = {
 	file: string;
@@ -37,6 +37,14 @@ export const getQuickactThemes = async () => {
 		action: 'versatile_quickact_themes_list',
 	});
 	return response.data || [];
+};
+
+export const deleteQuickactTheme = async (stylesheet: string) => {
+	const response = await quickactRequest({
+		action: 'versatile_quickact_theme_delete',
+		stylesheet,
+	});
+	return response;
 };
 
 export const useQuickactServices = () => {
