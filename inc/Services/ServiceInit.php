@@ -59,7 +59,9 @@ class ServiceInit {
 
 		// Quick Act service (formerly Quick Pick).
 		if ( ! empty( $versatile_service_list['quickact']['enable'] ) ) {
-			new QuickAct();
+			if ( current_user_can( 'manage_options' ) ) {
+				new QuickAct();
+			}
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );
