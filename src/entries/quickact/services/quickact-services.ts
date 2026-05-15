@@ -32,6 +32,14 @@ export const getQuickactPlugins = async () => {
 	return response.data || [];
 };
 
+export const deleteQuickactPlugin = async (pluginFile: string) => {
+	const response = await quickactRequest({
+		action: 'versatile_quickact_plugin_delete',
+		plugin_file: pluginFile,
+	});
+	return response;
+};
+
 export const getQuickactThemes = async () => {
 	const response = await quickactRequest<QuickactThemeItem[]>({
 		action: 'versatile_quickact_themes_list',

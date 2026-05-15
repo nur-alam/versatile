@@ -88,7 +88,7 @@
 		max-width: calc(100vw - 120px);
 		min-height: 300px;
 		max-height: 380px;
-		// overflow: auto;
+		overflow: auto;
 		flex: 1;
 		min-width: 0;
 	}
@@ -121,7 +121,7 @@
 		flex-direction: column;
 		gap: 10px;
 		max-height: 300px;
-		overflow: auto;
+		// overflow: auto;
 	}
 
 	.vt-quickact-row {

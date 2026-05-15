@@ -35,6 +35,7 @@ class QuickAct {
 		add_action( 'wp_ajax_versatile_quickact_plugins_list', array( $this, 'versatile_get_plugins_list' ) );
 		add_action( 'wp_ajax_versatile_quickact_plugin_activate', array( $this, 'versatile_activate_plugin' ) );
 		add_action( 'wp_ajax_versatile_quickact_plugin_deactivate', array( $this, 'versatile_deactivate_plugin' ) );
+		add_action( 'wp_ajax_versatile_quickact_plugin_delete', array( $this, 'versatile_delete_plugin' ) );
 		add_action( 'wp_ajax_versatile_quickact_themes_list', array( $this, 'versatile_get_themes_list' ) );
 		add_action( 'wp_ajax_versatile_quickact_theme_activate', array( $this, 'versatile_activate_theme' ) );
 		add_action( 'wp_ajax_versatile_quickact_theme_deactivate', array( $this, 'versatile_deactivate_theme' ) );
@@ -181,6 +182,7 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_activate_plugin() {
+		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -225,6 +227,7 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_deactivate_plugin() {
+		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -254,6 +257,60 @@ class QuickAct {
 			deactivate_plugins( $plugin_file, false, false );
 
 			$this->json_response( __( 'Plugin deactivated!', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
+		} catch ( \Exception $e ) {
+			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
+		}
+	}
+
+	/**
+	 * Delete plugin.
+	 *
+	 * @return void
+	 */
+	public function versatile_delete_plugin() {
+		sleep( 33 );
+		try {
+			$sanitized_data = versatile_sanitization_validation(
+				array(
+					array(
+						'name'     => 'plugin_file',
+						'value'    => $_REQUEST['plugin_file'] ?? '', // phpcs:ignore
+						'sanitize' => 'sanitize_text_field',
+						'rules'    => 'required|string',
+					),
+				)
+			);
+
+			if ( ! $sanitized_data['success'] ) {
+				$this->json_response( $sanitized_data['message'], array(), $sanitized_data['code'] ?? 400, $sanitized_data['errors'] ?? null );
+			}
+
+			$verify_request = versatile_verify_request( $sanitized_data );
+			if ( ! $verify_request['success'] ) {
+				$this->json_response( $verify_request['message'], array(), $verify_request['code'] ?? 403 );
+			}
+
+			if ( ! function_exists( 'delete_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$plugin_file = $sanitized_data['plugin_file'];
+
+			if ( is_plugin_active( $plugin_file ) ) {
+				$this->json_response( __( 'Cannot delete an active plugin.', 'versatile-toolkit' ), array(), 400 );
+			}
+
+			$result = delete_plugins( array( $plugin_file ) );
+
+			if ( is_wp_error( $result ) ) {
+				$this->json_response( $result->get_error_message(), array(), 400 );
+			}
+
+			if ( ! $result ) {
+				$this->json_response( __( 'Failed to delete plugin.', 'versatile-toolkit' ), array(), 400 );
+			}
+
+			$this->json_response( __( 'Plugin deleted successfully.', 'versatile-toolkit' ), array( 'plugin_file' => $plugin_file ), 200 );
 		} catch ( \Exception $e ) {
 			$this->json_response( 'An error occurred: ' . $e->getMessage(), array(), 500 );
 		}
@@ -301,6 +358,7 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_activate_theme() {
+		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -342,6 +400,7 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_deactivate_theme() {
+		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -407,6 +466,7 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_delete_theme() {
+		sleep( 33 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
