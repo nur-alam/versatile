@@ -276,8 +276,8 @@ export function ServerDataTable<
 							}}
 							disabled={page === 1}
 						>
-							<ArrowLeft className="vt-h-4 vt-w-4" />
-							Previous
+							<ArrowLeft className="vt-h-4 vt-w-4 vt-pr-1" />
+							Prev
 						</Button>
 
 						{/* Page Numbers */}
@@ -395,7 +395,7 @@ export function ServerDataTable<
 							disabled={page === totalPages}
 						>
 							{__('Next', 'versatile-toolkit')}
-							<ArrowRight className="vt-h-4 vt-w-4" />
+							<ArrowRight className="vt-h-4 vt-w-4 vt-pl-1" />
 						</Button>
 					</div>)}
 				</div>
