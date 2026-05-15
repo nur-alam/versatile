@@ -182,7 +182,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_activate_plugin() {
-		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -227,7 +226,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_deactivate_plugin() {
-		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -268,7 +266,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_delete_plugin() {
-		sleep( 33 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -358,7 +355,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_activate_theme() {
-		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -400,7 +396,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_deactivate_theme() {
-		sleep( 5 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
@@ -466,7 +461,6 @@ class QuickAct {
 	 * @return void
 	 */
 	public function versatile_delete_theme() {
-		sleep( 33 );
 		try {
 			$sanitized_data = versatile_sanitization_validation(
 				array(
