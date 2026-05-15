@@ -23,10 +23,10 @@ export const ViewLog = ({ row }: { row: DebugRow }) => {
 			<Dialog>
 				<DialogTrigger asChild>
 					<Button
-						size="sm"
-						variant="link"
+						size="icon"
+						variant="ghost"
 						aria-label={`View ${row.type}'s log`}
-						className="vt-p-0 vt-text-blue-600 hover:vt-bg-blue-100"
+						className="hover:vt-bg-blue-100 hover:vt-text-blue-900"
 					>
 						<Eye className="vt-h-4 vt-w-4" />
 					</Button>

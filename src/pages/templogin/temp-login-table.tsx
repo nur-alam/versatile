@@ -543,7 +543,7 @@ const TempLoginTable = () => {
 								{__('Extend by', 'versatile-toolkit')}
 							</Label>
 							<Select value={extendTimeValue} onValueChange={setExtendTimeValue}>
-								<SelectTrigger className="vt-w-full vt-block">
+								<SelectTrigger className="vt-w-full">
 									<SelectValue placeholder={__('Select expires at', 'versatile-toolkit')} />
 								</SelectTrigger>
 								<SelectContent className="vt-w-full vt-max-h-60 vt-scroll">

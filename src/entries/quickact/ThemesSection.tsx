@@ -1,6 +1,7 @@
 import ButtonLoader from '@/components/loader/ButtonLoader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
 	getQuickactThemes,
 	QuickactThemeItem,
@@ -8,16 +9,17 @@ import {
 } from '@/entries/quickact/services/quickact-services';
 import { useDebouncedValue } from '@/entries/quickact/useDebouncedValue';
 import { __ } from '@wordpress/i18n';
-import { Search } from 'lucide-react';
+import { EllipsisVertical, Search, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ThemesSection = () => {
 	const [themes, setThemes] = useState<QuickactThemeItem[]>([]);
 	const [isThemesLoading, setIsThemesLoading] = useState(false);
 	const [pendingThemeStylesheet, setPendingThemeStylesheet] = useState<string | null>(null);
+	const [pendingThemeDelete, setPendingThemeDelete] = useState<string | null>(null);
 	const [themeSearch, setThemeSearch] = useState('');
 	const debouncedThemeSearch = useDebouncedValue(themeSearch, 300);
-	const { mutateAsync } = useQuickactServices();
+	const { mutateAsync, isPending } = useQuickactServices();
 
 	const loadThemes = useCallback(async () => {
 		setIsThemesLoading(true);
@@ -53,6 +55,22 @@ const ThemesSection = () => {
 			);
 		} finally {
 			setPendingThemeStylesheet(null);
+		}
+	};
+
+	const handleThemeDelete = async (stylesheet: string) => {
+		if (!window.confirm(__('Are you sure you want to delete this theme?', 'versatile-toolkit'))) {
+			return;
+		}
+		setPendingThemeDelete(stylesheet);
+		try {
+			await mutateAsync({
+				action: 'versatile_quickact_theme_delete',
+				stylesheet,
+			});
+			setThemes((prevThemes) => prevThemes.filter((theme) => theme.stylesheet !== stylesheet));
+		} finally {
+			setPendingThemeDelete(null);
 		}
 	};
 
@@ -92,11 +110,9 @@ const ThemesSection = () => {
 				<div style={{ minHeight: '300px' }}>{__('No themes found.', 'versatile-toolkit')}</div>
 			)}
 			{!isThemesLoading && themes.length > 0 && filteredThemes.length === 0 && (
-				<div style={{ minHeight: '120px' }}>
-					{__('No themes match your search.', 'versatile-toolkit')}
-				</div>
+				<div style={{ minHeight: '120px' }}>{__('No themes match your search.', 'versatile-toolkit')}</div>
 			)}
-			<div className='vt-quickact-section-list'>
+			<div className="vt-quickact-section-list">
 				{filteredThemes.map((theme) => (
 					<div
 						key={theme.stylesheet}
@@ -108,24 +124,70 @@ const ThemesSection = () => {
 								{theme.stylesheet} {theme.version ? `(${theme.version})` : ''}
 							</div>
 						</div>
-						<Button
-							type="button"
-							className="vt-w-[60px]"
-							size="xs"
-							variant="secondary"
-							disabled={pendingThemeStylesheet === theme.stylesheet}
-							onClick={() => void handleThemeToggle(theme.stylesheet, !theme.is_active)}
-						>
-							<ButtonLoader
-								isLoading={pendingThemeStylesheet === theme.stylesheet}
-								loadingText="loading"
+						<div className="vt-flex vt-gap-1 vt-items-center">
+							<Button
+								type="button"
+								className="vt-w-[60px]"
 								size="xs"
+								variant="secondary"
+								disabled={isPending}
+								onClick={() => void handleThemeToggle(theme.stylesheet, !theme.is_active)}
 							>
-								{theme.is_active
-									? __('Deactivate', 'versatile-toolkit')
-									: __('Activate', 'versatile-toolkit')}
-							</ButtonLoader>
-						</Button>
+								<ButtonLoader
+									isLoading={pendingThemeStylesheet === theme.stylesheet}
+									loadingText="loading"
+									size="xs"
+								>
+									{theme.is_active
+										? __('Deactivate', 'versatile-toolkit')
+										: __('Activate', 'versatile-toolkit')}
+								</ButtonLoader>
+							</Button>
+
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										type="button"
+										variant="ghost"
+										size="xs"
+										className="vt-h-6 vt-w-6 vt-p-0"
+										// disabled={isPending}
+										disabled={theme.is_active}
+										onClick={(e) => e.stopPropagation()}
+										onPointerDown={(e) => e.stopPropagation()}
+									>
+										<EllipsisVertical
+											className={`vt-h-4 vt-w-4 ${theme.is_active ? 'vt-text-gray-400' : 'vt-text-gray-700'}`}
+										/>
+										<span className="vt-sr-only">{__('Open menu', 'versatile-toolkit')}</span>
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className="vt-w-max vt-p-1" align="end">
+									<div className="vt-flex vt-flex-col vt-gap-1">
+										{!theme.is_active && (
+											<Button
+												type="button"
+												className="vt-justify-start vt-text-destructive hover:vt-text-destructive"
+												size="xs"
+												variant="ghost"
+												disabled={isPending}
+												onClick={() => void handleThemeDelete(theme.stylesheet)}
+											>
+												<ButtonLoader
+													isLoading={pendingThemeDelete === theme.stylesheet}
+													loadingText="loading"
+													size="xs"
+												>
+													<Trash2 className="vt-mr-2 vt-h-3 vt-w-3" />
+													<span>{__('Delete', 'versatile-toolkit')}</span>
+												</ButtonLoader>
+											</Button>
+										)}
+										{/* Add more future buttons here */}
+									</div>
+								</PopoverContent>
+							</Popover>
+						</div>
 					</div>
 				))}
 			</div>
