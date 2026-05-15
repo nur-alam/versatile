@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Versatile Toolkit
- * Version: 1.0.9
+ * Version: 1.0.10
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Plugin URI: https://verspark.com/
