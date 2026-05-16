@@ -28,6 +28,7 @@ class Enqueue {
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_admin_scripts' ) );
 		// add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_front_end_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'load_admin_scripts' ) );
 	}
 
 	/**
@@ -40,41 +41,42 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_admin_scripts( $page ): void {
-		$plugin_data            = versatile_get_plugin_data();
-		$versatile_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
-		$versatile_js_bundle    = $plugin_data['plugin_url'] . 'assets/dist/js/versatile-js.min.js';
+		if ( current_user_can( 'manage_options' ) ) {
+			$plugin_data            = versatile_get_plugin_data();
+			$versatile_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/style.min.css';
+			$versatile_js_bundle    = $plugin_data['plugin_url'] . 'assets/dist/js/versatile-js.min.js';
 
-		// Register styles and scripts first
-		wp_register_style(
-			'versatile-style',
-			$versatile_style_bundle,
-			array(),
-			VERSATILE_VERSION,
-			'all'
-		);
-
-		wp_enqueue_style( 'versatile-style' );
-
-		if ( 'toplevel_page_versatile' === $page ) {
-			// Enqueue WordPress media library
-			wp_enqueue_media();
-
-			wp_register_script(
-				'versatile-js',
-				$versatile_js_bundle,
-				array( 'wp-element', 'wp-i18n' ),
+			// Register styles and scripts first
+			wp_register_style(
+				'versatile-style',
+				$versatile_style_bundle,
+				array(),
 				VERSATILE_VERSION,
-				true
+				'all'
 			);
 
-			// Then enqueue them
-			wp_enqueue_script( 'versatile-js' );
+			wp_enqueue_style( 'versatile-style' );
 
-			wp_add_inline_script(
-				'versatile-js',
-				'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
-				'before'
-			);
+			if ( 'toplevel_page_versatile' === $page ) {
+				// Enqueue WordPress media library
+				wp_enqueue_media();
+
+				wp_register_script(
+					'versatile-js',
+					$versatile_js_bundle,
+					array( 'wp-element', 'wp-i18n' ),
+					VERSATILE_VERSION,
+					true
+				);
+
+				// Then enqueue them
+				wp_enqueue_script( 'versatile-js' );
+				wp_add_inline_script(
+					'versatile-js',
+					'const _versatileObject = ' . wp_json_encode( self::scripts_data() ) . ';window._versatileObject=_versatileObject',
+					'before'
+				);
+			}
 		}
 	}
 
@@ -86,30 +88,30 @@ class Enqueue {
 	 * @return void
 	 */
 	public static function load_front_end_scripts(): void {
-		$plugin_data                        = Versatile::plugin_data();
-		$versatile_comingsoon_style_bundle  = $plugin_data['plugin_url'] . 'assets/dist/css/comingsoon-style.min.css';
-		$versatile_maintenance_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/maintenance-style.min.css';
+		$plugin_data = Versatile::plugin_data();
+		// $versatile_comingsoon_style_bundle  = $plugin_data['plugin_url'] . 'assets/dist/css/comingsoon-style.min.css';
+		// $versatile_maintenance_style_bundle = $plugin_data['plugin_url'] . 'assets/dist/css/maintenance-style.min.css';
 
-		$versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
+		// $versatile_mood_info = get_option( VERSATILE_MOOD_LIST, VERSATILE_DEFAULT_MOOD_LIST );
 
-		$enable_comingsoon  = $versatile_mood_info['enable_comingsoon'];
-		$enable_maintenance = $versatile_mood_info['enable_maintenance'];
+		// $enable_comingsoon  = $versatile_mood_info['enable_comingsoon'];
+		// $enable_maintenance = $versatile_mood_info['enable_maintenance'];
 
-		wp_register_style(
-			'versatile-comingsoon-style',
-			$versatile_comingsoon_style_bundle,
-			array(),
-			VERSATILE_VERSION,
-			'all'
-		);
+		// wp_register_style(
+		// 'versatile-comingsoon-style',
+		// $versatile_comingsoon_style_bundle,
+		// array(),
+		// VERSATILE_VERSION,
+		// 'all'
+		// );
 
-		wp_register_style(
-			'versatile-maintenance-style',
-			$versatile_maintenance_style_bundle,
-			array(),
-			VERSATILE_VERSION,
-			'all'
-		);
+		// wp_register_style(
+		// 'versatile-maintenance-style',
+		// $versatile_maintenance_style_bundle,
+		// array(),
+		// VERSATILE_VERSION,
+		// 'all'
+		// );
 	}
 
 	/**
