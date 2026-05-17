@@ -251,7 +251,7 @@ const debugLog = () => {
 					const cleanTimestamp = timestamp.replace(' UTC', '');
 					const date = new Date(cleanTimestamp + ' UTC');
 					// Convert to local time and format
-					return date.toLocaleString();
+					return date.toLocaleString(undefined, { hour12: true });
 				} catch (error) {
 					console.error('Error parsing timestamp:', timestamp, error);
 					return 'Invalid Date';
