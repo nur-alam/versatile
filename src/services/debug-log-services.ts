@@ -1,7 +1,6 @@
 import config from '@/config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { VersatileResponseType } from '@/utils/versatile-declaration';
-import { fetchUtil } from '@/utils/request-utils';
 import toast from 'react-hot-toast';
 import { __ } from '@wordpress/i18n';
 
@@ -27,6 +26,13 @@ export interface DebugRow {
     raw_line: string;
     severity: string;
     timestamp: string;
+    file?: string;
+    line?: string;
+    stack_trace?: string;
+    log_from: string;
+    source_type: string;
+    source_slug: string;
+    source_value: string;
 }
 
 export interface DebugLogSearchParams {
@@ -35,6 +41,7 @@ export interface DebugLogSearchParams {
     search?: string;
     sortKey?: string;
     order?: string;
+    source?: string;
 }
 
 export interface DebugLogData {
@@ -157,7 +164,7 @@ export const debugLogApi = {
     },
 
     // Load debug log content with pagination
-    loadLogContent: async ({ page, perPage, search, sortKey, order }: DebugLogSearchParams): Promise<{ data: DebugRow[], total: number, totalPages: number }> => {
+    loadLogContent: async ({ page, perPage, search, sortKey, order, source }: DebugLogSearchParams): Promise<{ data: DebugRow[], total: number, totalPages: number }> => {
         try {
             const params = new URLSearchParams({
                 action: 'versatile_get_debug_log_content',
@@ -167,6 +174,7 @@ export const debugLogApi = {
                 search: String(search || '').trim(),
                 sortKey: String(sortKey || '').trim(),
                 order: String(order?.trim()?.toLowerCase() || ''),
+                source: String(source || 'all').trim(),
             });
 
             const response = await fetch(`${config.ajax_url}?${params}`);
@@ -203,7 +211,7 @@ export const useToggleDebugLog = () => {
 
     return useMutation({
         mutationFn: debugLogApi.toggleDebugLog,
-        onSuccess: (data, variables) => {
+        onSuccess: (_data, variables) => {
             // Invalidate and refetch debug log status
             queryClient.invalidateQueries({ queryKey: ['debugLogStatus'] });
 

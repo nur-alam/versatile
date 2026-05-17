@@ -229,6 +229,15 @@ class DebugLog {
 				);
 			}
 
+			if (! empty($_GET['source'])) { // phpcs:ignore
+				$build_array_for_validation[] = array(
+					'name'     => 'source',
+					'value'    => wp_unslash($_GET['source']), // phpcs:ignore
+					'sanitize' => 'sanitize_text_field',
+					'rules'    => '',
+				);
+			}
+
 			$sanitized_data = versatile_sanitization_validation(
 				$build_array_for_validation
 			);
@@ -258,13 +267,26 @@ class DebugLog {
 
 			$page     = isset( $verified_data->page ) ? (int) $verified_data->page : 1;
 			$per_page = isset( $verified_data->per_page ) ? (int) $verified_data->per_page : 20;
+			$source   = isset( $verified_data->source ) ? (string) $verified_data->source : '';
 
 			$lines = file( $log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
 			// Parse complete error entries (multi-line support)
 			$error_entries = $this->parse_complete_error_entries( $lines );
+
+			if ( ! empty( $source ) && 'all' !== $source ) {
+				$error_entries = array_values(
+					array_filter(
+						$error_entries,
+						function ( $entry ) use ( $source ) {
+							return isset( $entry['source_value'] ) && $entry['source_value'] === $source;
+						}
+					)
+				);
+			}
+
 			$total_entries = count( $error_entries );
-			$total_pages   = ceil( $total_entries / $per_page );
+			$total_pages   = $per_page > 0 ? (int) ceil( $total_entries / $per_page ) : 0;
 
 			// Reverse entries to show newest first
 			$error_entries = array_reverse( $error_entries );
@@ -313,6 +335,10 @@ class DebugLog {
 				if ( ! preg_match( '/^\[([^\]]+)\]\s+(Automatic\s+updates|WordPress\s+database\s+error)/i', $line ) ) {
 					$current_error['message']  .= "\n" . trim( $line );
 					$current_error['raw_line'] .= "\n" . $line;
+					$current_error              = array_merge(
+						$current_error,
+						$this->detect_log_source( $current_error['raw_line'], $current_error['file'] ?? '' )
+					);
 				}
 			}
 		}
@@ -354,31 +380,209 @@ class DebugLog {
 				$stack_trace = isset( $parts[1] ) ? trim( $parts[1] ) : '';
 			}
 
-			return array(
-				'id'          => $line_number,
-				'timestamp'   => $timestamp,
-				'type'        => $type,
-				'severity'    => $severity,
-				'message'     => $message,
-				'file'        => $file,
-				'line'        => $line_num,
-				'stack_trace' => $stack_trace,
-				'raw_line'    => $line,
+			return array_merge(
+				array(
+					'id'          => $line_number,
+					'timestamp'   => $timestamp,
+					'type'        => $type,
+					'severity'    => $severity,
+					'message'     => $message,
+					'file'        => $file,
+					'line'        => $line_num,
+					'stack_trace' => $stack_trace,
+					'raw_line'    => $line,
+				),
+				$this->detect_log_source( $line, $file )
 			);
 		}
 
 		// If it doesn't match the standard format, treat as generic log entry
-		return array(
-			'id'          => $line_number,
-			'timestamp'   => '',
-			'type'        => 'Unknown',
-			'severity'    => 'info',
-			'message'     => $line,
-			'file'        => '',
-			'line'        => '',
-			'stack_trace' => '',
-			'raw_line'    => $line,
+		return array_merge(
+			array(
+				'id'          => $line_number,
+				'timestamp'   => '',
+				'type'        => 'Unknown',
+				'severity'    => 'info',
+				'message'     => $line,
+				'file'        => '',
+				'line'        => '',
+				'stack_trace' => '',
+				'raw_line'    => $line,
+			),
+			$this->detect_log_source( $line )
 		);
+	}
+
+	/**
+	 * Detect the most likely source for a log entry.
+	 *
+	 * @param string $content Full log content for the entry.
+	 * @param string $file    Main file extracted from the first log line.
+	 * @return array<string, string>
+	 */
+	private function detect_log_source( $content, $file = '' ) {
+		$haystack = trim( $content . "\n" . $file );
+		$matches  = array();
+
+		if ( preg_match( '#/wp-content/plugins/([^/\s]+)#i', $haystack, $plugin_match, PREG_OFFSET_CAPTURE ) ) {
+			$plugin_slug = $this->normalize_source_slug( $plugin_match[1][0] );
+			$plugin_list = $this->get_plugin_lookup();
+			$matches[]   = array(
+				'offset'       => $plugin_match[0][1],
+				'source_type'  => 'plugin',
+				'source_slug'  => $plugin_slug,
+				'source_label' => $plugin_list[ $plugin_slug ] ?? $this->format_source_label( $plugin_slug ),
+				'source_value' => 'plugin:' . $plugin_slug,
+			);
+		}
+
+		if ( preg_match( '#/wp-content/themes/([^/\s]+)#i', $haystack, $theme_match, PREG_OFFSET_CAPTURE ) ) {
+			$theme_slug = $this->normalize_source_slug( $theme_match[1][0] );
+			$theme_list = $this->get_theme_lookup();
+			$matches[]  = array(
+				'offset'       => $theme_match[0][1],
+				'source_type'  => 'theme',
+				'source_slug'  => $theme_slug,
+				'source_label' => $theme_list[ $theme_slug ] ?? $this->format_source_label( $theme_slug ),
+				'source_value' => 'theme:' . $theme_slug,
+			);
+		}
+
+		if ( preg_match( '#/wp-content/mu-plugins/([^/\s]+)#i', $haystack, $mu_plugin_match, PREG_OFFSET_CAPTURE ) ) {
+			$mu_plugin_slug = $this->normalize_source_slug( $mu_plugin_match[1][0] );
+			$matches[]      = array(
+				'offset'       => $mu_plugin_match[0][1],
+				'source_type'  => 'mu-plugin',
+				'source_slug'  => $mu_plugin_slug,
+				'source_label' => $this->format_source_label( $mu_plugin_slug ),
+				'source_value' => 'mu-plugin:' . $mu_plugin_slug,
+			);
+		}
+
+		if ( ! empty( $matches ) ) {
+			usort(
+				$matches,
+				function ( $left, $right ) {
+					return $left['offset'] <=> $right['offset'];
+				}
+			);
+
+			$source = $matches[0];
+			unset( $source['offset'] );
+			$source['log_from'] = $source['source_label'];
+
+			return $source;
+		}
+
+		if ( preg_match( '#/(wp-admin|wp-includes)/#i', $file ? $file : $haystack ) ) {
+			return array(
+				'source_type'  => 'wordpress-core',
+				'source_slug'  => 'wordpress-core',
+				'source_label' => 'WordPress Core',
+				'source_value' => 'wordpress-core',
+				'log_from'     => 'WordPress Core',
+			);
+		}
+
+		return array(
+			'source_type'  => 'unknown',
+			'source_slug'  => 'unknown',
+			'source_label' => 'Unknown',
+			'source_value' => 'unknown',
+			'log_from'     => 'Unknown',
+		);
+	}
+
+	/**
+	 * Build a lookup of plugin directory slugs to plugin names.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_plugin_lookup() {
+		static $plugin_lookup = null;
+
+		if ( null !== $plugin_lookup ) {
+			return $plugin_lookup;
+		}
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugin_lookup = array();
+		$all_plugins   = get_plugins();
+
+		foreach ( $all_plugins as $plugin_file => $plugin ) {
+			if ( empty( $plugin['Name'] ) ) {
+				continue;
+			}
+
+			$plugin_slug                   = $this->normalize_plugin_file_slug( $plugin_file );
+			$plugin_lookup[ $plugin_slug ] = $plugin['Name'];
+		}
+
+		return $plugin_lookup;
+	}
+
+	/**
+	 * Build a lookup of theme slugs to theme names.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_theme_lookup() {
+		static $theme_lookup = null;
+
+		if ( null !== $theme_lookup ) {
+			return $theme_lookup;
+		}
+
+		$theme_lookup = array();
+		$all_themes   = wp_get_themes();
+
+		foreach ( $all_themes as $theme_slug => $theme ) {
+			$theme_lookup[ $this->normalize_source_slug( $theme_slug ) ] = $theme->get( 'Name' );
+		}
+
+		return $theme_lookup;
+	}
+
+	/**
+	 * Normalize a plugin file path into the slug used by log paths.
+	 *
+	 * @param string $plugin_file Plugin file path.
+	 * @return string
+	 */
+	private function normalize_plugin_file_slug( $plugin_file ) {
+		$plugin_dir = dirname( $plugin_file );
+
+		if ( '.' !== $plugin_dir ) {
+			return $this->normalize_source_slug( $plugin_dir );
+		}
+
+		return $this->normalize_source_slug( basename( $plugin_file, '.php' ) );
+	}
+
+	/**
+	 * Normalize a detected source slug.
+	 *
+	 * @param string $slug Raw slug.
+	 * @return string
+	 */
+	private function normalize_source_slug( $slug ) {
+		$slug = wp_basename( str_replace( '\\', '/', $slug ) );
+		$slug = preg_replace( '/\.php$/i', '', $slug );
+
+		return strtolower( (string) $slug );
+	}
+
+	/**
+	 * Convert a slug into a readable label.
+	 *
+	 * @param string $slug Source slug.
+	 * @return string
+	 */
+	private function format_source_label( $slug ) {
+		return ucwords( str_replace( array( '-', '_' ), ' ', $slug ) );
 	}
 
 	/**
