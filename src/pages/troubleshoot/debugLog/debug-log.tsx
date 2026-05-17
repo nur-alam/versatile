@@ -1,33 +1,77 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 import { Column, ServerDataTable, TFetchDataPromise } from '@/pages/troubleshoot/debugLog/data-table';
 import DebugLogSettings from '@/pages/troubleshoot/debugLog/debug-log-settings';
 import { ViewLog } from '@/pages/troubleshoot/debugLog/view-log';
 import {
 	debugLogApi,
 	DebugRow,
+	DebugLogSearchParams,
 	formatFileInfo,
 	useClearDebugLog,
 	useDebugLogStatus,
 	useToggleDebugLog,
 } from '@/services/debug-log-services';
+import { useGetPluginList, useGetThemeList } from '@/services/versatile-services';
 import { LogTypeDisplay } from '@/utils/log-type-utils';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
+type LogSourceListItem = {
+	slug: string;
+	label: string;
+};
+
+type LogSourceOption = {
+	value: string;
+	label: string;
+	group: 'general' | 'plugin' | 'theme';
+};
+
+const normalizePluginSourceSlug = (pluginSlug: string) => {
+	const [rootSegment = pluginSlug] = pluginSlug.split('/');
+	return rootSegment.replace(/\.php$/i, '').toLowerCase();
+};
+
+const formatSourceType = (sourceType?: string) => {
+	switch (sourceType) {
+		case 'plugin':
+			return __('Plugin', 'versatile-toolkit');
+		case 'theme':
+			return __('Theme', 'versatile-toolkit');
+		case 'mu-plugin':
+			return __('MU Plugin', 'versatile-toolkit');
+		case 'wordpress-core':
+			return __('WordPress Core', 'versatile-toolkit');
+		default:
+			return __('Unknown', 'versatile-toolkit');
+	}
+};
 
 const debugLog = () => {
 	// Use React Router's useSearchParams for hash-based routing
 	const [searchParams] = useSearchParams();
+	const navigate = useNavigate();
 
 	// Auto refresh state
 	const [isAutoRefresh, setIsAutoRefresh] = useState(false);
 	const [refreshTrigger, setRefreshTrigger] = useState(0);
+	const [selectedSource, setSelectedSource] = useState('all');
+	const [isSourceFilterOpen, setIsSourceFilterOpen] = useState(false);
 
 	// React Query hooks
 	const { data: statusData, isLoading: statusLoading, refetch: refetchStatus } = useDebugLogStatus();
 	const toggleMutation = useToggleDebugLog();
 	const clearMutation = useClearDebugLog();
+	const { data: pluginListData } = useGetPluginList();
+	const { data: themeListData } = useGetThemeList();
 
 	// Derived state
 	const debugStatus = statusData?.enabled || false;
@@ -107,6 +151,60 @@ const debugLog = () => {
 		setIsAutoRefresh(enable);
 	};
 
+	const handleSourceFilterChange = (sourceValue: string) => {
+		setSelectedSource(sourceValue);
+		setIsSourceFilterOpen(false);
+
+		const nextParams = new URLSearchParams(searchParams);
+		nextParams.set('paged', '1');
+
+		navigate({
+			pathname: '/troubleshoot/debug-log',
+			search: `?${nextParams.toString()}`,
+		});
+	};
+
+	const { generalOptions, pluginOptions, themeOptions } = useMemo(() => {
+		const pluginMap = new Map<string, string>();
+		const themeMap = new Map<string, string>();
+
+		((pluginListData?.data as LogSourceListItem[] | undefined) ?? []).forEach((plugin) => {
+			pluginMap.set(`plugin:${normalizePluginSourceSlug(plugin.slug)}`, plugin.label);
+		});
+
+		((themeListData?.data as LogSourceListItem[] | undefined) ?? []).forEach((theme) => {
+			themeMap.set(`theme:${theme.slug.toLowerCase()}`, theme.label);
+		});
+
+		return {
+			generalOptions: [
+				{ value: 'all', label: __('All Sources', 'versatile-toolkit'), group: 'general' as const },
+				{
+					value: 'wordpress-core',
+					label: __('WordPress Core', 'versatile-toolkit'),
+					group: 'general' as const,
+				},
+				{ value: 'unknown', label: __('Unknown', 'versatile-toolkit'), group: 'general' as const },
+			],
+			pluginOptions: Array.from(pluginMap.entries()).map(
+				([value, label]) => ({ value, label, group: 'plugin' as const }) satisfies LogSourceOption,
+			),
+			themeOptions: Array.from(themeMap.entries()).map(
+				([value, label]) => ({ value, label, group: 'theme' as const }) satisfies LogSourceOption,
+			),
+		};
+	}, [pluginListData, themeListData]);
+
+	const selectedSourceOption = useMemo(
+		() => [...generalOptions, ...pluginOptions, ...themeOptions].find((option) => option.value === selectedSource),
+		[generalOptions, pluginOptions, selectedSource, themeOptions],
+	);
+
+	const fetchLogContent = useCallback(
+		(params: DebugLogSearchParams) => debugLogApi.loadLogContent({ ...params, source: selectedSource }),
+		[selectedSource],
+	);
+
 	const columns = [
 		{ key: 'id', header: 'No' },
 		{
@@ -119,8 +217,24 @@ const debugLog = () => {
 		{
 			key: 'message',
 			header: 'Description',
-			render: (row, key?: string) => {
-				return <>{row['raw_line'].substring(0, 200)}...</>;
+			render: (row) => {
+				const messagePreview =
+					row['raw_line'].length > 200 ? `${row['raw_line'].substring(0, 200)}...` : row['raw_line'];
+				return <>{messagePreview}</>;
+			},
+		},
+		{
+			key: 'log_from',
+			header: 'Log From',
+			render: (row) => {
+				return (
+					<div className="vt-min-w-[11rem]">
+						<Badge variant="success" className="vt-font-medium">
+							{row['log_from'] || __('Unknown', 'versatile-toolkit')}
+						</Badge>
+						{/* <div className="vt-text-xs vt-text-slate-500">{formatSourceType(row['source_type'])}</div> */}
+					</div>
+				);
 			},
 		},
 		// { key: "severity", header: "Severity" },
@@ -241,6 +355,89 @@ const debugLog = () => {
 						{__('Debug Log', 'versatile-toolkit')}
 					</h3>
 					<div className="vt-flex vt-flex-wrap vt-items-center vt-gap-3">
+						<Popover open={isSourceFilterOpen} onOpenChange={setIsSourceFilterOpen}>
+							<PopoverTrigger asChild>
+								<Button
+									variant="outline"
+									role="combobox"
+									aria-expanded={isSourceFilterOpen}
+									aria-label={__('Filter debug logs by source', 'versatile-toolkit')}
+									className="vt-min-w-[12rem] vt-max-w-[20rem] vt-justify-between vt-gap-2 vt-bg-white vt-font-normal"
+								>
+									<span className="vt-truncate">
+										{selectedSourceOption?.label || __('Select source...', 'versatile-toolkit')}
+									</span>
+									<ChevronsUpDown className="vt-h-4 vt-w-4 vt-shrink-0 vt-opacity-50" />
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="vt-w-[20rem] vt-p-0" align="start">
+								<Command>
+									<CommandInput placeholder={__('Search source...', 'versatile-toolkit')} />
+									<CommandList>
+										<CommandEmpty>{__('No source found.', 'versatile-toolkit')}</CommandEmpty>
+										<CommandGroup>
+											{generalOptions.map((option) => (
+												<CommandItem
+													key={option.value}
+													value={option.label}
+													onSelect={() => handleSourceFilterChange(option.value)}
+												>
+													<Check
+														className={cn(
+															'vt-mr-2 vt-h-4 vt-w-4',
+															selectedSource === option.value ? 'vt-opacity-100' : 'vt-opacity-0',
+														)}
+													/>
+													{option.label}
+												</CommandItem>
+											))}
+										</CommandGroup>
+										{pluginOptions.length > 0 && (
+											<CommandGroup heading={__('Plugins', 'versatile-toolkit')}>
+												{pluginOptions.map((option) => (
+													<CommandItem
+														key={option.value}
+														value={option.label}
+														onSelect={() => handleSourceFilterChange(option.value)}
+													>
+														<Check
+															className={cn(
+																'vt-mr-2 vt-h-4 vt-w-4',
+																selectedSource === option.value
+																	? 'vt-opacity-100'
+																	: 'vt-opacity-0',
+															)}
+														/>
+														{option.label}
+													</CommandItem>
+												))}
+											</CommandGroup>
+										)}
+										{themeOptions.length > 0 && (
+											<CommandGroup heading={__('Themes', 'versatile-toolkit')}>
+												{themeOptions.map((option) => (
+													<CommandItem
+														key={option.value}
+														value={option.label}
+														onSelect={() => handleSourceFilterChange(option.value)}
+													>
+														<Check
+															className={cn(
+																'vt-mr-2 vt-h-4 vt-w-4',
+																selectedSource === option.value
+																	? 'vt-opacity-100'
+																	: 'vt-opacity-0',
+															)}
+														/>
+														{option.label}
+													</CommandItem>
+												))}
+											</CommandGroup>
+										)}
+									</CommandList>
+								</Command>
+							</PopoverContent>
+						</Popover>
 						<button
 							title={__('Refresh Log', 'versatile-toolkit')}
 							onClick={handleRefreshLog}
@@ -294,9 +491,9 @@ const debugLog = () => {
 					</div>
 				</div>
 				<ServerDataTable<DebugRow, TFetchDataPromise<DebugRow>, typeof searchParams>
-					key={refreshTrigger} // Force re-render when refreshTrigger changes
+					key={`${refreshTrigger}-${selectedSource}`} // Force re-render when refreshTrigger or source filter changes
 					columns={columns}
-					fetchData={debugLogApi.loadLogContent}
+					fetchData={fetchLogContent}
 					searchParams={searchParams}
 				/>
 			</div>
