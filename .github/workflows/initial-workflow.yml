@@ -54,6 +54,7 @@ jobs:
         run: |
           version=$(grep -Po 'Version:\s*\K[\d.]+(?:-[\w]+)?' versatile-toolkit.php)
           echo "VERSION_NUMBER=$version" >> $GITHUB_ENV
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Build Plugin
         run: npm run build
@@ -61,6 +62,24 @@ jobs:
       - name: Verify dist files
         run: |
           find assets/dist -type f
+
+      - name: Extract release notes from readme changelog
+        run: |
+          awk -v version="$VERSION_NUMBER" '
+            $0 == "= " version " =" { in_section=1; next }
+            in_section && /^= [0-9]/ { exit }
+            in_section && /^== / { exit }
+            in_section { print }
+          ' readme.txt > RELEASE_NOTES.txt
+
+          sed -i '/^[[:space:]]*$/d' RELEASE_NOTES.txt
+
+          if [ ! -s RELEASE_NOTES.txt ]; then
+            echo "Failed to extract release notes for version $VERSION_NUMBER from readme.txt"
+            exit 1
+          fi
+
+          cat RELEASE_NOTES.txt
           
       # - name: WordPress Plugin Deploy
       #   id: deploy
@@ -73,6 +92,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
-          files: ../versatile-toolkit-${{ env.VERSION_NUMBER }}.zip
+          files: ../versatile-toolkit-${{ steps.get_version.outputs.version }}.zip
+          body_path: RELEASE_NOTES.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
