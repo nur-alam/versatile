@@ -91,33 +91,33 @@ Source code link : https://github.com/nur-alam/versatile
 
 == Changelog ==
 
-= 1.0.12 =
+= 1.0.12 May 18th, 2026
 * Debug log timestamps now display in 12-hour format.
 
-= 1.0.11 =
+= 1.0.11 May 17th
 * Quick Top actions like reset permalink, plugin & theme activate/deactivation also deletion.
 * Debug log source & filter debug log by plugins or themes
 * Quick Action UI sync with versatile ui components.
 * Tailwind class prefixing with vt
 
-= 1.0.7 =
+= 1.0.7 April 14th, 2026
 * Added "Quick Action" feature for one-click permalink reset, plugin & themes activation and deactivation
 
-= 1.0.4 =
+= 1.0.4 September 28th, 2025
 * Added temporary login feature for secure remote access
 * Implemented time-limited access tokens for remote login
 * Added role-based access control
 
-= 1.0.2 =
+= 1.0.2 August 25th, 2025
 = Debug log pagination numbering issue fixed
 = Plugin new screenshots
 
-= 1.0.1 =
+= 1.0.1 (August 25th, 2025 7:43 PM)
 = Debug log enable & disable, refresh log, view log, download log
 * Maintenance page template selection
 * Coming soon page template selection
 
-= 1.0.0 =
+= 1.0.0 July 20th, 2025
 * Initial release
 * IP-based troubleshooting and plugin management
 * Maintenance Mode with custom backgrounds and logos
