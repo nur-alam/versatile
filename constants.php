@@ -106,6 +106,39 @@ define(
 			'description' => 'Create and manage temporary login access for users without sharing permanent credentials.',
 			'icon'        => 'dashicons-admin-users',
 		),
+		'smtp'         => array(
+			'label'       => 'SMTP',
+			'enable'      => true,
+			'path'        => 'smtp',
+			'description' => 'Configure your SMTP settings for sending emails.',
+			'icon'        => 'dashicons-admin-tools',
+			'menus'       => array(
+				'dashboard'   => array(
+					'slug'   => '',
+					'label'  => 'SMTP Dashboard',
+					'parent' => 'smtp',
+					'icon'   => 'dashicons-admin-tools',
+				),
+				'logs'        => array(
+					'slug'   => 'logs',
+					'label'  => 'Email Logs',
+					'parent' => 'smtp',
+					'icon'   => 'dashicons-admin-tools',
+				),
+				'connections' => array(
+					'slug'   => 'connections',
+					'label'  => 'Email Connections',
+					'parent' => 'smtp',
+					'icon'   => 'dashicons-admin-tools',
+				),
+				'settings'    => array(
+					'slug'   => 'settings',
+					'label'  => 'SMTP Settings',
+					'parent' => 'smtp',
+					'icon'   => 'dashicons-admin-tools',
+				),
+			),
+		),
 		'maintenance'  => array(
 			'label'       => 'Maintenance Mode',
 			'enable'      => true,

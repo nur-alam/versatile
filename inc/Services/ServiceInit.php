@@ -18,6 +18,7 @@ use Versatile\Services\Comingsoon\ComingsoonMood;
 use Versatile\Services\QuickAct\QuickAct;
 use Versatile\Services\Templogin\Templogin;
 use Versatile\Database\TempLoginTable;
+use Versatile\Services\Smtp\VersatileSmtp;
 use Versatile\Traits\JsonResponse;
 
 /**
@@ -62,6 +63,11 @@ class ServiceInit {
 			if ( current_user_can( 'manage_options' ) ) {
 				new QuickAct();
 			}
+		}
+
+		// SMTP service
+		if ( ! empty( $versatile_service_list['smtp']['enable'] ) ) {
+			new VersatileSmtp();
 		}
 
 		add_action( 'wp_ajax_versatile_get_service_list', array( $this, 'versatile_get_service_list' ) );

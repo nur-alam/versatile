@@ -31,6 +31,7 @@ const Header = () => {
 	};
 
 	const currentService = getCurrentService();
+	console.log('Current Service:', currentService);
 
 	const updateServiceMutation = useUpdateServiceStatus();
 
@@ -101,6 +102,7 @@ const Header = () => {
 						</>
 					)}
 
+					{/* Troubleshoot Links */}
 					{!servicesIsLoading && services?.troubleshoot.enable && !currentService && (
 						<>
 							<Link
@@ -117,6 +119,30 @@ const Header = () => {
 							</Link>
 						</>
 					)}
+
+					{/* SMTP Link */}
+					{/* {!servicesIsLoading && services?.smtp.enable && !currentService && (
+						<>
+							<Link
+								to="/smtp/logs"
+								className="vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-text-blue-700 vt-bg-blue-50 vt-border vt-border-blue-200"
+							>
+								{__('Email Logs', 'versatile-toolkit')}
+							</Link>
+							<Link
+								to="/smtp/connections"
+								className="vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-text-blue-700 vt-bg-blue-50 vt-border vt-border-blue-200"
+							>
+								{__('Email Connections', 'versatile-toolkit')}
+							</Link>
+							<Link
+								to="/smtp/settings"
+								className="vt-text-sm vt-font-medium vt-rounded-md vt-px-3 vt-py-1 vt-text-blue-700 vt-bg-blue-50 vt-border vt-border-blue-200"
+							>
+								{__('SMTP Settings', 'versatile-toolkit')}
+							</Link>
+						</>
+					)} */}
 
 					<Sheet>
 						{/* Toggle Menu Button */}
