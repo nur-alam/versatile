@@ -5,4 +5,4 @@ const SmtpSettings = () => {
 	)
 }
 
-export default SmtpSettings;	
+export default SmtpSettings;

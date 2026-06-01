@@ -1,5 +1,34 @@
 <?php
 /**
+ * Get default email connection
+ *
+ * @return  array|boolean
+ */
+function versatile_get_default_provider() {
+	$default_provider = get_option( VERSATILE_DEFAULT_EMAIL_PROVIDER, array() );
+
+	if ( empty( $default_provider ) ) {
+		return false;
+	}
+	return $default_provider;
+}
+
+/**
+ * Get versatile provider
+ *
+ * @param string $provider Provider name.
+ *
+ * @return array|bool Provider configuration or false if not found.
+ */
+function versatile_get_provider( $provider ) {
+	$versatile_email_config = get_option( VERSATILE_EMAIL_CONFIG, array() );
+	if ( empty( $versatile_email_config ) ) {
+		return false;
+	}
+	return $versatile_email_config[ $provider ] ?? false;
+}
+
+/**
  * VersatileEmail class
  *
  * @package Versatile
@@ -486,6 +515,8 @@ if ( ! function_exists( 'wp_mail' ) ) :
 
 		// Send!
 		try {
+
+			// here will be custom provider selection
 			$send = $phpmailer->send();
 
 			/**

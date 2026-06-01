@@ -115,7 +115,7 @@ define(
 			'menus'       => array(
 				'dashboard'   => array(
 					'slug'   => '',
-					'label'  => 'SMTP Dashboard',
+					'label'  => 'Dashboard',
 					'parent' => 'smtp',
 					'icon'   => 'dashicons-admin-tools',
 				),
@@ -165,3 +165,7 @@ define(
 
 define( 'VERSATILE_DEFAULT_COMINGSOON_TEMPLATE', 'classic' );
 define( 'VERSATILE_DEFAULT_MAINTENANCE_TEMPLATE', 'classic' );
+
+// smtp
+define( 'VERSATILE_DEFAULT_EMAIL_PROVIDER', 'versatile_default_email_provider' );
+define( 'VERSATILE_EMAIL_CONFIG', 'versatile_email_config' );
