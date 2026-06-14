@@ -16,6 +16,7 @@ import Header from '@/pages/Header';
 import { RouteGuard } from '@/components/RouteGuard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import DebugLog from '@/pages/troubleshoot/debugLog/debug-log';
+import AddConnection from './pages/smtp/add-connection';
 
 const root = ReactDOM.createRoot(document.getElementById('versatile-root') as HTMLElement);
 
@@ -107,6 +108,14 @@ root.render(
 								<RouteGuard>
 									<ErrorBoundary>
 										<Connections />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+
+							<Route path="/smtp/connection/add" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<AddConnection />
 									</ErrorBoundary>
 								</RouteGuard>
 							} />

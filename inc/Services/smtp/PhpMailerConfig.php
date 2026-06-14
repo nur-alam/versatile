@@ -10,6 +10,8 @@
 
 namespace Versatile\Services\Smtp;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * Set SMTP configuration class
  */
