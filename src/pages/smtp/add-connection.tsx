@@ -5,21 +5,25 @@ import DefaultSmtp from '@pages/smtp/provider/default-smtp';
 import AwsSes from '@pages/smtp/provider/aws-ses';
 import Gmail from '@pages/smtp/provider/gmail';
 import { useState } from 'react';
+import RouteBack from '@/components/atom/route-back';
+import { SmtpSecurityOptionsType, EmailProviderOptionsType } from '@/utils/versatile-declaration';
 
 const AddConnection = () => {
 
-	const [selectedProtocol, setSelectedProtocol] = useState('smtp');
+	const [selectedProvider, setSelectedProvider] = useState<EmailProviderOptionsType>('smtp');
 
 	return (
-		<Card className="vt-w-full vt-max-w-[1000px] vt-shadow-lg vt-mt-6">
-			<CardHeader>
+		<Card className="vt-w-full vt-max-w-[1000px] vt-shadow-lg vt-p-6 vt-mt-6 vt-min-h-[500px]">
+			<div className="vt-flex vt-justify-between vt-items-center vt-mb-8">
 				<CardTitle>{__('Add Connection', 'versatile-toolkit')}</CardTitle>
-			</CardHeader>
-			<CardContent className="vt-p-6">
+				<RouteBack link="/smtp/connections" />
+			</div>
+			<div>
 				<Tabs
-					defaultValue="smtp"
+					value={selectedProvider}
 					className="vt-flex vt-gap-6"
-					onValueChange={(value) => setSelectedProtocol(value)}
+					onValueChange={(value) => setSelectedProvider(value as EmailProviderOptionsType)}
+					defaultValue="smtp"
 				>
 					<TabsList className="vt-flex vt-flex-col vt-h-fit vt-w-48 vt-bg-muted vt-p-2 vt-rounded-lg">
 						<TabsTrigger value="smtp" className="vt-w-full vt-flex vt-justify-start vt-items-center vt-gap-2 vt-p-2.5">
@@ -56,18 +60,18 @@ const AddConnection = () => {
 						</TabsTrigger>
 					</TabsList>
 					<div className="vt-flex-1 vt-border-l vt-pl-6">
-						<TabsContent value={selectedProtocol}>
-							<DefaultSmtp />
+						<TabsContent value="smtp">
+							<DefaultSmtp selectedProvider={selectedProvider} />
 						</TabsContent>
 						<TabsContent value="ses">
-							<AwsSes />
+							<AwsSes selectedProvider={selectedProvider} />
 						</TabsContent>
 						<TabsContent value="gmail">
-							<Gmail />
+							<Gmail selectedProvider={selectedProvider} />
 						</TabsContent>
 					</div>
 				</Tabs>
-			</CardContent>
+			</div>
 		</Card>
 	)
 }
