@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SmtpSecurityOptionsType, EmailProviderOptionsType, emailProviderOptions, smtpSecurityOptionsMap } from '@/utils/versatile-declaration';
 import { Button } from '@/components/ui/button';
+import { useUpdateSmtpConfig } from '@/services/smtp-services';
 
 
 const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOptionsType }) => {
@@ -25,8 +26,11 @@ const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOpti
 		}
 	});
 
-	const onSubmit = (values: SmtpConfigFormValues) => {
-		console.log('onSubmit', values);
+	const updateSmtpConfigMutation = useUpdateSmtpConfig();
+
+	const onSubmit = async (values: SmtpConfigFormValues) => {
+		const newValues = { ...values, selectedProvider }
+		await updateSmtpConfigMutation.mutateAsync(newValues);
 	}
 
 	return (
