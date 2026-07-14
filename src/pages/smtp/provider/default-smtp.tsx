@@ -138,10 +138,9 @@ const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOpti
 								<div className="vt-flex vt-gap-2 vt-justify-end">
 									<Button
 										type="submit"
-									// disabled={form.}
+										disabled={updateSmtpConfigMutation.isPending}
 									>
-										{__("Save Changes", "versatile-toolkit")}
-										{/* {form.isPending ? __("Saving...", "trigger") : __("Save Changes", "trigger")} */}
+										{updateSmtpConfigMutation.isPending ? __("Saving...", "versatile-toolkit") : __("Save Changes", "versatile-toolkit")}
 									</Button>
 								</div>
 							</form>
