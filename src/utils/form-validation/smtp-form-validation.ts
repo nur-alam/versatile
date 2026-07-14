@@ -1,6 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import { z } from 'zod';
-import { emailProviderOptions, smtpSecurityOptions, smtpPortOptions } from '../versatile-declaration';
+import { awsSesRegionOptions, emailProviderOptions, smtpPortOptions, smtpSecurityOptions } from '../versatile-declaration';
 
 export const smtpConfigSchema = z.object({
 	provider: z.enum(emailProviderOptions, { message: 'Invalid email provider' }),
@@ -14,3 +13,14 @@ export const smtpConfigSchema = z.object({
 });
 
 export type SmtpConfigFormValues = z.infer<typeof smtpConfigSchema>;
+
+export const awsSesConfigSchema = z.object({
+	provider: z.enum(emailProviderOptions, { message: 'Invalid email provider' }),
+	accessKeyId: z.string().min(1, { message: 'Access key ID is required' }),
+	secretAccessKey: z.string().min(1, { message: 'Secret access key is required' }),
+	region: z.enum(awsSesRegionOptions, { message: 'Region is required' }),
+	fromName: z.string().min(1, { message: 'From name is required' }),
+	fromEmail: z.string().email({ message: 'Valid from email is required' }),
+});
+
+export type AwsSesConfigFormValues = z.infer<typeof awsSesConfigSchema>;

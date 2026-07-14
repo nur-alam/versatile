@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SmtpSecurityOptionsType, EmailProviderOptionsType, emailProviderOptions, smtpSecurityOptionsMap } from '@/utils/versatile-declaration';
+import { EmailProviderOptionsType, smtpSecurityOptionsMap } from '@/utils/versatile-declaration';
 import { Button } from '@/components/ui/button';
 import { useUpdateSmtpConfig } from '@/services/smtp-services';
 

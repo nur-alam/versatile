@@ -56,18 +56,20 @@ export const smtpPortOptionsMap: { label: string; value: SmtpPortOptionsType }[]
 ];
 
 // AWS SES Regions
-export type AwsSesRegionOptionsType =
-	| 'us-east-1'
-	| 'us-east-2'
-	| 'us-west-1'
-	| 'us-west-2'
-	| 'eu-west-1'
-	| 'eu-central-1'
-	| 'ap-south-1'
-	| 'ap-southeast-1'
-	| 'ap-southeast-2'
-	| 'ap-northeast-1';
-// export type AwsSesRegionOptionsMapType = { value: AwsSesRegionOptionsType; label: string };
+export const awsSesRegionOptions = [
+	'us-east-1',
+	'us-east-2',
+	'us-west-1',
+	'us-west-2',
+	'eu-west-1',
+	'eu-central-1',
+	'ap-south-1',
+	'ap-southeast-1',
+	'ap-southeast-2',
+	'ap-northeast-1',
+] as const;
+
+export type AwsSesRegionOptionsType = typeof awsSesRegionOptions[number];
 
 export const awsSesRegionOptionsMap: { value: AwsSesRegionOptionsType; label: string }[] = [
 	{ value: 'us-east-1', label: 'US East (N. Virginia)' },
