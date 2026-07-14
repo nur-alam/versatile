@@ -24,3 +24,13 @@ export const awsSesConfigSchema = z.object({
 });
 
 export type AwsSesConfigFormValues = z.infer<typeof awsSesConfigSchema>;
+
+export const gmailConfigSchema = z.object({
+	provider: z.enum(emailProviderOptions, { message: 'Invalid email provider' }),
+	clientId: z.string().min(1, { message: 'Client ID is required' }),
+	clientSecret: z.string().min(1, { message: 'Client secret is required' }),
+	fromName: z.string().min(1, { message: 'From name is required' }),
+	fromEmail: z.string().email({ message: 'Valid from email is required' }),
+});
+
+export type GmailConfigFormValues = z.infer<typeof gmailConfigSchema>;

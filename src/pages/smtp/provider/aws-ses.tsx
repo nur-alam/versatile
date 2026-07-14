@@ -33,7 +33,7 @@ const AwsSes = ({ selectedProvider }: { selectedProvider: EmailProviderOptionsTy
 	return (
 		<div className="vt-flex vt-justify-center">
 			<Card className="vt-w-full vt-h-full">
-				<CardContent className="vt-p-6">
+				<CardContent className="vt-p-4">
 					<div className="vt-flex vt-justify-between vt-items-center vt-mb-5">
 						<h2 className="vt-text-xl vt-font-semibold vt-text-primary">
 							{__('Amazon SES Configuration', 'versatile-toolkit')}

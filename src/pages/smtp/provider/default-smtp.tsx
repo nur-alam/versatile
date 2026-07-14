@@ -45,9 +45,7 @@ const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOpti
 							<form
 								className="vt-space-y-6"
 								onSubmit={
-									form.handleSubmit((values) => {
-										onSubmit(values);
-									}, (errors) => {
+									form.handleSubmit(onSubmit, (errors) => {
 										console.log('form errors', errors);
 									})
 								}

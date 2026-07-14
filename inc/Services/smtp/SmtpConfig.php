@@ -57,12 +57,12 @@ class SmtpConfig {
 					'sanitize' => 'sanitize_text_field',
 					'rules'    => 'required|string|email',
 				),
-				array(
-					'name'     => 'selectedProvider',
-					'value'    => $_POST['selectedProvider'] ?? '', // phpcs:ignore
-					'sanitize' => 'sanitize_text_field',
-					'rules'    => 'required|string',
-				),
+				// array(
+				// 'name'     => 'selectedProvider',
+				// 'value'    => $_POST['selectedProvider'] ?? '', // phpcs:ignore
+				// 'sanitize' => 'sanitize_text_field',
+				// 'rules'    => 'required|string',
+				// ),
 			);
 
 			if ( 'smtp' === $provider ) {
@@ -125,7 +125,25 @@ class SmtpConfig {
 						),
 					)
 				);
-			} elseif ( 'gmail' !== $provider ) {
+			} elseif ( 'gmail' === $provider ) {
+				$inputs = array_merge(
+					$inputs,
+					array(
+						array(
+							'name'     => 'clientId',
+							'value'    => $_POST['clientId'] ?? '', // phpcs:ignore
+							'sanitize' => 'sanitize_text_field',
+							'rules'    => 'required|string',
+						),
+						array(
+							'name'     => 'clientSecret',
+							'value'    => $_POST['clientSecret'] ?? '', // phpcs:ignore
+							'sanitize' => 'sanitize_text_field',
+							'rules'    => 'required|string',
+						),
+					)
+				);
+			} else {
 				$this->json_response( __( 'Invalid email provider', 'versatile-toolkit' ), null, 400, null );
 			}
 
