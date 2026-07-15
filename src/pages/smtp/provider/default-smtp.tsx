@@ -89,11 +89,11 @@ const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOpti
 														onValueChange={field.onChange}
 													>
 														<FormControl>
-															<SelectTrigger>
+															<SelectTrigger className="vt-w-full">
 																<SelectValue placeholder="Select security type" />
 															</SelectTrigger>
 														</FormControl>
-														<SelectContent>
+														<SelectContent className="vt-w-full">
 															{smtpSecurityOptionsMap.map((item) => (
 																<SelectItem key={item.value} value={item.value}>
 																	{item.label}

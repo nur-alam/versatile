@@ -16,7 +16,7 @@ const AddConnection = () => {
 		<Card className="vt-w-full vt-max-w-[1000px] vt-shadow-lg vt-p-6 vt-mt-6 vt-min-h-[500px]">
 			<div className="vt-flex vt-justify-between vt-items-center vt-mb-8">
 				<CardTitle>{__('Add Connection', 'versatile-toolkit')}</CardTitle>
-				<RouteBack link="/smtp/connections" />
+				<RouteBack link="/smtp" />
 			</div>
 			<div>
 				<Tabs

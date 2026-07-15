@@ -35,7 +35,6 @@ class SmtpConfig {
 	 * @return object
 	 */
 	public function update_smtp_config() {
-		sleep( 10 );
 		try {
 			$provider = isset( $_POST['provider'] ) ? sanitize_text_field( wp_unslash( $_POST['provider'] ) ) : ''; // phpcs:ignore
 			$inputs   = array(
