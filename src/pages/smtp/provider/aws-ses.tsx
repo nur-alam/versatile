@@ -3,27 +3,45 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useUpdateSmtpConfig } from '@/services/smtp-services';
+import { ConnectionType, useUpdateSmtpConfig } from '@/services/smtp-services';
 import { AwsSesConfigFormValues, awsSesConfigSchema } from '@/utils/form-validation/smtp-form-validation';
 import { AwsSesRegionOptionsType, awsSesRegionOptionsMap, EmailProviderOptionsType } from '@/utils/versatile-declaration';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { __ } from '@wordpress/i18n';
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
-const AwsSes = ({ selectedProvider }: { selectedProvider: EmailProviderOptionsType }) => {
+const getAwsSesDefaultValues = (
+	selectedProvider: EmailProviderOptionsType,
+	existingConnection?: ConnectionType,
+): AwsSesConfigFormValues => ({
+	provider: selectedProvider,
+	accessKeyId: existingConnection?.accessKeyId ?? '',
+	secretAccessKey: existingConnection?.secretAccessKey ?? '',
+	region: existingConnection?.region as AwsSesConfigFormValues['region'],
+	fromName: existingConnection?.fromName ?? '',
+	fromEmail: existingConnection?.fromEmail ?? '',
+});
+
+const AwsSes = ({
+	selectedProvider,
+	allConnections,
+}: {
+	selectedProvider: EmailProviderOptionsType;
+	allConnections: ConnectionType[];
+}) => {
 	const form = useForm<AwsSesConfigFormValues>({
 		resolver: zodResolver(awsSesConfigSchema),
-		defaultValues: {
-			provider: selectedProvider,
-			accessKeyId: '',
-			secretAccessKey: '',
-			region: undefined,
-			fromName: '',
-			fromEmail: '',
-		},
+		defaultValues: getAwsSesDefaultValues(selectedProvider),
 	});
 
 	const updateSmtpConfigMutation = useUpdateSmtpConfig();
+
+	useEffect(() => {
+		const existingConnection = allConnections.find((connection) => connection.provider === selectedProvider);
+
+		form.reset(getAwsSesDefaultValues(selectedProvider, existingConnection));
+	}, [allConnections, form, selectedProvider]);
 
 	const onSubmit = async (values: AwsSesConfigFormValues) => {
 		const newValues = { ...values, selectedProvider };

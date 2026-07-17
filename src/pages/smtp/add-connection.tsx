@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { __ } from '@wordpress/i18n';
 import DefaultSmtp from '@pages/smtp/provider/default-smtp';
@@ -6,11 +6,13 @@ import AwsSes from '@pages/smtp/provider/aws-ses';
 import Gmail from '@pages/smtp/provider/gmail';
 import { useState } from 'react';
 import RouteBack from '@/components/atom/route-back';
-import { SmtpSecurityOptionsType, EmailProviderOptionsType } from '@/utils/versatile-declaration';
+import { EmailProviderOptionsType } from '@/utils/versatile-declaration';
+import { useGetEmailConnections } from '@/services/smtp-services';
 
 const AddConnection = () => {
-
 	const [selectedProvider, setSelectedProvider] = useState<EmailProviderOptionsType>('smtp');
+	const { data } = useGetEmailConnections();
+	const allConnections = data?.data ?? [];
 
 	return (
 		<Card className="vt-w-full vt-max-w-[1000px] vt-shadow-lg vt-p-6 vt-mt-6 vt-min-h-[500px]">
@@ -61,13 +63,13 @@ const AddConnection = () => {
 					</TabsList>
 					<div className="vt-flex-1 vt-border-l vt-pl-6">
 						<TabsContent value="smtp">
-							<DefaultSmtp selectedProvider={selectedProvider} />
+							<DefaultSmtp selectedProvider={selectedProvider} allConnections={allConnections} />
 						</TabsContent>
 						<TabsContent value="ses">
-							<AwsSes selectedProvider={selectedProvider} />
+							<AwsSes selectedProvider={selectedProvider} allConnections={allConnections} />
 						</TabsContent>
 						<TabsContent value="gmail">
-							<Gmail selectedProvider={selectedProvider} />
+							<Gmail selectedProvider={selectedProvider} allConnections={allConnections} />
 						</TabsContent>
 					</div>
 				</Tabs>

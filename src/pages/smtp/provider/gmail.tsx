@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useUpdateSmtpConfig } from '@/services/smtp-services';
+import { ConnectionType, useUpdateSmtpConfig } from '@/services/smtp-services';
 import { GmailConfigFormValues, gmailConfigSchema } from '@/utils/form-validation/smtp-form-validation';
 import { copyToClipboard } from '@/utils/utils';
 import { EmailProviderOptionsType, redirectUrl } from '@/utils/versatile-declaration';
@@ -11,20 +11,38 @@ import { __ } from '@wordpress/i18n';
 import { Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
-const Gmail = ({ selectedProvider }: { selectedProvider: EmailProviderOptionsType }) => {
+const getGmailDefaultValues = (
+	selectedProvider: EmailProviderOptionsType,
+	existingConnection?: ConnectionType,
+): GmailConfigFormValues => ({
+	provider: selectedProvider,
+	clientId: existingConnection?.clientId ?? '',
+	clientSecret: existingConnection?.clientSecret ?? '',
+	fromName: existingConnection?.fromName ?? '',
+	fromEmail: existingConnection?.fromEmail ?? '',
+});
+
+const Gmail = ({
+	selectedProvider,
+	allConnections,
+}: {
+	selectedProvider: EmailProviderOptionsType;
+	allConnections: ConnectionType[];
+}) => {
 	const form = useForm<GmailConfigFormValues>({
 		resolver: zodResolver(gmailConfigSchema),
-		defaultValues: {
-			provider: selectedProvider,
-			clientId: '',
-			clientSecret: '',
-			fromName: '',
-			fromEmail: '',
-		},
+		defaultValues: getGmailDefaultValues(selectedProvider),
 	});
 
 	const updateSmtpConfigMutation = useUpdateSmtpConfig();
+
+	useEffect(() => {
+		const existingConnection = allConnections.find((connection) => connection.provider === selectedProvider);
+
+		form.reset(getGmailDefaultValues(selectedProvider, existingConnection));
+	}, [allConnections, form, selectedProvider]);
 
 	const onSubmit = async (values: GmailConfigFormValues) => {
 		const newValues = { ...values, selectedProvider };

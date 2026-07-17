@@ -8,25 +8,42 @@ import { useForm } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EmailProviderOptionsType, smtpSecurityOptionsMap } from '@/utils/versatile-declaration';
 import { Button } from '@/components/ui/button';
-import { useUpdateSmtpConfig } from '@/services/smtp-services';
+import { ConnectionType, useUpdateSmtpConfig } from '@/services/smtp-services';
+import { useEffect } from 'react';
 
+const getSmtpDefaultValues = (
+	selectedProvider: EmailProviderOptionsType,
+	existingConnection?: ConnectionType,
+): SmtpConfigFormValues => ({
+	provider: selectedProvider,
+	fromName: existingConnection?.fromName ?? 'Versatile Toolkit',
+	fromEmail: existingConnection?.fromEmail ?? 'vers@versatile-toolkit.com',
+	smtpHost: existingConnection?.smtpHost ?? 'smtp.hostinger.com',
+	smtpPort: (existingConnection?.smtpPort as SmtpConfigFormValues['smtpPort']) ?? '587',
+	smtpSecurity: (existingConnection?.smtpSecurity as SmtpConfigFormValues['smtpSecurity']) ?? 'tls',
+	smtpUsername: existingConnection?.smtpUsername ?? 'vers@versatile-toolkit.com',
+	smtpPassword: existingConnection?.smtpPassword ?? 'vers@versatile-toolkit.com',
+});
 
-const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOptionsType }) => {
+const DefaultSmtp = ({
+	selectedProvider,
+	allConnections,
+}: {
+	selectedProvider: EmailProviderOptionsType;
+	allConnections: ConnectionType[];
+}) => {
 	const form = useForm<SmtpConfigFormValues>({
 		resolver: zodResolver(smtpConfigSchema),
-		defaultValues: {
-			provider: selectedProvider,
-			fromName: 'Versatile Toolkit',
-			fromEmail: 'vers@versatile-toolkit.com',
-			smtpHost: 'smtp.hostinger.com',
-			smtpPort: '587',
-			smtpSecurity: 'tls',
-			smtpUsername: 'vers@versatile-toolkit.com',
-			smtpPassword: 'vers@versatile-toolkit.com',
-		}
+		defaultValues: getSmtpDefaultValues(selectedProvider),
 	});
 
 	const updateSmtpConfigMutation = useUpdateSmtpConfig();
+
+	useEffect(() => {
+		const existingConnection = allConnections.find((connection) => connection.provider === selectedProvider);
+
+		form.reset(getSmtpDefaultValues(selectedProvider, existingConnection));
+	}, [allConnections, form, selectedProvider]);
 
 	const onSubmit = async (values: SmtpConfigFormValues) => {
 		const newValues = { ...values, selectedProvider }
@@ -132,6 +149,36 @@ const DefaultSmtp = ({ selectedProvider }: { selectedProvider: EmailProviderOpti
 											</FormItem>
 										)}
 									/>
+								</div>
+								<div className="vt-border-t vt-pt-6">
+									<div className="vt-grid vt-grid-cols-2 vt-gap-4">
+										<FormField
+											control={form.control}
+											name="fromName"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>{__("From Name", "versatile-toolkit")}</FormLabel>
+													<FormControl>
+														<Input placeholder="nur@verspark.com" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name="fromEmail"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>{__("From Email", "versatile-toolkit")}</FormLabel>
+													<FormControl>
+														<Input placeholder="nur@verspark.com" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
 								</div>
 								<div className="vt-flex vt-gap-2 vt-justify-end">
 									<Button

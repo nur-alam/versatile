@@ -56,12 +56,6 @@ class SmtpConfig {
 					'sanitize' => 'sanitize_text_field',
 					'rules'    => 'required|string|email',
 				),
-				// array(
-				// 'name'     => 'selectedProvider',
-				// 'value'    => $_POST['selectedProvider'] ?? '', // phpcs:ignore
-				// 'sanitize' => 'sanitize_text_field',
-				// 'rules'    => 'required|string',
-				// ),
 			);
 
 			if ( 'smtp' === $provider ) {
@@ -160,6 +154,14 @@ class SmtpConfig {
 			// Get existing config.
 			$existing_config = get_option( VERSATILE_EMAIL_CONFIG, array() );
 			$config          = $existing_config;
+			$provider_key    = $data['provider'];
+
+			if ( 'aws' === $provider_key ) {
+				$provider_key = 'ses';
+			}
+
+			$data['createdAt'] = $existing_config[ $provider_key ]['createdAt'] ?? current_time( 'mysql' );
+			$data['updatedAt'] = current_time( 'mysql' );
 
 			if ( 'smtp' === $data['provider'] ) {
 				$config['smtp'] = $data;
@@ -176,6 +178,60 @@ class SmtpConfig {
 			update_option( VERSATILE_EMAIL_CONFIG, $config );
 
 			return $this->json_response( __( 'Email configuration updated successfully', 'versatile-toolkit' ) );
+		} catch ( \Exception $e ) {
+			$this->json_response( $e->getMessage(), null, 500, null );
+		}
+	}
+
+	/**
+	 * Get all saved email connections.
+	 *
+	 * @return void
+	 */
+	public function get_email_connections() {
+		try {
+			$sanitized_data = versatile_sanitization_validation();
+			if ( ! $sanitized_data['success'] ) {
+				$this->json_response( $sanitized_data['message'], null, $sanitized_data['code'] ?? 400, $sanitized_data['errors'] ?? null );
+			}
+
+			$verify_request = versatile_verify_request( $sanitized_data );
+			if ( ! $verify_request['success'] ) {
+				$this->json_response( $verify_request['message'], null, $verify_request['code'] ?? 400, $verify_request['errors'] ?? null );
+			}
+
+			$config = get_option( VERSATILE_EMAIL_CONFIG, array() );
+			// $provider_labels  = array(
+			// 'smtp'  => __( 'SMTP', 'versatile-toolkit' ),
+			// 'ses'   => __( 'Amazon SES', 'versatile-toolkit' ),
+			// 'gmail' => __( 'Google Gmail', 'versatile-toolkit' ),
+			// );
+			// $connection_items = array();
+
+			// foreach ( $connections as $provider => $connection ) {
+			// $normalized_provider = 'aws' === $provider ? 'ses' : $provider;
+			// $connection_items[] = array(
+			// 'provider'       => $normalized_provider,
+			// 'provider_label' => $provider_labels[ $normalized_provider ] ?? strtoupper( $normalized_provider ),
+			// 'email'          => $connection['fromEmail'] ?? '',
+			// 'created_at'     => $connection['createdAt'] ?? '',
+			// 'from_name'      => $connection['fromName'] ?? '',
+			// );
+			// }
+
+			// usort(
+			// $connection_items,
+			// function ( $first, $second ) {
+			// return strtotime( $second['created_at'] ?? '' ) <=> strtotime( $first['created_at'] ?? '' );
+			// }
+			// );
+
+			$connections = array();
+			foreach ( $config as $provider => $data ) {
+				$connections[] = $data;
+			}
+
+			$this->json_response( __( 'Email connections fetched successfully', 'versatile-toolkit' ), $connections );
 		} catch ( \Exception $e ) {
 			$this->json_response( $e->getMessage(), null, 500, null );
 		}
