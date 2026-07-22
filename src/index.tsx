@@ -7,11 +7,16 @@ import Dashboard from '@/pages/versatile';
 import TroubleShoot from '@/pages/troubleshoot';
 import Maintenance from '@pages/maintenance';
 import Comingsoon from '@/pages/comingsoon';
+import EmailLogs from '@/pages/smtp/email-logs';
+import Connections from '@/pages/smtp/connections';
+import SmtpSettings from '@/pages/smtp/smtp-settings';
+import Smtp from '@/pages/smtp';
 import TempLogin from '@/pages/templogin/temp-login';
 import Header from '@/pages/Header';
 import { RouteGuard } from '@/components/RouteGuard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import DebugLog from '@/pages/troubleshoot/debugLog/debug-log';
+import AddConnection from './pages/smtp/add-connection';
 
 const root = ReactDOM.createRoot(document.getElementById('versatile-root') as HTMLElement);
 
@@ -51,6 +56,8 @@ root.render(
 									<Dashboard />
 								</ErrorBoundary>
 							} />
+
+							{/* Troubleshoot */}
 							<Route path="/troubleshoot" element={
 								<RouteGuard>
 									<ErrorBoundary>
@@ -58,20 +65,15 @@ root.render(
 									</ErrorBoundary>
 								</RouteGuard>
 							} />
-							<Route path="/maintenance" element={
+							<Route path="/troubleshoot/debug-log" element={
 								<RouteGuard>
 									<ErrorBoundary>
-										<Maintenance />
+										<DebugLog />
 									</ErrorBoundary>
 								</RouteGuard>
 							} />
-							<Route path="/comingsoon" element={
-								<RouteGuard>
-									<ErrorBoundary>
-										<Comingsoon />
-									</ErrorBoundary>
-								</RouteGuard>
-							} />
+
+							{/* Temp login */}
 							<Route path="/templogin" element={
 								<RouteGuard>
 									<ErrorBoundary>
@@ -79,10 +81,58 @@ root.render(
 									</ErrorBoundary>
 								</RouteGuard>
 							} />
-							<Route path="/troubleshoot/debug-log" element={
+
+							{/* Smtp settings */}
+							<Route path="/smtp" element={
 								<RouteGuard>
 									<ErrorBoundary>
-										<DebugLog />
+										<Smtp />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+							<Route path="/smtp/logs" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<EmailLogs />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+							<Route path="/smtp/settings" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<SmtpSettings />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+							<Route path="/smtp/connections" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<Connections />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+
+							<Route path="/smtp/connection/add" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<AddConnection />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+
+							{/* Maintenance */}
+							<Route path="/maintenance" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<Maintenance />
+									</ErrorBoundary>
+								</RouteGuard>
+							} />
+							{/* Coming soon */}
+							<Route path="/comingsoon" element={
+								<RouteGuard>
+									<ErrorBoundary>
+										<Comingsoon />
 									</ErrorBoundary>
 								</RouteGuard>
 							} />

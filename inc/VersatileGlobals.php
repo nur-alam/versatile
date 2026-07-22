@@ -40,7 +40,7 @@ function versatile_get_plugin_data() {
  * @param array $inputs Array of input data to verify.
  * @param array $permissions Array of user permission strings to check (default: empty array).
  *
- * @return object{success: bool, message: string, code: int, data?: array} Returns array with verification result and sanitized data.
+ * @return array{success: bool, message: string, code: int, data?: array} Returns array with verification result and sanitized data.
  */
 function versatile_verify_request( $inputs, $permissions = 'manage_options' ) {
 	// Check user permissions
@@ -203,7 +203,8 @@ function versatile_grab_error_message( $errors ) {
 	if ( ! count( $errors ) ) {
 		$error_message = null;
 	} else {
-		$error_message = reset( reset( $errors ) );
+		$first_error_set = reset( $errors );
+		$error_message   = reset( $first_error_set );
 	}
 
 	return $error_message;

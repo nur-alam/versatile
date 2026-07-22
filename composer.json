@@ -9,7 +9,8 @@
 			"Versatile\\": "inc/"
 		},
 		"files": [
-			"./inc/VersatileGlobals.php"
+			"./inc/VersatileGlobals.php",
+			"./inc/VersatileWpMail.php"
 		]
 	},
 	"authors": [
