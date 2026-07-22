@@ -1,9 +1,9 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ConnectionType } from '@/services/smtp-services';
 import EditSmtpConfig from '@pages/smtp/provider/edit-smtp-config';
+import EditGmailConfig from '@pages/smtp/provider/edit-gmail-config';
 import { __ } from '@wordpress/i18n';
 // import EditSesConfig from '@pages/smtp/provider/edit-ses-config';
-// import EditGmailConfig from '@pages/smtp/provider/edit-gmail-config';
 
 interface EmailConnectionProps {
 	open: boolean;
@@ -32,11 +32,11 @@ export function EditConnectionSheet({ open, onOpenChange, connection }: EmailCon
 				<>
 					<EditSesConfig connection={connection} />
 				</>
-			)}
+			)} */}
 
 			{connection.provider === "gmail" && (
-				<EditGmailConfig connection={connection} />
-			)} */}
+				<EditGmailConfig connection={connection} onSuccess={() => onOpenChange(false)} />
+			)}
 
 		</SheetContent>
 	</Sheet >
