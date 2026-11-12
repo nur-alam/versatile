@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:where(#versatile-root, #vt-quickact-container, .vt-ui),
+:where(#versatile-root, #vt-quickact-container, .vt-ui) *,
+:where(#versatile-root, #vt-quickact-container, .vt-ui)::before,
+:where(#versatile-root, #vt-quickact-container, .vt-ui) *::before,
+:where(#versatile-root, #vt-quickact-container, .vt-ui)::after,
+:where(#versatile-root, #vt-quickact-container, .vt-ui) *::after {
+	border-color: hsl(var(--border));
+}
+
 @layer base {
 	:root {
 		--background: 0 0% 100%;
@@ -60,42 +69,24 @@
 }
 
 
-@layer base {
-	* {
-		border-color: hsl(var(--border));
-	}
-
-	body {
-		@apply vt-font-sans vt-antialiased vt-bg-background vt-text-foreground;
-	}
-}
-
-body {}
-
-// .wp-person a:focus .gravatar,
-// .wp-person a:focus,
-// .wp-person a:focus .media-icon img,
-// .wp-person a:focus .plugin-icon {
-// 	color: #043959 !important;
-// 	box-shadow: 0 0 0 0px #2271b1 !important;
-// 	outline: 0px solid transparent !important;
-// }
-
-.wp-person a:focus .gravatar,
-a:focus,
-a:focus .media-icon img,
-a:focus .plugin-icon {
-	color: unset;
-	box-shadow: unset;
-	outline: unset;
-}
-
-a:active,
-a:hover,
-a:focus {
-	color: unset;
-}
-
 #versatile-root {
+	@apply vt-font-sans vt-antialiased vt-bg-background vt-text-foreground;
 	margin-right: 20px;
+}
+
+:where(#versatile-root, #vt-quickact-container, .vt-ui) {
+	.wp-person a:focus .gravatar,
+	a:focus,
+	a:focus .media-icon img,
+	a:focus .plugin-icon {
+		color: unset;
+		box-shadow: unset;
+		outline: unset;
+	}
+
+	a:active,
+	a:hover,
+	a:focus {
+		color: unset;
+	}
 }

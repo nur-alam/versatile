@@ -20,7 +20,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<SheetPrimitive.Overlay
 		className={cn(
-			'vt-fixed vt-inset-0 vt-z-[99999] vt-bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+			'vt-ui vt-fixed vt-inset-0 vt-z-[99999] vt-bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
 			className,
 		)}
 		{...props}
@@ -55,7 +55,7 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
 			<SheetOverlay />
 			<SheetPrimitive.Content
 				ref={ref}
-				className={cn(sheetVariants({ side }), 'vt-z-[99999] sm:vt-max-w-[540px]', className)}
+				className={cn(sheetVariants({ side }), 'vt-ui vt-z-[99999] sm:vt-max-w-[540px]', className)}
 				{...props}
 			>
 				{/* 'vt-absolute vt-right-4 vt-top-4 vt-rounded-sm vt-opacity-70 vt-ring-offset-background vt-transition-opacity hover:vt-opacity-100 focus:vt-outline-none focus:vt-ring-2 focus:vt-ring-ring focus:vt-ring-offset-2 disabled:vt-pointer-events-none data-[state=open]:vt-bg-secondary' */}
