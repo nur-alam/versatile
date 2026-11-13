@@ -39,7 +39,7 @@ const toasterRoot = ReactDOM.createRoot(toasterRootElement);
 toasterRoot.render(
 	<Toaster
 		position="bottom-right"
-		containerClassName="vt-quickact-toaster"
+		containerClassName="vt-ui vt-quickact-toaster"
 		toastOptions={{
 			duration: 5000,
 			style: {

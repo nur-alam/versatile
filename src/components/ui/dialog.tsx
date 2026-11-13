@@ -23,7 +23,7 @@ const DialogOverlay = React.forwardRef<
 	<DialogPrimitive.Overlay
 		ref={ref}
 		className={cn(
-			'vt-fixed vt-inset-0 vt-z-[99999] vt-bg-black/80 vt-data-[state=open]:vt-animate-in vt-data-[state=closed]:vt-animate-out vt-data-[state=closed]:vt-fade-out-0 vt-data-[state=open]:vt-fade-in-0',
+			'vt-ui vt-fixed vt-inset-0 vt-z-[99999] vt-bg-black/80 vt-data-[state=open]:vt-animate-in vt-data-[state=closed]:vt-animate-out vt-data-[state=closed]:vt-fade-out-0 vt-data-[state=open]:vt-fade-in-0',
 			className,
 		)}
 		{...props}
@@ -40,7 +40,7 @@ const DialogContent = React.forwardRef<
 		<DialogPrimitive.Content
 			ref={ref}
 			className={cn(
-				'vt-fixed vt-left-[50%] vt-top-[50%] vt-grid vt-w-full vt-translate-x-[-50%] vt-translate-y-[-50%] vt-gap-4 vt-border vt-bg-background vt-p-6 vt-shadow-lg vt-duration-200 vt-data-[state=open]:vt-animate-in vt-data-[state=closed]:vt-animate-out vt-data-[state=closed]:vt-fade-out-0 vt-data-[state=open]:vt-fade-in-0 vt-data-[state=closed]:vt-zoom-out-95 vt-data-[state=open]:vt-zoom-in-95 vt-data-[state=closed]:vt-slide-out-to-left-1/2 vt-data-[state=closed]:vt-slide-out-to-top-[48%] vt-data-[state=open]:vt-slide-in-from-left-1/2 vt-data-[state=open]:vt-slide-in-from-top-[48%] sm:vt-rounded-lg',
+				'vt-ui vt-fixed vt-left-[50%] vt-top-[50%] vt-grid vt-w-full vt-translate-x-[-50%] vt-translate-y-[-50%] vt-gap-4 vt-border vt-bg-background vt-p-6 vt-shadow-lg vt-duration-200 vt-data-[state=open]:vt-animate-in vt-data-[state=closed]:vt-animate-out vt-data-[state=closed]:vt-fade-out-0 vt-data-[state=open]:vt-fade-in-0 vt-data-[state=closed]:vt-zoom-out-95 vt-data-[state=open]:vt-zoom-in-95 vt-data-[state=closed]:vt-slide-out-to-left-1/2 vt-data-[state=closed]:vt-slide-out-to-top-[48%] vt-data-[state=open]:vt-slide-in-from-left-1/2 vt-data-[state=open]:vt-slide-in-from-top-[48%] sm:vt-rounded-lg',
 				'vt-max-w-4xl vt-z-[99999]',
 				className,
 			)}

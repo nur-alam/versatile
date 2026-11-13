@@ -38,7 +38,7 @@ const SelectContent = React.forwardRef<
 		<SelectPrimitive.Content
 			ref={ref}
 			className={cn(
-				'vt-relative vt-z-[100000] vt-min-w-[8rem] vt-overflow-hidden vt-rounded-md vt-border vt-bg-popover vt-text-popover-foreground vt-shadow-md data-[state=open]:vt-animate-in data-[state=closed]:vt-animate-out data-[state=closed]:vt-fade-out-0 data-[state=open]:vt-fade-in-0 data-[state=closed]:vt-zoom-out-95 data-[state=open]:vt-zoom-in-95 data-[side=bottom]:vt-slide-in-from-top-2 data-[side=left]:vt-slide-in-from-right-2 data-[side=right]:vt-slide-in-from-left-2 data-[side=top]:vt-slide-in-from-bottom-2',
+				'vt-ui vt-relative vt-z-[100000] vt-min-w-[8rem] vt-overflow-hidden vt-rounded-md vt-border vt-bg-popover vt-text-popover-foreground vt-shadow-md data-[state=open]:vt-animate-in data-[state=closed]:vt-animate-out data-[state=closed]:vt-fade-out-0 data-[state=open]:vt-fade-in-0 data-[state=closed]:vt-zoom-out-95 data-[state=open]:vt-zoom-in-95 data-[side=bottom]:vt-slide-in-from-top-2 data-[side=left]:vt-slide-in-from-right-2 data-[side=right]:vt-slide-in-from-left-2 data-[side=top]:vt-slide-in-from-bottom-2',
 				position === 'popper' &&
 					'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
 				className,

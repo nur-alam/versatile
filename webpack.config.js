@@ -6,6 +6,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpack = require('webpack');
+const scopeVersatilePreflight = require('./postcss/scope-versatile-preflight');
+
+const postcssPlugins = [require('tailwindcss'), scopeVersatilePreflight(), require('autoprefixer')];
 
 let version = '';
 
@@ -32,7 +35,7 @@ module.exports = (env, options) => {
 							loader: 'postcss-loader',
 							options: {
 								postcssOptions: {
-									plugins: [require('tailwindcss'), require('autoprefixer')],
+									plugins: postcssPlugins,
 								},
 							},
 						},
@@ -47,7 +50,7 @@ module.exports = (env, options) => {
 							loader: 'postcss-loader',
 							options: {
 								postcssOptions: {
-									plugins: [require('tailwindcss'), require('autoprefixer')],
+									plugins: postcssPlugins,
 								},
 							},
 						},
