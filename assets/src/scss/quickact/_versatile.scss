@@ -27,6 +27,7 @@
 
 	.vt-quickact-menu-wrapper {
 		display: none;
+		position: absolute;
 		background: #fff;
 		color: #1d2327;
 		border: 1px solid #c3c4c7;
@@ -36,8 +37,9 @@
 		top: 100%;
 		left: 0;
 		z-index: 100000;
-		min-width: 800px;
-		margin-top: 0px;
+		width: min(800px, calc(100vw - 32px));
+		max-width: calc(100vw - 32px);
+		margin-top: 2px;
 		padding: 10px;
 		gap: 10px;
 		box-sizing: border-box;
@@ -84,8 +86,8 @@
 	}
 
 	.vt-quickact-content {
-		width: 500px;
-		max-width: calc(100vw - 120px);
+		width: auto;
+		max-width: 100%;
 		min-height: 300px;
 		max-height: 380px;
 		flex: 1;
