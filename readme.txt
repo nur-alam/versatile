@@ -4,7 +4,7 @@ Tags: troubleshooting, temporary login, maintenance mode, coming soon, IP contro
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -90,6 +90,9 @@ Yes, the plugin integrates with WordPress media library, allowing you to upload 
 Source code link : https://github.com/nur-alam/versatile
 
 == Changelog ==
+
+= 1.0.13 =
+* Keep the Quick Actions panel from shifting the other admin bar items.
 
 = 1.0.12 =
 * Scoped Tailwind preflight to the plugin UI so wp-admin styles stay intact.
